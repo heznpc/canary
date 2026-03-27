@@ -1,5 +1,6 @@
 import type { StackVersion } from "../types";
 import type { StackType } from "../projects";
+import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
 
 interface StackMeta {
   name: string;
@@ -8,7 +9,7 @@ interface StackMeta {
   registryPackage?: string; // npm package name to check
 }
 
-const STACK_META: Record<string, StackMeta> = {
+export const STACK_META: Record<string, StackMeta> = {
   nextjs: {
     name: "Next.js",
     latestVersion: "16",
@@ -66,7 +67,8 @@ const STACK_META: Record<string, StackMeta> = {
 
 export async function analyzeStack(
   stackTypes: StackType[],
-  repo?: string
+  repo?: string,
+  packageJson?: Record<string, unknown> | null,
 ): Promise<StackVersion[]> {
   const results: StackVersion[] = [];
 
@@ -76,9 +78,13 @@ export async function analyzeStack(
 
     let currentVersion: string | null = null;
 
-    // Try to detect current version from npm registry if repo has package.json
-    if (meta.registryPackage && repo) {
-      currentVersion = await detectVersionFromRepo(repo, meta.registryPackage);
+    if (meta.registryPackage) {
+      // 이미 파싱된 package.json이 있으면 재사용, 없으면 fetch
+      currentVersion = packageJson
+        ? extractVersionFromPkg(packageJson, meta.registryPackage)
+        : repo
+          ? await detectVersionFromRepo(repo, meta.registryPackage)
+          : null;
     }
 
     const isEol =
@@ -101,11 +107,15 @@ export async function analyzeStack(
   return results;
 }
 
-function fetchWithTimeout(url: string, ms = 5000) {
-  return Promise.race([
-    fetch(url),
-    new Promise<never>((_, reject) => setTimeout(() => reject(new Error("timeout")), ms)),
-  ]);
+function extractVersionFromPkg(
+  pkg: Record<string, unknown>,
+  packageName: string,
+): string | null {
+  const deps = pkg.dependencies as Record<string, string> | undefined;
+  const devDeps = pkg.devDependencies as Record<string, string> | undefined;
+  const version = deps?.[packageName] ?? devDeps?.[packageName];
+  if (!version) return null;
+  return version.replace(/^[\^~>=<]*/g, "");
 }
 
 async function detectVersionFromRepo(
@@ -113,9 +123,10 @@ async function detectVersionFromRepo(
   packageName: string
 ): Promise<string | null> {
   try {
-    const [owner, name] = repo.split("/");
+    const parsed = parseRepoSlug(repo);
+    if (!parsed) return null;
     const res = await fetchWithTimeout(
-      `https://raw.githubusercontent.com/${owner}/${name}/HEAD/package.json`
+      `https://raw.githubusercontent.com/${parsed.owner}/${parsed.name}/HEAD/package.json`
     );
     if (!res.ok) return null;
 

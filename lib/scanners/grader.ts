@@ -1,5 +1,4 @@
 import type { ProjectHealth, HealthGrade, Recommendation } from "../types";
-import type { ProjectConfig } from "../projects";
 
 export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendation" | "reasons">): {
   grade: HealthGrade;
@@ -78,6 +77,17 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   if (deploy.status === "down") {
     score -= 30;
     reasons.push("배포된 서비스가 다운 상태");
+  }
+
+  if (project.category === "paper" && health.research) {
+    const research = health.research;
+    if (research.fieldActivity === "hot") {
+      score -= 10;
+      reasons.push("분야 활동 활발 — 최신 관련 연구 확인 필요");
+    } else if (research.fieldActivity === "active") {
+      score -= 5;
+      reasons.push("분야에 새 논문 꾸준히 게재 중 — 리뷰 권장");
+    }
   }
 
   // ── Maintenance mode leniency ──

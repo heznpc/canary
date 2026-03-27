@@ -1,21 +1,57 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { GradeBadge } from "./grade-badge";
 import { TagBadge } from "./tag-badge";
 import { DeployIndicator } from "./deploy-indicator";
 import { RecommendationLabel } from "./recommendation-label";
+import { UpdateActions } from "./update-actions";
+import { VibeCodingPanel } from "./vibecoding-intel";
+import { ResearchPanel } from "./research-intel";
 import type { ProjectHealth } from "@/lib/types";
-import { GitBranch, Package, Clock } from "lucide-react";
+import {
+  GitBranch,
+  Package,
+  Clock,
+  ChevronDown,
+  Terminal,
+  Sparkles,
+  BookOpen,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 
+type DetailTab = "updates" | "vibecoding" | "research";
+
 export function ProjectCard({ health }: { health: ProjectHealth }) {
-  const { project, git, dependencies, stack, deploy, grade, recommendation, reasons } = health;
+  const [expanded, setExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<DetailTab>("updates");
+
+  const {
+    project,
+    git,
+    dependencies,
+    stack,
+    deploy,
+    updateActions,
+    vibeCoding,
+    research,
+    grade,
+    recommendation,
+    reasons,
+  } = health;
 
   const lastCommitAgo = git?.lastCommitDate
-    ? formatDistanceToNow(new Date(git.lastCommitDate), { addSuffix: true, locale: ko })
+    ? formatDistanceToNow(new Date(git.lastCommitDate), {
+        addSuffix: true,
+        locale: ko,
+      })
     : null;
+
+  const outdatedCount = updateActions.length;
+  const hasGotchas = vibeCoding.gotchas.length > 0;
+  const hasResearch = research !== null && research.recentPapers.length > 0;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -27,7 +63,9 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
               <GradeBadge grade={grade} />
               <TagBadge tag={project.tag} />
             </div>
-            <p className="text-sm text-muted-foreground">{project.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {project.description}
+            </p>
           </div>
         </div>
       </CardHeader>
@@ -41,8 +79,8 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                 s.eol
                   ? "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950 dark:text-red-300 dark:ring-red-500/30"
                   : s.releasesBehind > 0
-                  ? "bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-950 dark:text-amber-300 dark:ring-amber-500/30"
-                  : "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-900 dark:text-gray-300 dark:ring-gray-500/30"
+                    ? "bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-950 dark:text-amber-300 dark:ring-amber-500/30"
+                    : "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-900 dark:text-gray-300 dark:ring-gray-500/30"
               }`}
             >
               {s.name} {s.current ?? ""}
@@ -96,7 +134,124 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
             ))}
           </ul>
         </div>
+
+        {/* Expand toggle */}
+        {(outdatedCount > 0 || hasGotchas || vibeCoding.tips.length > 0 || hasResearch) && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors w-full pt-1"
+          >
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`}
+            />
+            {expanded ? "접기" : "상세 보기"}
+            {!expanded && (
+              <span className="flex items-center gap-2 ml-auto">
+                {outdatedCount > 0 && (
+                  <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                    <Terminal className="h-3 w-3" />
+                    {outdatedCount}개 업데이트
+                  </span>
+                )}
+                {hasGotchas && (
+                  <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                    <Sparkles className="h-3 w-3" />
+                    AI 고려사항
+                  </span>
+                )}
+                {hasResearch && (
+                  <span className="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400">
+                    <BookOpen className="h-3 w-3" />
+                    리서치 동향
+                  </span>
+                )}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Expanded detail */}
+        {expanded && (
+          <div className="border-t pt-3 space-y-3">
+            {/* Tab switcher */}
+            <div className="flex gap-1">
+              <TabButton
+                active={activeTab === "updates"}
+                onClick={() => setActiveTab("updates")}
+                icon={<Terminal className="h-3 w-3" />}
+                label="업데이트 액션"
+                count={outdatedCount}
+              />
+              <TabButton
+                active={activeTab === "vibecoding"}
+                onClick={() => setActiveTab("vibecoding")}
+                icon={<Sparkles className="h-3 w-3" />}
+                label="바이브코딩"
+                count={vibeCoding.gotchas.length}
+              />
+              {hasResearch && (
+                <TabButton
+                  active={activeTab === "research"}
+                  onClick={() => setActiveTab("research")}
+                  icon={<BookOpen className="h-3 w-3" />}
+                  label="리서치"
+                  count={research!.recentPapers.length}
+                />
+              )}
+            </div>
+
+            {/* Tab content */}
+            {activeTab === "updates" && (
+              <UpdateActions actions={updateActions} />
+            )}
+            {activeTab === "vibecoding" && (
+              <VibeCodingPanel intel={vibeCoding} />
+            )}
+            {activeTab === "research" && research && (
+              <ResearchPanel intel={research} />
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  icon,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {icon}
+      {label}
+      {count > 0 && (
+        <span
+          className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+            active
+              ? "bg-primary-foreground/20"
+              : "bg-foreground/10"
+          }`}
+        >
+          {count}
+        </span>
+      )}
+    </button>
   );
 }
