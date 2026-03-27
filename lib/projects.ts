@@ -13,6 +13,9 @@ export interface ProjectConfig {
   deployUrl?: string;
   npmPackage?: string;
   category: "app" | "paper" | "mcp" | "infra";
+  // 논문 프로젝트용
+  keywords?: string[];
+  researchArea?: string;
 }
 
 export const projects: ProjectConfig[] = [
@@ -126,6 +129,8 @@ export const projects: ProjectConfig[] = [
     stack: ["latex"],
     deployTarget: "none",
     category: "paper",
+    keywords: ["children play", "cultural appropriation", "paper battle games", "cross-cultural study"],
+    researchArea: "HCI / Cultural Studies",
   },
   {
     id: "eddy",
@@ -136,6 +141,8 @@ export const projects: ProjectConfig[] = [
     stack: ["latex"],
     deployTarget: "zenodo",
     category: "paper",
+    keywords: ["ADHD", "AI-augmented productivity", "task orchestration", "cognitive assistive technology"],
+    researchArea: "HCI / Assistive AI",
   },
   {
     id: "ploidy",
@@ -145,8 +152,9 @@ export const projects: ProjectConfig[] = [
     tag: "active",
     stack: ["python", "latex"],
     deployTarget: "zenodo",
-    npmPackage: undefined,
     category: "paper",
+    keywords: ["LLM bias", "confirmation bias", "structured debate", "debiasing", "asymmetric context"],
+    researchArea: "NLP / AI Safety",
   },
   {
     id: "villagent",
@@ -157,6 +165,8 @@ export const projects: ProjectConfig[] = [
     stack: ["nextjs", "typescript"],
     deployTarget: "none",
     category: "paper",
+    keywords: ["multi-agent systems", "AI collaboration", "game design", "social simulation"],
+    researchArea: "AI / Game Studies",
   },
   {
     id: "z-gap",
@@ -167,6 +177,8 @@ export const projects: ProjectConfig[] = [
     stack: ["latex", "python"],
     deployTarget: "none",
     category: "paper",
+    keywords: ["LLM representations", "code generation", "natural language interface", "representation convergence"],
+    researchArea: "NLP / Software Engineering",
   },
   // ── MCP ──
   {

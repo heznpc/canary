@@ -14,6 +14,8 @@ export interface DependencyInfo {
   current: string;
   latest: string;
   type: "major" | "minor" | "patch" | "up-to-date";
+  githubRepo?: string;
+  isKey?: boolean;
 }
 
 export interface DependencyHealth {
@@ -23,6 +25,63 @@ export interface DependencyHealth {
   outdatedPatch: number;
   vulnerabilities: number;
   deps: DependencyInfo[];
+  packageManager:
+    | "pnpm" | "npm" | "yarn"
+    | "pip" | "uv" | "poetry"
+    | "flutter"
+    | "gradle" | "maven"
+    | "unknown";
+}
+
+export interface UpdateAction {
+  name: string;
+  current: string;
+  latest: string;
+  severity: "major" | "minor" | "patch";
+  command: string;
+  githubRepo?: string;
+  changelogUrl?: string;
+}
+
+export interface ReleaseHighlight {
+  version: string;
+  date: string;
+  url: string;
+  breaking: string[];
+  highlights: string[];
+}
+
+export interface ReleaseNoteSummary {
+  packageName: string;
+  from: string;
+  to: string;
+  releases: ReleaseHighlight[];
+  migrationGuideUrl?: string;
+}
+
+export interface VibeCodingIntel {
+  hasAgentsMd: boolean;
+  hasClaudeMd: boolean;
+  gotchas: string[];
+  tips: string[];
+}
+
+export interface RecentPaper {
+  title: string;
+  authors: string;
+  year: number;
+  venue?: string;
+  citationCount: number;
+  url: string;
+  tldr?: string;
+}
+
+export interface ResearchIntel {
+  recentPapers: RecentPaper[];
+  trendingKeywords: string[];
+  fieldActivity: "hot" | "active" | "stable" | "quiet";
+  suggestion: string;
+  lastChecked: string;
 }
 
 export interface StackVersion {
@@ -50,6 +109,9 @@ export interface ProjectHealth {
   dependencies: DependencyHealth | null;
   stack: StackVersion[];
   deploy: DeployStatus;
+  updateActions: UpdateAction[];
+  vibeCoding: VibeCodingIntel;
+  research: ResearchIntel | null;
   grade: HealthGrade;
   recommendation: Recommendation;
   reasons: string[];
