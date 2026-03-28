@@ -6,6 +6,7 @@ import { analyzeStack, STACK_META } from "./stack";
 import { checkDeployStatus } from "./deploy";
 import { analyzeVibeCoding } from "./vibecoding";
 import { analyzeResearch } from "./research";
+import { checkDocFreshness } from "./docs";
 import { gradeProject } from "./grader";
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
@@ -55,7 +56,7 @@ export async function scanProject(project: ProjectConfig): Promise<ProjectHealth
     ? generateUpdateActions(dependencies)
     : [];
 
-  const [vibeCoding, research] = await Promise.all([
+  const [vibeCoding, research, docFreshness] = await Promise.all([
     withTimeout(
       analyzeVibeCoding(project.repo, project.stack, stackVersions),
       8000,
@@ -63,6 +64,9 @@ export async function scanProject(project: ProjectConfig): Promise<ProjectHealth
     ),
     project.category === "paper"
       ? withTimeout(analyzeResearch(project), 10000, null)
+      : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkDocFreshness(project), 8000, null)
       : Promise.resolve(null),
   ]);
 
@@ -75,6 +79,7 @@ export async function scanProject(project: ProjectConfig): Promise<ProjectHealth
     updateActions,
     vibeCoding,
     research,
+    docFreshness,
     scannedAt: new Date().toISOString(),
   };
   const { grade, recommendation, reasons } = gradeProject(partial);

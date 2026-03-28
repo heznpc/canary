@@ -103,6 +103,26 @@ export interface DeployStatus {
 export type HealthGrade = "A" | "B" | "C" | "D" | "F";
 export type Recommendation = "keep" | "update" | "upgrade" | "rewrite" | "archive";
 
+/* ── Doc Freshness ── */
+
+export interface DocMismatch {
+  file: string;
+  field: string;
+  expected: string;
+  actual: string;
+  severity: "error" | "warning";
+}
+
+export interface DocFreshness {
+  readmeVersionMatch: boolean;
+  changelogUpToDate: boolean;
+  todoStaleness: number;
+  agentsMdExists: boolean;
+  claudeMdExists: boolean;
+  mismatches: DocMismatch[];
+  lastChecked: string;
+}
+
 export interface ProjectHealth {
   project: ProjectConfig;
   git: GitStatus | null;
@@ -112,6 +132,7 @@ export interface ProjectHealth {
   updateActions: UpdateAction[];
   vibeCoding: VibeCodingIntel;
   research: ResearchIntel | null;
+  docFreshness: DocFreshness | null;
   grade: HealthGrade;
   recommendation: Recommendation;
   reasons: string[];

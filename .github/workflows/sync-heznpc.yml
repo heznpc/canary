@@ -1,0 +1,84 @@
+name: Sync heznpc Landing Page
+
+on:
+  repository_dispatch:
+    types: [project-updated]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly Monday fallback
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Canary
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scan and generate projects.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Start Next.js in background, hit the sync API, save output
+          npm run build
+          node -e "
+            const { scanAll } = require('./lib/scanners');
+            const { generateProjectsJson } = require('./lib/sync/heznpc');
+            (async () => {
+              const data = await scanAll();
+              const json = generateProjectsJson(data);
+              require('fs').writeFileSync('projects.json', json);
+              console.log('Generated projects.json');
+            })();
+          "
+
+      - name: Checkout heznpc
+        uses: actions/checkout@v4
+        with:
+          repository: heznpc/heznpc
+          path: heznpc-repo
+          token: ${{ secrets.HEZNPC_PAT }}
+
+      - name: Update heznpc
+        run: |
+          cp projects.json heznpc-repo/projects.json
+          cd heznpc-repo
+          node build.js
+          git config user.name "canary-bot"
+          git config user.email "canary-bot@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: sync project data from Canary"
+          git push
+
+      - name: Check doc freshness and create issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.HEZNPC_PAT }}
+        run: |
+          node -e "
+            const { scanAll } = require('./lib/scanners');
+            (async () => {
+              const data = await scanAll();
+              for (const p of data.projects) {
+                if (p.docFreshness && p.docFreshness.mismatches.length > 0) {
+                  const body = p.docFreshness.mismatches.map(m =>
+                    '- **' + m.file + '**: ' + m.field + ' — expected ' + m.expected + ', found ' + m.actual
+                  ).join('\n');
+
+                  console.log('Doc drift in ' + p.project.repo + ':\n' + body);
+                  // Create issue via GitHub API
+                  // gh api repos/{repo}/issues -f title='doc-drift: ...' -f body='...' -f labels='doc-drift'
+                }
+              }
+            })();
+          "

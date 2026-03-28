@@ -22,6 +22,7 @@ function makeHealth(overrides: Partial<GraderInput> = {}): GraderInput {
     updateActions: [],
     vibeCoding: { hasAgentsMd: false, hasClaudeMd: false, gotchas: [], tips: [] },
     research: null,
+    docFreshness: null,
     scannedAt: new Date().toISOString(),
     ...overrides,
   };

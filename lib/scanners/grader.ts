@@ -90,6 +90,28 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
     }
   }
 
+  // ── Doc freshness ──
+  if (health.docFreshness) {
+    const df = health.docFreshness;
+    if (!df.readmeVersionMatch) {
+      const mismatchCount = df.mismatches.filter((m) => m.file === "README.md").length;
+      score -= mismatchCount * 5;
+      reasons.push(`README에 outdated 버전 언급 ${mismatchCount}건`);
+    }
+    if (!df.changelogUpToDate) {
+      score -= 10;
+      reasons.push("CHANGELOG에 최신 릴리스 버전 누락");
+    }
+    if (df.todoStaleness >= 10) {
+      score -= 5;
+      reasons.push(`TODO에 미완료 항목 ${df.todoStaleness}개 — 정리 필요`);
+    }
+    if (!df.agentsMdExists && project.tag === "active") {
+      score -= 3;
+      reasons.push("AGENTS.md 없음 — AI 코딩 컨텍스트 부재");
+    }
+  }
+
   // ── Maintenance mode leniency ──
   if (project.tag === "maintenance") {
     score = Math.min(100, score + 20); // More lenient

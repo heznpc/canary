@@ -5,8 +5,31 @@ import { parsePythonManifest, checkPypiVersion } from "./deps-python";
 import { parsePubspecYaml, checkPubVersion } from "./deps-flutter";
 import { parseGradle, parsePomXml, checkMavenVersion } from "./deps-jvm";
 
+let _tokenWarned = false;
+
 function getOctokit() {
+  if (!process.env.GITHUB_TOKEN && !_tokenWarned) {
+    _tokenWarned = true;
+    console.warn("[canary] GITHUB_TOKEN is not set — GitHub API requests will be unauthenticated and heavily rate-limited.");
+  }
   return new Octokit({ auth: process.env.GITHUB_TOKEN || undefined });
+}
+
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      const status = (err as { status?: number }).status;
+      if (status === 429 && attempt < maxAttempts - 1) {
+        const delay = 1000 * 2 ** attempt;
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error("withRetry: unreachable");
 }
 
 export async function getGitStatus(repo: string): Promise<GitStatus | null> {
@@ -16,15 +39,19 @@ export async function getGitStatus(repo: string): Promise<GitStatus | null> {
     const { owner, name } = parsed;
     const octokit = getOctokit();
 
-    const { data: repoData } = await octokit.rest.repos.get({ owner, repo: name });
+    const { data: repoData } = await withRetry(() =>
+      octokit.rest.repos.get({ owner, repo: name }),
+    );
     const defaultBranch = repoData.default_branch;
 
-    const { data: commits } = await octokit.rest.repos.listCommits({
-      owner,
-      repo: name,
-      sha: defaultBranch,
-      per_page: 1,
-    });
+    const { data: commits } = await withRetry(() =>
+      octokit.rest.repos.listCommits({
+        owner,
+        repo: name,
+        sha: defaultBranch,
+        per_page: 1,
+      }),
+    );
 
     const lastCommit = commits[0];
 
