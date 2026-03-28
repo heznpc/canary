@@ -30,19 +30,25 @@ export async function GET() {
     );
   }
 
+  const isDev = process.env.NODE_ENV === "development";
+
   const cached = cacheGet(SCAN_CACHE_KEY);
   if (cached) {
-    const stats = cacheStats();
-    return Response.json(cached, {
-      headers: { "X-Cache": "HIT", "X-Cache-Stats": `hits=${stats.hits},misses=${stats.misses}` },
-    });
+    const responseHeaders: Record<string, string> = { "X-Cache": "HIT" };
+    if (isDev) {
+      const stats = cacheStats();
+      responseHeaders["X-Cache-Stats"] = `hits=${stats.hits},misses=${stats.misses}`;
+    }
+    return Response.json(cached, { headers: responseHeaders });
   }
 
   const data = await scanAll();
   cacheSet(SCAN_CACHE_KEY, data, SCAN_CACHE_TTL);
 
-  const stats = cacheStats();
-  return Response.json(data, {
-    headers: { "X-Cache": "MISS", "X-Cache-Stats": `hits=${stats.hits},misses=${stats.misses}` },
-  });
+  const responseHeaders: Record<string, string> = { "X-Cache": "MISS" };
+  if (isDev) {
+    const stats = cacheStats();
+    responseHeaders["X-Cache-Stats"] = `hits=${stats.hits},misses=${stats.misses}`;
+  }
+  return Response.json(data, { headers: responseHeaders });
 }

@@ -4,6 +4,7 @@
 
 interface RateLimitEntry {
   timestamps: number[];
+  windowMs: number;
 }
 
 const store = new Map<string, RateLimitEntry>();
@@ -12,7 +13,7 @@ const store = new Map<string, RateLimitEntry>();
 setInterval(() => {
   const now = Date.now();
   for (const [key, entry] of store) {
-    entry.timestamps = entry.timestamps.filter((t) => now - t < 60_000);
+    entry.timestamps = entry.timestamps.filter((t) => now - t < 2 * entry.windowMs);
     if (entry.timestamps.length === 0) store.delete(key);
   }
 }, 5 * 60_000);
@@ -34,19 +35,26 @@ export function rateLimit(
   let entry = store.get(ip);
 
   if (!entry) {
-    entry = { timestamps: [] };
+    entry = { timestamps: [], windowMs };
     store.set(ip, entry);
+  } else {
+    entry.windowMs = Math.max(entry.windowMs, windowMs);
   }
 
   // Remove timestamps outside the window
   entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs);
 
-  if (entry.timestamps.length >= limit) {
+  // Push first, then check — atomic in a single synchronous block so
+  // concurrent requests cannot both pass the check before either pushes.
+  entry.timestamps.push(now);
+
+  if (entry.timestamps.length > limit) {
+    // Over limit — roll back the timestamp we just added
+    entry.timestamps.pop();
     const oldest = entry.timestamps[0];
     const retryAfterMs = oldest + windowMs - now;
     return { allowed: false, retryAfterMs };
   }
 
-  entry.timestamps.push(now);
   return { allowed: true };
 }
