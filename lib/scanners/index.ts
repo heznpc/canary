@@ -8,6 +8,7 @@ import { analyzeVibeCoding } from "./vibecoding";
 import { analyzeResearch } from "./research";
 import { checkDocFreshness } from "./docs";
 import { gradeProject } from "./grader";
+import { logger } from "../logger";
 
 function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
   let timer: ReturnType<typeof setTimeout>;
@@ -17,7 +18,10 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
   ]).finally(() => clearTimeout(timer));
 }
 
-export async function scanProject(project: ProjectConfig): Promise<ProjectHealth> {
+export async function scanProject(project: ProjectConfig, requestId?: string): Promise<ProjectHealth> {
+  const ctx = requestId ? { requestId, project: project.id } : { project: project.id };
+  logger.info(`Scanning project: ${project.id}`, ctx);
+
   const [git, depResult, deploy] = await Promise.all([
     project.repo
       ? withTimeout(getGitStatus(project.repo), 8000, null)
@@ -84,16 +88,21 @@ export async function scanProject(project: ProjectConfig): Promise<ProjectHealth
   };
   const { grade, recommendation, reasons } = gradeProject(partial);
 
+  logger.info(`Scan complete for ${project.id}: grade=${grade}`, ctx);
+
   return { ...partial, grade, recommendation, reasons };
 }
 
-export async function scanAll(): Promise<DashboardData> {
+export async function scanAll(requestId?: string): Promise<DashboardData> {
+  const ctx = requestId ? { requestId } : {};
+  logger.info("Starting full scan", { ...ctx, projectCount: projects.length });
+
   const results: ProjectHealth[] = [];
   const batchSize = 4;
 
   for (let i = 0; i < projects.length; i += batchSize) {
     const batch = projects.slice(i, i + batchSize);
-    const batchResults = await Promise.all(batch.map(scanProject));
+    const batchResults = await Promise.all(batch.map((p) => scanProject(p, requestId)));
     results.push(...batchResults);
   }
 
@@ -104,6 +113,8 @@ export async function scanAll(): Promise<DashboardData> {
     critical: results.filter((r) => r.grade === "F").length,
     archived: results.filter((r) => r.project.tag === "archived").length,
   };
+
+  logger.info("Full scan complete", { ...ctx, summary });
 
   return {
     projects: results,

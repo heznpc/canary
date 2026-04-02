@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { projects } from "../lib/projects";
-import type { ProjectConfig, ProjectTag, DeployTarget, StackType } from "../lib/projects";
+import type { ProjectConfig, ProjectTag, DeployTarget } from "../lib/projects";
 
 const validTags: ProjectTag[] = ["active", "maintenance", "archived", "prototype", "research"];
 const validDeployTargets: DeployTarget[] = [

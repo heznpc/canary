@@ -19,7 +19,8 @@ export default function Home() {
       const json = await res.json();
       setData(json);
     } catch (err) {
-      console.error("Scan failed:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(JSON.stringify({ level: "error", message: `Scan failed: ${message}`, timestamp: new Date().toISOString() }));
     } finally {
       setLoading(false);
     }

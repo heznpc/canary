@@ -1,4 +1,4 @@
-import type { ReleaseHighlight, ReleaseNoteSummary } from "../types";
+import type { ReleaseNoteSummary } from "../types";
 import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
 
 function githubHeaders(): HeadersInit {
