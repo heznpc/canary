@@ -4,13 +4,21 @@ import { compareVersions, batchCheckDeps, fetchWithTimeout, parseRepoSlug } from
 import { parsePythonManifest, checkPypiVersion } from "./deps-python";
 import { parsePubspecYaml, checkPubVersion } from "./deps-flutter";
 import { parseGradle, parsePomXml, checkMavenVersion } from "./deps-jvm";
+import { logger } from "../logger";
+import { CircuitBreaker } from "../circuit-breaker";
 
 let _tokenWarned = false;
+
+const githubCircuitBreaker = new CircuitBreaker({
+  failureThreshold: 5,
+  resetTimeoutMs: 60_000,
+  name: "github-api",
+});
 
 function getOctokit() {
   if (!process.env.GITHUB_TOKEN && !_tokenWarned) {
     _tokenWarned = true;
-    console.warn("[canary] GITHUB_TOKEN is not set — GitHub API requests will be unauthenticated and heavily rate-limited.");
+    logger.warn("GITHUB_TOKEN is not set — GitHub API requests will be unauthenticated and heavily rate-limited.", { source: "canary" });
   }
   return new Octokit({ auth: process.env.GITHUB_TOKEN || undefined });
 }
@@ -33,7 +41,7 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
 }
 
 export async function getGitStatus(repo: string): Promise<GitStatus | null> {
-  try {
+  return githubCircuitBreaker.execute(async () => {
     const parsed = parseRepoSlug(repo);
     if (!parsed) return null;
     const { owner, name } = parsed;
@@ -63,9 +71,7 @@ export async function getGitStatus(repo: string): Promise<GitStatus | null> {
       lastCommitDate: lastCommit?.commit.committer?.date ?? null,
       lastCommitMessage: lastCommit?.commit.message ?? null,
     };
-  } catch {
-    return null;
-  }
+  }, null);
 }
 
 export interface DepScanResult {
@@ -74,7 +80,7 @@ export interface DepScanResult {
 }
 
 export async function getDependencyHealth(repo: string): Promise<DepScanResult | null> {
-  try {
+  return githubCircuitBreaker.execute(async () => {
     const parsed = parseRepoSlug(repo);
     if (!parsed) return null;
     const { owner, name } = parsed;
@@ -146,9 +152,7 @@ export async function getDependencyHealth(repo: string): Promise<DepScanResult |
     }
 
     return null;
-  } catch {
-    return null;
-  }
+  }, null);
 }
 
 async function scanNodeDeps(
@@ -369,4 +373,3 @@ function generateCommand(
       return `# ${dep.name}을 ${dep.latest}로 업데이트`;
   }
 }
-
