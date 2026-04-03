@@ -1,8 +1,19 @@
 # Canary
 
-**Project health dashboard** — monitor stack freshness, deploy status, code quality, and activity across all your repositories in one place.
+**Project health dashboard + research platform** — monitor stack freshness, deploy status, code quality, and activity across all your repositories, grounded in a thesis on the *metadatafication* of version control.
 
-Canary scans your GitHub projects and grades them A–F based on dependency health, CI/CD presence, test infrastructure, stack EOL status, deploy uptime, documentation freshness, and more.
+Canary scans your GitHub projects and grades them A–F based on dependency health, CI/CD presence, test infrastructure, stack EOL status, deploy uptime, documentation freshness, and more. It also serves as the implementation companion to our research paper on how AI agents are transforming Git from a developer-facing tool into invisible background infrastructure.
+
+## Research
+
+This repository is a monorepo containing both the service and the accompanying research paper:
+
+> **The Metadatafication of Version Control: How AI Agents Transform Git from Tool to Infrastructure**
+
+Git is not dying — it is becoming invisible. Like EXIF metadata on photos or DNS in networking, Git records will persist as automatically-generated background data that developers rarely inspect directly. Canary operationalizes this thesis by replacing manual Git inspection with automated health grading and agent-readability scoring.
+
+- Paper source: [`paper/`](paper/)
+- Manuscript draft: [`manuscript.md`](manuscript.md)
 
 ## Features
 
@@ -70,6 +81,12 @@ lib/
   rate-limit.ts         # Per-IP rate limiting
   circuit-breaker.ts    # GitHub API circuit breaker
   logger.ts             # Structured JSON logging
+paper/                  # Research paper (LaTeX)
+  main.tex              # Paper source
+  references.bib        # Bibliography
+  main.pdf              # Compiled PDF
+manuscript.md           # Markdown draft
+outline.md              # Paper outline
 landing/                # Multilingual landing page (GitHub Pages)
 ```
 

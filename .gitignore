@@ -43,3 +43,10 @@ TODO.md
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/missfont.log
