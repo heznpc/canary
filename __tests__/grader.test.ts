@@ -3,6 +3,20 @@ import { gradeProject } from "../lib/scanners/grader";
 import type { ProjectHealth } from "../lib/types";
 
 type GraderInput = Omit<ProjectHealth, "grade" | "recommendation" | "reasons">;
+type CodeQualityInput = GraderInput["codeQuality"];
+
+function makeCodeQuality(overrides: Partial<NonNullable<CodeQualityInput>> = {}): NonNullable<CodeQualityInput> {
+  return {
+    hasCI: true, ciPlatforms: ["github-actions"],
+    hasTests: true, testFramework: "vitest",
+    hasLint: true, hasTypeCheck: true, hasLicense: true,
+    hasContributing: false, hasSecurityPolicy: false,
+    hasDependencyBot: true, dependencyBotName: "dependabot",
+    score: 100,
+    lastChecked: new Date().toISOString(),
+    ...overrides,
+  };
+}
 
 function makeHealth(overrides: Partial<GraderInput> = {}): GraderInput {
   return {
@@ -164,25 +178,8 @@ describe("gradeProject", () => {
 
   it("penalizes active projects with no CI", () => {
     const result = gradeProject(
-      makeHealth({
-        codeQuality: {
-          hasCI: false,
-          ciPlatforms: [],
-          hasTests: true,
-          testFramework: "vitest",
-          hasLint: true,
-          hasTypeCheck: true,
-          hasLicense: true,
-          hasContributing: false,
-          hasSecurityPolicy: false,
-          hasDependencyBot: true,
-          dependencyBotName: "dependabot",
-          score: 70,
-          lastChecked: new Date().toISOString(),
-        },
-      }),
+      makeHealth({ codeQuality: makeCodeQuality({ hasCI: false, ciPlatforms: [] }) }),
     );
-    // 100 - 10(no CI) = 90 => A
     expect(result.grade).toBe("A");
     expect(result.reasons.some((r) => r.includes("CI/CD"))).toBe(true);
   });
@@ -190,21 +187,11 @@ describe("gradeProject", () => {
   it("penalizes active projects with no tests and no lint", () => {
     const result = gradeProject(
       makeHealth({
-        codeQuality: {
-          hasCI: false,
-          ciPlatforms: [],
-          hasTests: false,
-          testFramework: null,
-          hasLint: false,
-          hasTypeCheck: false,
-          hasLicense: false,
-          hasContributing: false,
-          hasSecurityPolicy: false,
-          hasDependencyBot: false,
-          dependencyBotName: null,
-          score: 0,
-          lastChecked: new Date().toISOString(),
-        },
+        codeQuality: makeCodeQuality({
+          hasCI: false, ciPlatforms: [], hasTests: false, testFramework: null,
+          hasLint: false, hasTypeCheck: false, hasLicense: false,
+          hasDependencyBot: false, dependencyBotName: null, score: 0,
+        }),
       }),
     );
     // 100 - 10(CI) - 10(tests) - 5(lint) - 5(no dep bot) = 70 => C
@@ -225,21 +212,11 @@ describe("gradeProject", () => {
           deployTarget: "none",
           category: "app",
         },
-        codeQuality: {
-          hasCI: false,
-          ciPlatforms: [],
-          hasTests: false,
-          testFramework: null,
-          hasLint: false,
-          hasTypeCheck: false,
-          hasLicense: false,
-          hasContributing: false,
-          hasSecurityPolicy: false,
-          hasDependencyBot: false,
-          dependencyBotName: null,
-          score: 0,
-          lastChecked: new Date().toISOString(),
-        },
+        codeQuality: makeCodeQuality({
+          hasCI: false, ciPlatforms: [], hasTests: false, testFramework: null,
+          hasLint: false, hasTypeCheck: false, hasLicense: false,
+          hasDependencyBot: false, dependencyBotName: null, score: 0,
+        }),
       }),
     );
     // prototype gets +10 leniency; no code quality penalties for non-active
@@ -254,7 +231,6 @@ describe("gradeProject", () => {
           openPRs: 0,
           openIssues: 0,
           contributors: 1,
-          isActive: false,
           weeklyCommitAvg: 0,
           lastChecked: new Date().toISOString(),
         },
@@ -273,7 +249,6 @@ describe("gradeProject", () => {
           openPRs: 8,
           openIssues: 15,
           contributors: 3,
-          isActive: true,
           weeklyCommitAvg: 1.5,
           lastChecked: new Date().toISOString(),
         },
@@ -353,19 +328,8 @@ describe("gradeProject", () => {
 
   it("penalizes missing dependency bot for active projects", () => {
     const result = gradeProject(
-      makeHealth({
-        codeQuality: {
-          hasCI: true, ciPlatforms: ["github-actions"],
-          hasTests: true, testFramework: "vitest",
-          hasLint: true, hasTypeCheck: true, hasLicense: true,
-          hasContributing: false, hasSecurityPolicy: false,
-          hasDependencyBot: false, dependencyBotName: null,
-          score: 70,
-          lastChecked: new Date().toISOString(),
-        },
-      }),
+      makeHealth({ codeQuality: makeCodeQuality({ hasDependencyBot: false, dependencyBotName: null }) }),
     );
-    // 100 - 5(no dep bot) = 95 => A
     expect(result.grade).toBe("A");
     expect(result.reasons.some((r) => r.includes("Dependabot"))).toBe(true);
   });

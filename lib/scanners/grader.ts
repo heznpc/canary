@@ -127,7 +127,7 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
 
   // ── Activity pulse ──
   if (health.activity && project.tag === "active") {
-    if (health.activity.commitsLast4Weeks === 0 && !health.activity.isActive) {
+    if (health.activity.commitsLast4Weeks === 0 && health.activity.openPRs === 0) {
       score -= 10;
       reasons.push("최근 4주간 활동 없음 — active 프로젝트치고 비활성");
     }

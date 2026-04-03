@@ -1,6 +1,6 @@
 import type { DataFreshnessStatus } from "../types";
 import type { DataFreshnessConfig, DataCycle } from "../projects";
-import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
+import { fetchWithTimeout, parseRepoSlug, githubHeaders } from "./version-utils";
 import { logger } from "../logger";
 
 interface CommitInfo {
@@ -11,10 +11,6 @@ interface CommitInfo {
   };
 }
 
-/**
- * GitHub API로 특정 경로의 마지막 커밋 날짜를 확인하여
- * 예상 갱신 주기 대비 stale 여부를 판단한다.
- */
 export async function checkDataFreshness(
   repo: string,
   config: DataFreshnessConfig,
@@ -25,10 +21,7 @@ export async function checkDataFreshness(
   const { owner, name } = parsed;
 
   try {
-    const headers: HeadersInit = { Accept: "application/vnd.github+json" };
-    if (process.env.GITHUB_TOKEN) {
-      headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-    }
+    const headers = githubHeaders();
 
     const url =
       `https://api.github.com/repos/${owner}/${name}/commits` +
@@ -86,9 +79,6 @@ export async function checkDataFreshness(
   }
 }
 
-/**
- * 마지막 업데이트 이후 다음 예상 갱신일을 계산한다.
- */
 function computeNextExpected(lastUpdate: Date, cycle: DataCycle): Date {
   switch (cycle) {
     case "weekly-wed":
@@ -105,11 +95,6 @@ function computeNextExpected(lastUpdate: Date, cycle: DataCycle): Date {
   }
 }
 
-/**
- * 기준일 이후 가장 가까운 특정 요일(targetDay)을 찾되,
- * 최소 intervalDays 이후로 설정한다.
- * targetDay: 0=Sun, 1=Mon, ..., 3=Wed, 4=Thu
- */
 function nextWeekday(from: Date, targetDay: number, intervalDays: number): Date {
   const earliest = new Date(from.getTime() + intervalDays * 86_400_000);
   const diff = (targetDay - earliest.getUTCDay() + 7) % 7;

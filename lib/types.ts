@@ -136,8 +136,8 @@ export interface CodeQuality {
   hasContributing: boolean;
   hasSecurityPolicy: boolean;
   hasDependencyBot: boolean;
-  dependencyBotName: string | null;  // "dependabot" | "renovate" | null
-  score: number;              // 0-100 quality sub-score
+  dependencyBotName: string | null;
+  score: number;
   lastChecked: string;
 }
 
@@ -145,12 +145,12 @@ export interface CodeQuality {
 
 export interface ScorecardCheck {
   name: string;
-  score: number;   // 0-10
+  score: number;
   reason: string;
 }
 
 export interface ScorecardResult {
-  score: number;   // 0-10 overall
+  score: number;
   checks: ScorecardCheck[];
   date: string;
   lastChecked: string;
@@ -163,7 +163,6 @@ export interface ActivityPulse {
   openPRs: number;
   openIssues: number;
   contributors: number;
-  isActive: boolean;
   weeklyCommitAvg: number;
   lastChecked: string;
 }

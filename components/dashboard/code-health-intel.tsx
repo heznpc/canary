@@ -112,7 +112,7 @@ export function CodeHealthPanel({
           </div>
           <div className="grid grid-cols-2 gap-1">
             {scorecard.checks
-              .sort((a, b) => a.score - b.score)
+              .toSorted((a, b) => a.score - b.score)
               .slice(0, 8)
               .map((check) => (
                 <div key={check.name} className="flex items-center justify-between text-[11px] px-1.5 py-1 rounded bg-muted/50">
