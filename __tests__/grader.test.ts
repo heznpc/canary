@@ -23,6 +23,7 @@ function makeHealth(overrides: Partial<GraderInput> = {}): GraderInput {
     vibeCoding: { hasAgentsMd: false, hasClaudeMd: false, gotchas: [], tips: [] },
     research: null,
     codeQuality: null,
+    scorecard: null,
     activity: null,
     docFreshness: null,
     dataFreshness: null,
@@ -174,6 +175,8 @@ describe("gradeProject", () => {
           hasLicense: true,
           hasContributing: false,
           hasSecurityPolicy: false,
+          hasDependencyBot: true,
+          dependencyBotName: "dependabot",
           score: 70,
           lastChecked: new Date().toISOString(),
         },
@@ -197,13 +200,15 @@ describe("gradeProject", () => {
           hasLicense: false,
           hasContributing: false,
           hasSecurityPolicy: false,
+          hasDependencyBot: false,
+          dependencyBotName: null,
           score: 0,
           lastChecked: new Date().toISOString(),
         },
       }),
     );
-    // 100 - 10(CI) - 10(tests) - 5(lint) = 75 => B
-    expect(result.grade).toBe("B");
+    // 100 - 10(CI) - 10(tests) - 5(lint) - 5(no dep bot) = 70 => C
+    expect(result.grade).toBe("C");
     expect(result.reasons.some((r) => r.includes("테스트"))).toBe(true);
     expect(result.reasons.some((r) => r.includes("린팅"))).toBe(true);
   });
@@ -230,6 +235,8 @@ describe("gradeProject", () => {
           hasLicense: false,
           hasContributing: false,
           hasSecurityPolicy: false,
+          hasDependencyBot: false,
+          dependencyBotName: null,
           score: 0,
           lastChecked: new Date().toISOString(),
         },
@@ -276,6 +283,91 @@ describe("gradeProject", () => {
     expect(result.grade).toBe("A");
     expect(result.reasons.some((r) => r.includes("PR"))).toBe(true);
     expect(result.reasons.some((r) => r.includes("이슈"))).toBe(true);
+  });
+
+  it("penalizes low OpenSSF Scorecard score", () => {
+    const result = gradeProject(
+      makeHealth({
+        scorecard: {
+          score: 3,
+          checks: [{ name: "Maintained", score: 5, reason: "test" }],
+          date: new Date().toISOString(),
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 15(scorecard<4) = 85 => B
+    expect(result.grade).toBe("B");
+    expect(result.reasons.some((r) => r.includes("Scorecard"))).toBe(true);
+  });
+
+  it("applies mild penalty for medium Scorecard score", () => {
+    const result = gradeProject(
+      makeHealth({
+        scorecard: {
+          score: 6,
+          checks: [],
+          date: new Date().toISOString(),
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 5(scorecard<8) = 95 => A
+    expect(result.grade).toBe("A");
+    expect(result.reasons.some((r) => r.includes("Scorecard"))).toBe(true);
+  });
+
+  it("no scorecard penalty for score >= 8", () => {
+    const result = gradeProject(
+      makeHealth({
+        scorecard: {
+          score: 9,
+          checks: [],
+          date: new Date().toISOString(),
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    expect(result.grade).toBe("A");
+    expect(result.reasons.every((r) => !r.includes("Scorecard"))).toBe(true);
+  });
+
+  it("skips scorecard penalty for archived projects", () => {
+    const result = gradeProject(
+      makeHealth({
+        project: {
+          id: "old", name: "Old", description: "archived",
+          tag: "archived", stack: [], deployTarget: "none", category: "app",
+        },
+        scorecard: {
+          score: 2,
+          checks: [],
+          date: new Date().toISOString(),
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    expect(result.grade).toBe("A");
+    expect(result.recommendation).toBe("archive");
+  });
+
+  it("penalizes missing dependency bot for active projects", () => {
+    const result = gradeProject(
+      makeHealth({
+        codeQuality: {
+          hasCI: true, ciPlatforms: ["github-actions"],
+          hasTests: true, testFramework: "vitest",
+          hasLint: true, hasTypeCheck: true, hasLicense: true,
+          hasContributing: false, hasSecurityPolicy: false,
+          hasDependencyBot: false, dependencyBotName: null,
+          score: 70,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 5(no dep bot) = 95 => A
+    expect(result.grade).toBe("A");
+    expect(result.reasons.some((r) => r.includes("Dependabot"))).toBe(true);
   });
 
   it("combines multiple penalties to produce grade F", () => {
