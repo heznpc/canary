@@ -95,22 +95,42 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
     const hasContributing = rootNames.has("CONTRIBUTING.md") || rootNames.has("CONTRIBUTING");
     const hasSecurityPolicy = rootNames.has("SECURITY.md") || rootNames.has("SECURITY");
 
-    // CI — check .github/workflows
+    // Dependency update bot
+    let hasDependencyBot = false;
+    let dependencyBotName: string | null = null;
+
+    if (rootNames.has("renovate.json") || rootNames.has(".renovaterc") || rootNames.has(".renovaterc.json")) {
+      hasDependencyBot = true;
+      dependencyBotName = "renovate";
+    }
+
+    // CI — check .github/workflows + dependabot.yml
     let hasCI = false;
     const ciPlatforms: string[] = [];
 
     if (rootNames.has(".github")) {
-      const wfRes = await fetchWithTimeout(
-        `https://api.github.com/repos/${owner}/${name}/contents/.github/workflows`,
-        { headers: h },
-        8000,
-      );
+      const [wfRes, depbotRes] = await Promise.all([
+        fetchWithTimeout(
+          `https://api.github.com/repos/${owner}/${name}/contents/.github/workflows`,
+          { headers: h }, 8000,
+        ),
+        !hasDependencyBot
+          ? fetchWithTimeout(
+              `https://api.github.com/repos/${owner}/${name}/contents/.github/dependabot.yml`,
+              { headers: h }, 8000,
+            )
+          : Promise.resolve(null),
+      ]);
       if (wfRes.ok) {
         const workflows = await wfRes.json();
         if (Array.isArray(workflows) && workflows.length > 0) {
           hasCI = true;
           ciPlatforms.push("github-actions");
         }
+      }
+      if (depbotRes?.ok) {
+        hasDependencyBot = true;
+        dependencyBotName = "dependabot";
       }
     }
 
@@ -122,17 +142,20 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
 
     // Quality sub-score (0-100)
     let score = 0;
-    if (hasCI) score += 25;
-    if (hasTests) score += 25;
-    if (hasLint) score += 20;
+    if (hasCI) score += 20;
+    if (hasTests) score += 20;
+    if (hasLint) score += 15;
     if (hasTypeCheck) score += 15;
     if (hasLicense) score += 10;
+    if (hasDependencyBot) score += 10;
     if (hasSecurityPolicy) score += 5;
+    if (hasContributing) score += 5;
 
     return {
       hasCI, ciPlatforms, hasTests, testFramework,
       hasLint, hasTypeCheck, hasLicense,
       hasContributing, hasSecurityPolicy,
+      hasDependencyBot, dependencyBotName,
       score,
       lastChecked: new Date().toISOString(),
     };

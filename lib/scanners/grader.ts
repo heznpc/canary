@@ -104,6 +104,25 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
       score -= 5;
       reasons.push("린팅 설정 없음");
     }
+    if (!health.codeQuality.hasDependencyBot) {
+      score -= 5;
+      reasons.push("Dependabot/Renovate 미설정 — 의존성 자동 업데이트 없음");
+    }
+  }
+
+  // ── OpenSSF Scorecard ──
+  if (health.scorecard) {
+    const sc = health.scorecard.score;
+    if (sc < 4) {
+      score -= 15;
+      reasons.push(`OpenSSF Scorecard ${sc}/10 — 보안 관행 심각 부족`);
+    } else if (sc < 6) {
+      score -= 10;
+      reasons.push(`OpenSSF Scorecard ${sc}/10 — 보안 관행 개선 필요`);
+    } else if (sc < 8) {
+      score -= 5;
+      reasons.push(`OpenSSF Scorecard ${sc}/10 — 보안 관행 양호하나 개선 여지`);
+    }
   }
 
   // ── Activity pulse ──

@@ -135,7 +135,24 @@ export interface CodeQuality {
   hasLicense: boolean;
   hasContributing: boolean;
   hasSecurityPolicy: boolean;
+  hasDependencyBot: boolean;
+  dependencyBotName: string | null;  // "dependabot" | "renovate" | null
   score: number;              // 0-100 quality sub-score
+  lastChecked: string;
+}
+
+/* ── OpenSSF Scorecard ── */
+
+export interface ScorecardCheck {
+  name: string;
+  score: number;   // 0-10
+  reason: string;
+}
+
+export interface ScorecardResult {
+  score: number;   // 0-10 overall
+  checks: ScorecardCheck[];
+  date: string;
   lastChecked: string;
 }
 
@@ -173,6 +190,7 @@ export interface ProjectHealth {
   vibeCoding: VibeCodingIntel;
   research: ResearchIntel | null;
   codeQuality: CodeQuality | null;
+  scorecard: ScorecardResult | null;
   activity: ActivityPulse | null;
   docFreshness: DocFreshness | null;
   dataFreshness: DataFreshnessStatus | null;

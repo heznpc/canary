@@ -40,6 +40,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
     vibeCoding,
     research,
     codeQuality,
+    scorecard,
     activity,
     grade,
     recommendation,
@@ -228,7 +229,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
               <VibeCodingPanel intel={vibeCoding} />
             )}
             {activeTab === "codehealth" && (
-              <CodeHealthPanel quality={codeQuality} activity={activity} />
+              <CodeHealthPanel quality={codeQuality} scorecard={scorecard} activity={activity} />
             )}
             {activeTab === "research" && research && (
               <ResearchPanel intel={research} />
