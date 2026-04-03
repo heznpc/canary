@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Monitor stack freshness, deploy status, code quality, and activity across all your repositories.">
+  <title>Canary — Project Health Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐤</text></svg>">
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Canary
+    </a>
+    <div class="nav-links">
+      <a href="#features" data-i18n="nav_features">Features</a>
+      <a href="#how" data-i18n="nav_how">How It Works</a>
+      <a href="#grading" data-i18n="nav_grading">Grading</a>
+      <a href="https://github.com/heznpc/canary" target="_blank" rel="noopener" data-i18n="nav_github">GitHub</a>
+      <div class="lang-switch" id="lang-switch"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <span class="hero-tag" data-i18n="hero_tag">Open Source</span>
+  <h1 data-i18n="hero_title">Know the health of every project — at a glance.</h1>
+  <p data-i18n="hero_sub">Canary scans your GitHub repos and grades them A–F based on dependencies, CI/CD, deploy status, code quality, and more.</p>
+  <div class="hero-btns">
+    <a href="https://github.com/heznpc/canary" class="btn btn-primary" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      <span data-i18n="hero_cta">View on GitHub</span>
+    </a>
+    <a href="#features" class="btn btn-ghost">
+      <span data-i18n="hero_cta2">See Features</span>
+    </a>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="section-head">
+    <h2 data-i18n="feat_title">Everything you need to monitor project health</h2>
+    <p data-i18n="feat_sub">Canary replaces your mental checklist with automated, continuous scanning across every dimension that matters.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F4E6;</div>
+      <h3 data-i18n="feat_deps_title">Dependency Health</h3>
+      <p data-i18n="feat_deps_desc">Multi-ecosystem scanning for Node.js, Python, Flutter, and JVM. Detects outdated majors, security vulnerabilities, and suggests update commands.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x2705;</div>
+      <h3 data-i18n="feat_ci_title">Code Quality</h3>
+      <p data-i18n="feat_ci_desc">Checks for CI/CD pipelines, test frameworks, linting config, TypeScript strict mode, and license presence.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F680;</div>
+      <h3 data-i18n="feat_deploy_title">Deploy Status</h3>
+      <p data-i18n="feat_deploy_desc">Monitors Vercel, GitHub Pages, npm, Chrome Web Store, and Zenodo. Instant down detection.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F4C8;</div>
+      <h3 data-i18n="feat_activity_title">Activity Pulse</h3>
+      <p data-i18n="feat_activity_desc">Tracks commit frequency, open PRs, unresolved issues, and contributor count over time.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F4DA;</div>
+      <h3 data-i18n="feat_stack_title">Stack Freshness</h3>
+      <p data-i18n="feat_stack_desc">Tracks Next.js, React, Flutter, Spring Boot, Python, TypeScript, and Node.js versions. Flags EOL runtimes.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F4DD;</div>
+      <h3 data-i18n="feat_docs_title">Doc & Data Freshness</h3>
+      <p data-i18n="feat_docs_desc">Detects README version drift, stale CHANGELOGs, TODO pile-up, and missed data update cycles.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F52C;</div>
+      <h3 data-i18n="feat_research_title">Research Tracking</h3>
+      <p data-i18n="feat_research_desc">Semantic Scholar integration for paper projects. Shows field activity, trending keywords, and recent publications.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">&#x1F916;</div>
+      <h3 data-i18n="feat_vibe_title">AI Coding Intel</h3>
+      <p data-i18n="feat_vibe_desc">Framework-version-specific gotchas and tips for Claude, Copilot, and other AI coding workflows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how" id="how">
+  <div class="section-head">
+    <h2 data-i18n="how_title">How It Works</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3 data-i18n="how_step1_title">Configure</h3>
+      <p data-i18n="how_step1_desc">Define your projects — repo, stack, deploy target, and category.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3 data-i18n="how_step2_title">Scan</h3>
+      <p data-i18n="how_step2_desc">Canary fetches data from GitHub, npm, PyPI, and more via parallel scanners with circuit breakers.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3 data-i18n="how_step3_title">Grade</h3>
+      <p data-i18n="how_step3_desc">A 100-point scoring algorithm grades each project A–F with context-aware adjustments.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3 data-i18n="how_step4_title">Act</h3>
+      <p data-i18n="how_step4_desc">Get specific update commands, release notes, and recommendations — not just warnings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Grading -->
+<section class="grading" id="grading">
+  <div class="section-head">
+    <h2 data-i18n="grade_title">Grading System</h2>
+    <p data-i18n="grade_sub">Context-aware scoring with leniency for maintenance and prototype projects.</p>
+  </div>
+  <div class="grade-table">
+    <div class="grade-row">
+      <div class="grade-badge a">A</div>
+      <span class="grade-score">90+</span>
+      <span class="grade-desc" data-i18n="grade_a">Healthy — no action needed</span>
+    </div>
+    <div class="grade-row">
+      <div class="grade-badge b">B</div>
+      <span class="grade-score">75–89</span>
+      <span class="grade-desc" data-i18n="grade_b">Good — minor improvements possible</span>
+    </div>
+    <div class="grade-row">
+      <div class="grade-badge c">C</div>
+      <span class="grade-score">60–74</span>
+      <span class="grade-desc" data-i18n="grade_c">Needs updates — falling behind</span>
+    </div>
+    <div class="grade-row">
+      <div class="grade-badge d">D</div>
+      <span class="grade-score">40–59</span>
+      <span class="grade-desc" data-i18n="grade_d">Needs upgrade — significant debt</span>
+    </div>
+    <div class="grade-row">
+      <div class="grade-badge f">F</div>
+      <span class="grade-score">0–39</span>
+      <span class="grade-desc" data-i18n="grade_f">Critical — consider rewrite</span>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <p class="footer-tagline" data-i18n="footer_tagline">Stop guessing. Start monitoring.</p>
+    <p data-i18n="footer_oss">Open source under MIT license.</p>
+    <p data-i18n="footer_built">Built with Next.js 16, React 19, TypeScript, and Tailwind CSS.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
