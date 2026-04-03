@@ -9,6 +9,7 @@ import { RecommendationLabel } from "./recommendation-label";
 import { UpdateActions } from "./update-actions";
 import { VibeCodingPanel } from "./vibecoding-intel";
 import { ResearchPanel } from "./research-intel";
+import { CodeHealthPanel } from "./code-health-intel";
 import type { ProjectHealth } from "@/lib/types";
 import {
   GitBranch,
@@ -18,11 +19,12 @@ import {
   Terminal,
   Sparkles,
   BookOpen,
+  ShieldCheck,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 
-type DetailTab = "updates" | "vibecoding" | "research";
+type DetailTab = "updates" | "vibecoding" | "research" | "codehealth";
 
 export function ProjectCard({ health }: { health: ProjectHealth }) {
   const [expanded, setExpanded] = useState(false);
@@ -37,6 +39,8 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
     updateActions,
     vibeCoding,
     research,
+    codeQuality,
+    activity,
     grade,
     recommendation,
     reasons,
@@ -52,6 +56,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
   const outdatedCount = updateActions.length;
   const hasGotchas = vibeCoding.gotchas.length > 0;
   const hasResearch = research !== null && research.recentPapers.length > 0;
+  const hasCodeHealth = codeQuality !== null || activity !== null;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -136,7 +141,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
         </div>
 
         {/* Expand toggle */}
-        {(outdatedCount > 0 || hasGotchas || vibeCoding.tips.length > 0 || hasResearch) && (
+        {(outdatedCount > 0 || hasGotchas || vibeCoding.tips.length > 0 || hasResearch || hasCodeHealth) && (
           <button
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors w-full pt-1"
@@ -157,6 +162,12 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                   <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
                     <Sparkles className="h-3 w-3" />
                     AI 고려사항
+                  </span>
+                )}
+                {hasCodeHealth && (
+                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                    <ShieldCheck className="h-3 w-3" />
+                    코드 건강
                   </span>
                 )}
                 {hasResearch && (
@@ -189,6 +200,15 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                 label="바이브코딩"
                 count={vibeCoding.gotchas.length}
               />
+              {hasCodeHealth && (
+                <TabButton
+                  active={activeTab === "codehealth"}
+                  onClick={() => setActiveTab("codehealth")}
+                  icon={<ShieldCheck className="h-3 w-3" />}
+                  label="코드 건강"
+                  count={codeQuality ? codeQuality.score : 0}
+                />
+              )}
               {hasResearch && (
                 <TabButton
                   active={activeTab === "research"}
@@ -206,6 +226,9 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
             )}
             {activeTab === "vibecoding" && (
               <VibeCodingPanel intel={vibeCoding} />
+            )}
+            {activeTab === "codehealth" && (
+              <CodeHealthPanel quality={codeQuality} activity={activity} />
             )}
             {activeTab === "research" && research && (
               <ResearchPanel intel={research} />

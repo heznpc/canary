@@ -90,6 +90,38 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
     }
   }
 
+  // ── Code quality ──
+  if (health.codeQuality && project.tag === "active") {
+    if (!health.codeQuality.hasCI) {
+      score -= 10;
+      reasons.push("CI/CD 파이프라인 없음 — 자동화 테스트 부재");
+    }
+    if (!health.codeQuality.hasTests) {
+      score -= 10;
+      reasons.push("테스트 인프라 없음");
+    }
+    if (!health.codeQuality.hasLint) {
+      score -= 5;
+      reasons.push("린팅 설정 없음");
+    }
+  }
+
+  // ── Activity pulse ──
+  if (health.activity && project.tag === "active") {
+    if (health.activity.commitsLast4Weeks === 0 && !health.activity.isActive) {
+      score -= 10;
+      reasons.push("최근 4주간 활동 없음 — active 프로젝트치고 비활성");
+    }
+    if (health.activity.openPRs >= 5) {
+      score -= 5;
+      reasons.push(`미처리 PR ${health.activity.openPRs}개 — 리뷰 필요`);
+    }
+    if (health.activity.openIssues >= 10) {
+      score -= 5;
+      reasons.push(`미해결 이슈 ${health.activity.openIssues}개 누적`);
+    }
+  }
+
   // ── Doc freshness ──
   if (health.docFreshness) {
     const df = health.docFreshness;
@@ -110,6 +142,15 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
       score -= 3;
       reasons.push("AGENTS.md 없음 — AI 코딩 컨텍스트 부재");
     }
+  }
+
+  // ── Data freshness ──
+  if (health.dataFreshness?.stale) {
+    const days = health.dataFreshness.daysSinceUpdate;
+    score -= 15;
+    reasons.push(
+      `데이터 갱신 지연 — 마지막 갱신 ${days}일 전 (주기: ${health.dataFreshness.expectedCycle})`,
+    );
   }
 
   // ── Maintenance mode leniency ──

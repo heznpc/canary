@@ -22,7 +22,10 @@ function makeHealth(overrides: Partial<GraderInput> = {}): GraderInput {
     updateActions: [],
     vibeCoding: { hasAgentsMd: false, hasClaudeMd: false, gotchas: [], tips: [] },
     research: null,
+    codeQuality: null,
+    activity: null,
     docFreshness: null,
+    dataFreshness: null,
     scannedAt: new Date().toISOString(),
     ...overrides,
   };
@@ -156,6 +159,123 @@ describe("gradeProject", () => {
     const result = gradeProject(health);
     // 100 - 2*15 = 70, +20 leniency = 90 => A
     expect(result.grade).toBe("A");
+  });
+
+  it("penalizes active projects with no CI", () => {
+    const result = gradeProject(
+      makeHealth({
+        codeQuality: {
+          hasCI: false,
+          ciPlatforms: [],
+          hasTests: true,
+          testFramework: "vitest",
+          hasLint: true,
+          hasTypeCheck: true,
+          hasLicense: true,
+          hasContributing: false,
+          hasSecurityPolicy: false,
+          score: 70,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 10(no CI) = 90 => A
+    expect(result.grade).toBe("A");
+    expect(result.reasons.some((r) => r.includes("CI/CD"))).toBe(true);
+  });
+
+  it("penalizes active projects with no tests and no lint", () => {
+    const result = gradeProject(
+      makeHealth({
+        codeQuality: {
+          hasCI: false,
+          ciPlatforms: [],
+          hasTests: false,
+          testFramework: null,
+          hasLint: false,
+          hasTypeCheck: false,
+          hasLicense: false,
+          hasContributing: false,
+          hasSecurityPolicy: false,
+          score: 0,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 10(CI) - 10(tests) - 5(lint) = 75 => B
+    expect(result.grade).toBe("B");
+    expect(result.reasons.some((r) => r.includes("테스트"))).toBe(true);
+    expect(result.reasons.some((r) => r.includes("린팅"))).toBe(true);
+  });
+
+  it("does not penalize non-active projects for missing CI", () => {
+    const result = gradeProject(
+      makeHealth({
+        project: {
+          id: "proto",
+          name: "Proto",
+          description: "proto",
+          tag: "prototype",
+          stack: [],
+          deployTarget: "none",
+          category: "app",
+        },
+        codeQuality: {
+          hasCI: false,
+          ciPlatforms: [],
+          hasTests: false,
+          testFramework: null,
+          hasLint: false,
+          hasTypeCheck: false,
+          hasLicense: false,
+          hasContributing: false,
+          hasSecurityPolicy: false,
+          score: 0,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // prototype gets +10 leniency; no code quality penalties for non-active
+    expect(result.grade).toBe("A");
+  });
+
+  it("penalizes inactive active projects", () => {
+    const result = gradeProject(
+      makeHealth({
+        activity: {
+          commitsLast4Weeks: 0,
+          openPRs: 0,
+          openIssues: 0,
+          contributors: 1,
+          isActive: false,
+          weeklyCommitAvg: 0,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 10(inactive) = 90 => A
+    expect(result.grade).toBe("A");
+    expect(result.reasons.some((r) => r.includes("활동 없음"))).toBe(true);
+  });
+
+  it("penalizes many open PRs and issues", () => {
+    const result = gradeProject(
+      makeHealth({
+        activity: {
+          commitsLast4Weeks: 5,
+          openPRs: 8,
+          openIssues: 15,
+          contributors: 3,
+          isActive: true,
+          weeklyCommitAvg: 1.5,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+    // 100 - 5(PRs>=5) - 5(issues>=10) = 90 => A
+    expect(result.grade).toBe("A");
+    expect(result.reasons.some((r) => r.includes("PR"))).toBe(true);
+    expect(result.reasons.some((r) => r.includes("이슈"))).toBe(true);
   });
 
   it("combines multiple penalties to produce grade F", () => {

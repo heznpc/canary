@@ -7,6 +7,9 @@ import { checkDeployStatus } from "./deploy";
 import { analyzeVibeCoding } from "./vibecoding";
 import { analyzeResearch } from "./research";
 import { checkDocFreshness } from "./docs";
+import { checkDataFreshness } from "./data-freshness";
+import { checkCodeQuality } from "./code-quality";
+import { checkActivity } from "./activity";
 import { gradeProject } from "./grader";
 import { logger } from "../logger";
 
@@ -60,7 +63,7 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     ? generateUpdateActions(dependencies)
     : [];
 
-  const [vibeCoding, research, docFreshness] = await Promise.all([
+  const [vibeCoding, research, docFreshness, dataFreshness, codeQuality, activity] = await Promise.all([
     withTimeout(
       analyzeVibeCoding(project.repo, project.stack, stackVersions),
       8000,
@@ -71,6 +74,15 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
       : Promise.resolve(null),
     project.repo
       ? withTimeout(checkDocFreshness(project), 8000, null)
+      : Promise.resolve(null),
+    project.repo && project.dataFreshness
+      ? withTimeout(checkDataFreshness(project.repo, project.dataFreshness), 8000, null)
+      : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkCodeQuality(project.repo), 10000, null)
+      : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkActivity(project.repo), 10000, null)
       : Promise.resolve(null),
   ]);
 
@@ -83,7 +95,10 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     updateActions,
     vibeCoding,
     research,
+    codeQuality,
+    activity,
     docFreshness,
+    dataFreshness,
     scannedAt: new Date().toISOString(),
   };
   const { grade, recommendation, reasons } = gradeProject(partial);

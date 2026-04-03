@@ -2,6 +2,14 @@ export type ProjectTag = "active" | "maintenance" | "archived" | "prototype" | "
 export type DeployTarget = "vercel" | "npm" | "chrome-store" | "github-pages" | "zenodo" | "docker" | "mobile" | "none";
 export type StackType = "nextjs" | "react" | "flutter" | "spring-boot" | "python" | "vanilla-js" | "latex" | "typescript" | "chrome-extension" | "node";
 
+export type DataCycle = "weekly-wed" | "weekly-thu" | "biweekly-wed" | "monthly";
+
+export interface DataFreshnessConfig {
+  watchPath: string;        // GitHub path to monitor (e.g., "src/data/")
+  expectedCycle: DataCycle;
+  gracePeriodDays: number;  // days after expected update before flagging stale
+}
+
 export interface ProjectConfig {
   id: string;
   name: string;
@@ -16,6 +24,8 @@ export interface ProjectConfig {
   // 논문 프로젝트용
   keywords?: string[];
   researchArea?: string;
+  // 데이터 갱신 주기 모니터링
+  dataFreshness?: DataFreshnessConfig;
 }
 
 export const projects: ProjectConfig[] = [
@@ -109,6 +119,11 @@ export const projects: ProjectConfig[] = [
     deployTarget: "vercel",
     deployUrl: "https://tr-archive.vercel.app",
     category: "app",
+    dataFreshness: {
+      watchPath: "src/data/",
+      expectedCycle: "biweekly-wed",
+      gracePeriodDays: 3,
+    },
   },
   {
     id: "trashmonster",
