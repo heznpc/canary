@@ -6,6 +6,12 @@ export function parseRepoSlug(repo: string): { owner: string; name: string } | n
   return { owner: parts[0], name: parts[1] };
 }
 
+export function githubHeaders(): HeadersInit {
+  const h: HeadersInit = { Accept: "application/vnd.github+json" };
+  if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  return h;
+}
+
 export function fetchWithTimeout(url: string, opts: RequestInit = {}, ms = 5000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);

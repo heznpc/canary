@@ -16,12 +16,6 @@ interface ApiResponse {
   checks: ApiCheck[];
 }
 
-/**
- * OpenSSF Scorecard API에서 보안 점수를 가져온다.
- * https://api.securityscorecards.dev/projects/github.com/{owner}/{repo}
- *
- * 인덱싱되지 않은 레포는 404를 반환하므로 null로 처리한다.
- */
 export async function checkScorecard(repo: string): Promise<ScorecardResult | null> {
   const parsed = parseRepoSlug(repo);
   if (!parsed) return null;

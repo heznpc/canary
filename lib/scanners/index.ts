@@ -126,13 +126,14 @@ export async function scanAll(requestId?: string): Promise<DashboardData> {
     results.push(...batchResults);
   }
 
-  const summary = {
-    total: results.length,
-    healthy: results.filter((r) => r.grade === "A" || r.grade === "B").length,
-    needsUpdate: results.filter((r) => r.grade === "C" || r.grade === "D").length,
-    critical: results.filter((r) => r.grade === "F").length,
-    archived: results.filter((r) => r.project.tag === "archived").length,
-  };
+  let healthy = 0, needsUpdate = 0, critical = 0, archived = 0;
+  for (const r of results) {
+    if (r.grade === "A" || r.grade === "B") healthy++;
+    else if (r.grade === "C" || r.grade === "D") needsUpdate++;
+    else if (r.grade === "F") critical++;
+    if (r.project.tag === "archived") archived++;
+  }
+  const summary = { total: results.length, healthy, needsUpdate, critical, archived };
 
   logger.info("Full scan complete", { ...ctx, summary });
 

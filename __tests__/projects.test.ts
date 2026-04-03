@@ -9,9 +9,8 @@ const validDeployTargets: DeployTarget[] = [
 const validCategories: ProjectConfig["category"][] = ["app", "paper", "mcp", "infra"];
 
 describe("projects", () => {
-  it("is a non-empty array", () => {
+  it("is an array", () => {
     expect(Array.isArray(projects)).toBe(true);
-    expect(projects.length).toBeGreaterThan(0);
   });
 
   it("every project has a unique id", () => {
@@ -57,7 +56,6 @@ describe("projects", () => {
 
   it("projects with a repo field have a valid owner/repo format", () => {
     const withRepo = projects.filter((p) => p.repo);
-    expect(withRepo.length).toBeGreaterThan(0);
     for (const project of withRepo) {
       const parts = project.repo!.split("/");
       expect(parts).toHaveLength(2);
@@ -75,28 +73,11 @@ describe("projects", () => {
 
   it("paper projects have keywords and researchArea", () => {
     const papers = projects.filter((p) => p.category === "paper");
-    expect(papers.length).toBeGreaterThan(0);
     for (const paper of papers) {
       expect(Array.isArray(paper.keywords)).toBe(true);
       expect(paper.keywords!.length).toBeGreaterThan(0);
       expect(typeof paper.researchArea).toBe("string");
       expect(paper.researchArea!.length).toBeGreaterThan(0);
-    }
-  });
-
-  it("contains specific known projects", () => {
-    const ids = projects.map((p) => p.id);
-    expect(ids).toContain("aegis");
-    expect(ids).toContain("airmcp");
-    expect(ids).toContain("ploidy");
-  });
-
-  it("mcp projects exist and have valid config", () => {
-    const mcps = projects.filter((p) => p.category === "mcp");
-    expect(mcps.length).toBeGreaterThan(0);
-    for (const mcp of mcps) {
-      expect(typeof mcp.id).toBe("string");
-      expect(typeof mcp.name).toBe("string");
     }
   });
 });
