@@ -123,6 +123,46 @@ export interface DocFreshness {
   lastChecked: string;
 }
 
+/* ── Code Quality ── */
+
+export interface CodeQuality {
+  hasCI: boolean;
+  ciPlatforms: string[];
+  hasTests: boolean;
+  testFramework: string | null;
+  hasLint: boolean;
+  hasTypeCheck: boolean;
+  hasLicense: boolean;
+  hasContributing: boolean;
+  hasSecurityPolicy: boolean;
+  score: number;              // 0-100 quality sub-score
+  lastChecked: string;
+}
+
+/* ── Activity Pulse ── */
+
+export interface ActivityPulse {
+  commitsLast4Weeks: number;
+  openPRs: number;
+  openIssues: number;
+  contributors: number;
+  isActive: boolean;
+  weeklyCommitAvg: number;
+  lastChecked: string;
+}
+
+/* ── Data Freshness ── */
+
+export interface DataFreshnessStatus {
+  lastUpdateDate: string | null;   // ISO date of last commit touching watchPath
+  lastUpdateMessage: string | null;
+  daysSinceUpdate: number | null;
+  expectedCycle: string;
+  stale: boolean;                  // true if past grace period
+  nextExpectedDate: string | null; // ISO date of next expected update
+  lastChecked: string;
+}
+
 export interface ProjectHealth {
   project: ProjectConfig;
   git: GitStatus | null;
@@ -132,7 +172,10 @@ export interface ProjectHealth {
   updateActions: UpdateAction[];
   vibeCoding: VibeCodingIntel;
   research: ResearchIntel | null;
+  codeQuality: CodeQuality | null;
+  activity: ActivityPulse | null;
   docFreshness: DocFreshness | null;
+  dataFreshness: DataFreshnessStatus | null;
   grade: HealthGrade;
   recommendation: Recommendation;
   reasons: string[];
