@@ -1,13 +1,31 @@
 {
-  "timestamp": "2026-04-04T10:06:22.950Z",
+  "timestamp": "2026-04-04T10:29:46.345Z",
   "window": "90d",
   "minCommitsThreshold": 5,
   "userResults": [
     {
+      "repo": "heznpc/z-gap",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 17,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
       "repo": "heznpc/canary",
       "group": "user",
       "defaultBranch": "main",
-      "totalCommits90d": 15,
+      "totalCommits90d": 16,
       "agentEraFiles": [
         "AGENTS.md",
         "CLAUDE.md"
@@ -24,26 +42,8 @@
         "other-agent": []
       },
       "contextCommits90d": 2,
-      "cam": 0.13333333333333333,
-      "camPercent": "13.3%",
-      "excluded": false
-    },
-    {
-      "repo": "heznpc/z-gap",
-      "group": "user",
-      "defaultBranch": "main",
-      "totalCommits90d": 16,
-      "agentEraFiles": [],
-      "fileBreakdown": {
-        "agents-md": [],
-        "claude-md": [],
-        "cursor": [],
-        "copilot": [],
-        "other-agent": []
-      },
-      "contextCommits90d": 0,
-      "cam": 0,
-      "camPercent": "0.0%",
+      "cam": 0.125,
+      "camPercent": "12.5%",
       "excluded": false
     },
     {
@@ -659,8 +659,235 @@
       "cam": 0.005333333333333333,
       "camPercent": "0.5%",
       "excluded": false
+    },
+    {
+      "repo": "torvalds/linux",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "totalCommits90d": 13891,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "kubernetes/kubernetes",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "totalCommits90d": 2353,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "golang/go",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "totalCommits90d": 719,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "rust-lang/rust",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 7288,
+      "agentEraFiles": [
+        "src/tools/rust-analyzer/AGENTS.md",
+        "src/tools/rust-analyzer/CLAUDE.md"
+      ],
+      "fileBreakdown": {
+        "agents-md": [
+          "src/tools/rust-analyzer/AGENTS.md"
+        ],
+        "claude-md": [
+          "src/tools/rust-analyzer/CLAUDE.md"
+        ],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 1,
+      "cam": 0.00013721185510428101,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "docker/cli",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "totalCommits90d": 316,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 661,
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "fileBreakdown": {
+        "agents-md": [
+          "AGENTS.md"
+        ],
+        "claude-md": [
+          "CLAUDE.md"
+        ],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 5,
+      "cam": 0.007564296520423601,
+      "camPercent": "0.8%",
+      "excluded": false
+    },
+    {
+      "repo": "python/cpython",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 1062,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "django/django",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 253,
+      "agentEraFiles": [
+        ".github/copilot-instructions.md"
+      ],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [
+          ".github/copilot-instructions.md"
+        ],
+        "other-agent": []
+      },
+      "contextCommits90d": 1,
+      "cam": 0.003952569169960474,
+      "camPercent": "0.4%",
+      "excluded": false
+    },
+    {
+      "repo": "pallets/flask",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 48,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "spring-projects/spring-boot",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "totalCommits90d": 1461,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
+    },
+    {
+      "repo": "apache/kafka",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "trunk",
+      "totalCommits90d": 473,
+      "agentEraFiles": [],
+      "fileBreakdown": {
+        "agents-md": [],
+        "claude-md": [],
+        "cursor": [],
+        "copilot": [],
+        "other-agent": []
+      },
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false
     }
   ],
-  "includedCount": 21,
+  "includedCount": 32,
   "excludedCount": 9
 }
