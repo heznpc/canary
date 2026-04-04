@@ -42,10 +42,11 @@ We argue that version control is now entering a similar transition. The trigger 
 
 The prevailing discourse frames this shift as a binary: Git is either dying or it is fine. We reject both positions. Instead, we introduce the concept of \textit{metadatafication}---the process by which a directly-operated tool transitions into automatically-generated background data that persists but is no longer directly manipulated by its end users. Git's commit history, branches, and diffs will continue to exist, much as EXIF metadata exists on every photograph. But the developer who directly runs \texttt{git add}, \texttt{git commit}, and \texttt{git push} will become as rare as the photographer who manually records ISO settings on a notepad.
 
-This paper makes three contributions:
+This paper makes four contributions:
 \begin{enumerate}
   \item We define and characterize \textbf{metadatafication} as a general pattern of infrastructure evolution, grounding it in historical precedents from networking, storage, and media technologies.
   \item We propose a \textbf{four-layer framework} (version control, collaboration, distribution, reuse) analyzing how each layer transforms when AI agents become the primary code authors.
+  \item We present \textbf{Canary}, an open-source project health dashboard that operationalizes the framework as a running system---replacing manual Git inspection with automated grading across 25+ repositories---and define the \textbf{Context Attention Metric (CAM)} to measure the attention shift the framework predicts.
   \item We identify \textbf{capability marketplaces}---exemplified by the Model Context Protocol (MCP)---as the structural successor to both app stores and template ecosystems, completing the redistribution of developer attention from code inspection to context engineering.
 \end{enumerate}
 
@@ -195,9 +196,9 @@ Reuse & Templates; libraries & MCP capability catalog & Infrastructure for capab
 
 Across all four layers, Git transitions from a foreground tool that developers directly manipulate to a background substrate that agents operate on their behalf.
 
-\section{Case Study: Canary}
+\section{Canary: A Design Artifact}
 
-To illustrate how the metadatafication thesis manifests in practice, we present Canary, an open-source project health dashboard that operationalizes several aspects of the framework described above. Canary replaces manual Git inspection with automated health grading, serving as both a demonstration of how developer attention shifts away from direct version control interaction and an instance of the one-person company hypothesis in action.
+Canary is an open-source project health dashboard whose design decisions are derived from the metadatafication framework. Each scanner embodies a specific claim from Sections~3--4: that Git records become automatically consumed metadata, that developer attention migrates from code inspection to project-level health signals, and that agent-readability is a first-class quality attribute. The system has been in continuous operation across a solo developer's 25+ project portfolio, serving simultaneously as a research artifact and a production tool---a dual role that grounds the framework in running code rather than thought experiment alone.
 
 \subsection{System Overview}
 
@@ -235,9 +236,9 @@ Operating Canary across a 25-project portfolio managed by a single developer wit
   \item Context-aware grading (prototypes receive $+10$ leniency, maintenance projects $+20$) acknowledges that not all projects in a portfolio require the same level of attention---a design decision aligned with the metadatafication insight that developer attention is a scarce resource to be allocated strategically.
 \end{itemize}
 
-\subsection{Toward Quantitative Validation: Context Attention Metric}
+\subsection{Evaluation: The Context Attention Metric}
 
-The attention redistribution claim (Section 4.1) is currently supported by structural argument and historical analogy. To move toward empirical grounding, we propose a \textit{Context Attention Metric} (CAM): the fraction of commits in a rolling window that modify at least one \textit{agent-era} context artifact.
+To evaluate whether the attention redistribution predicted by the framework (Section~4.1) is observable in practice, we define the \textit{Context Attention Metric} (CAM): the fraction of commits in a rolling window that modify at least one \textit{agent-era} context artifact. We then demonstrate its computability across 32 repositories and report initial signals.
 
 We distinguish agent-era artifacts---files that exist specifically to instruct AI agents (AGENTS.md, CLAUDE.md, \texttt{.cursorrules}, \texttt{copilot-instructions.md}, structured specification files)---from legacy configuration (tsconfig.json, ESLint configs, CI workflows) that predates the agentic turn. Only the former directly evidence attention migration toward context engineering; the latter inflate the ratio without supporting the thesis.
 
@@ -249,7 +250,7 @@ We distinguish agent-era artifacts---files that exist specifically to instruct A
 
 To control for circularity (the author's portfolio is biased toward AI-assisted development), we measure CAM for both the portfolio and an external reference sample of 24 repositories spanning 7 programming ecosystems. The reference sample is explicitly split into \textit{AI-adjacent} projects (Vercel AI, LangChain, Anthropic Cookbook; $n=3$) and \textit{traditional} open-source projects with no inherent AI connection ($n=21$), the latter covering JavaScript/TypeScript (React, Next.js, TypeScript, Node.js, Svelte, Remix, Vite, Deno, shadcn/ui, Tailwind CSS), systems languages (Linux, Rust, Go, Docker, Prometheus), and Python/Java (CPython, Django, Flask, Spring Boot, Kafka). Repositories with fewer than 5 commits in the window are excluded ($n=9$).
 
-\textbf{Preliminary findings.} Table~\ref{tab:cam} summarizes results for the 90-day window ending April 2026 across 32 included repositories.
+\textbf{Results.} Table~\ref{tab:cam} summarizes CAM values for the 90-day window ending April 2026 across 32 included repositories.
 
 \begin{table}[ht]
 \centering

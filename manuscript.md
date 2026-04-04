@@ -12,11 +12,12 @@ We argue that version control is now entering a similar transition. The trigger 
 
 The prevailing discourse frames this shift as a binary: Git is either dying or it is fine. We reject both positions. Instead, we introduce the concept of *metadatafication* — the process by which a directly-operated tool transitions into automatically-generated background data that persists but is no longer directly manipulated by its end users. Git's commit history, branches, and diffs will continue to exist, much as EXIF metadata exists on every photograph. But the developer who directly runs `git add`, `git commit`, and `git push` will become as rare as the photographer who manually records ISO settings on a notepad.
 
-This paper makes three contributions:
+This paper makes four contributions:
 
 1. We define and characterize **metadatafication** as a general pattern of infrastructure evolution, grounding it in historical precedents from networking, storage, and media technologies.
 2. We propose a **four-layer framework** (version control, collaboration, distribution, reuse) analyzing how each layer transforms when AI agents become the primary code authors.
-3. We identify **capability marketplaces** — exemplified by the Model Context Protocol (MCP) — as the structural successor to both app stores and template ecosystems, completing the redistribution of developer attention from code inspection to context engineering.
+3. We present **Canary**, an open-source project health dashboard that operationalizes the framework as a running system — replacing manual Git inspection with automated grading across 25+ repositories — and define the **Context Attention Metric (CAM)** to measure the attention shift the framework predicts.
+4. We identify **capability marketplaces** — exemplified by the Model Context Protocol (MCP) — as the structural successor to both app stores and template ecosystems, completing the redistribution of developer attention from code inspection to context engineering.
 
 ## 2. Background and Related Work
 
@@ -138,9 +139,9 @@ We synthesize these observations into an integrated framework describing the tra
 
 Across all four layers, Git transitions from a foreground tool that developers directly manipulate to a background substrate that agents operate on their behalf. The records Git produces are not less important — they may become *more* important for compliance, auditing, and forensic analysis — but they are no longer the site of developer attention and effort.
 
-## 5. Case Study: Canary
+## 5. Canary: A Design Artifact
 
-To illustrate how the metadatafication thesis manifests in practice, we present Canary, an open-source project health dashboard that operationalizes several aspects of the framework described above. Canary replaces manual Git inspection with automated health grading, serving as both a demonstration of how developer attention shifts away from direct version control interaction and an instance of the one-person company hypothesis in action.
+Canary is an open-source project health dashboard whose design decisions are derived from the metadatafication framework. Each scanner embodies a specific claim from Sections 3–4: that Git records become automatically consumed metadata, that developer attention migrates from code inspection to project-level health signals, and that agent-readability is a first-class quality attribute. The system has been in continuous operation across a solo developer's 25+ project portfolio, serving simultaneously as a research artifact and a production tool — a dual role that grounds the framework in running code rather than thought experiment alone.
 
 ### 5.1 System Overview
 
@@ -166,9 +167,9 @@ Operating Canary across a 25-project portfolio managed by a solo developer with 
 - MCP servers are tracked as a first-class category, reflecting capability marketplace emergence.
 - Context-aware grading (prototypes +10 leniency, maintenance +20) acknowledges that developer attention is a scarce resource to be allocated strategically.
 
-### 5.4 Toward Quantitative Validation: Context Attention Metric
+### 5.4 Evaluation: The Context Attention Metric
 
-The attention redistribution claim (Section 4.1) is currently supported by structural argument and historical analogy. To move toward empirical grounding, we propose a *Context Attention Metric* (CAM): the fraction of commits in a rolling window that modify at least one *agent-era* context artifact.
+To evaluate whether the attention redistribution predicted by the framework (Section 4.1) is observable in practice, we define the *Context Attention Metric* (CAM): the fraction of commits in a rolling window that modify at least one *agent-era* context artifact. We then demonstrate its computability across 32 repositories and report initial signals.
 
 We distinguish agent-era artifacts — files that exist specifically to instruct AI agents (AGENTS.md, CLAUDE.md, `.cursorrules`, `copilot-instructions.md`, structured specification files) — from legacy configuration (tsconfig.json, ESLint configs, CI workflows) that predates the agentic turn. Only the former directly evidence attention migration toward context engineering; the latter inflate the ratio without supporting the thesis.
 
@@ -178,7 +179,7 @@ where C_90 is the set of commits in the most recent 90-day window. The metric ca
 
 To control for circularity (the author's portfolio is biased toward AI-assisted development), we measure CAM for both the portfolio and an external reference sample of 24 repositories spanning 7 programming ecosystems. The reference sample is explicitly split into *AI-adjacent* projects (Vercel AI, LangChain, Anthropic Cookbook; n=3) and *traditional* open-source projects with no inherent AI connection (n=21), the latter covering JavaScript/TypeScript (React, Next.js, TypeScript, Node.js, Svelte, Remix, Vite, Deno, shadcn/ui, Tailwind CSS), systems languages (Linux, Rust, Go, Docker, Prometheus), and Python/Java (CPython, Django, Flask, Spring Boot, Kafka). Repositories with fewer than 5 commits in the window are excluded (n=9).
 
-**Preliminary findings.** Results for the 90-day window ending April 2026 across 32 included repositories:
+**Results.** CAM values for the 90-day window ending April 2026 across 32 included repositories:
 
 | Subgroup | n | w/ agent files | Mean CAM | Median CAM |
 |---|---|---|---|---|
