@@ -174,13 +174,22 @@ We distinguish agent-era artifacts — files that exist specifically to instruct
 
 where C_90 is the set of commits in the most recent 90-day window. The metric can be computed from data Canary already collects (commit history via the GitHub API and file tree classification) without additional API calls.
 
-To control for circularity (the author's portfolio is biased toward AI-assisted development), we measure CAM for both the portfolio and an external reference sample of 14 prominent open-source repositories spanning AI-adjacent projects (Vercel AI, LangChain, Remix) and established infrastructure (React, Next.js, TypeScript, Node.js, Tailwind CSS).
+To control for circularity (the author's portfolio is biased toward AI-assisted development), we measure CAM for both the portfolio and an external reference sample. The reference sample is explicitly split into *AI-adjacent* projects (Vercel AI, LangChain, Anthropic Cookbook; n=3) and *traditional* open-source projects with no inherent AI connection (React, Next.js, TypeScript, Node.js, Svelte, Remix, Vite, Deno, shadcn/ui, Tailwind CSS; n=10). Repositories with fewer than 5 commits in the window are excluded to remove noise from initialization-only repos.
 
-**Preliminary findings.** Across the portfolio (15 public repositories, 90-day window ending April 2026), 4 repositories (27%) contain agent-era files, with CAM ranging from 4.3% (AirMCP, an MCP server with 257 commits) to 14.3% (Canary itself, 14 commits). The median portfolio CAM is 0.0%, reflecting that agent-era file adoption is not yet universal even for an AI-enthusiast developer.
+**Preliminary findings.** Results for the 90-day window ending April 2026 across 21 included repositories (8 user, 13 reference):
 
-The reference sample tells a more striking story: 9 of 14 repositories (64%) now contain agent-era files, including React (CLAUDE.md), Next.js (AGENTS.md, CLAUDE.md, .cursor rules), TypeScript (AGENTS.md, copilot-instructions.md), LangChain (AGENTS.md, CLAUDE.md), and Remix (AGENTS.md in multiple packages, CAM = 6.8%). The median reference CAM is 1.7%. Notably, repositories with zero agent-era files (Node.js, Tailwind CSS) cluster at CAM = 0.0%, producing a bimodal distribution: projects have either adopted agent-era artifacts or not, with little middle ground.
+| Subgroup | n | w/ agent files | Mean CAM | Median CAM |
+|---|---|---|---|---|
+| User portfolio (≥5 commits) | 8 | 2 (25%) | 2.2% | 0.0% |
+| Reference: AI-adjacent | 3 | 3 (100%) | 2.5% | 1.9% |
+| Reference: Traditional | 10 | 8 (80%) | 1.6% | 0.4% |
+| **Reference: All** | **13** | **11 (85%)** | **1.8%** | **1.3%** |
 
-These results are consistent with Phase 2 (Assisted Tool) of the metadatafication model: agent-era files are being *created* across the ecosystem — including in projects not typically associated with AI-assisted development — but commit activity on them remains a small fraction of total development effort (1-7% for active adopters). The attention migration is underway but far from complete. A longitudinal study tracking CAM quarterly would test whether this fraction increases as predicted by the thesis.
+The most striking finding is not the CAM values themselves but the *adoption rate among traditional projects*: 8 of 10 non-AI-adjacent repositories now contain agent-era files. These include React (CLAUDE.md), Next.js (AGENTS.md, CLAUDE.md, .cursor rules), TypeScript (AGENTS.md, copilot-instructions.md), Remix (AGENTS.md in multiple packages), Deno (CLAUDE.md, copilot-instructions.md), and Vite (copilot-instructions.md). By file type, AGENTS.md appears in 8 repos, CLAUDE.md in 7, copilot-instructions.md in 3, and .cursor configurations in 3.
+
+CAM values for active adopters range from 0.1% (shadcn/ui) to 6.8% (Remix), with a median of 1.3% across all reference repos. This indicates that agent-era files are being created but not yet intensively maintained: commit activity on them remains 1-7% of total development effort.
+
+These results are consistent with early Phase 2 (Assisted Tool) of the metadatafication model. Agent-era artifacts are proliferating across the ecosystem — including projects not associated with AI-assisted development — but the attention redistribution predicted by our thesis is in its infancy. The user portfolio's lower adoption rate (25% vs. 80% for traditional OSS) likely reflects project maturity: most user repos are prototypes or research artifacts, while reference repos are mature projects with established contributor bases actively preparing for agentic workflows. A longitudinal study tracking CAM quarterly would test whether this fraction increases as predicted.
 
 ## 6. Implications
 
