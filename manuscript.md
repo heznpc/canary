@@ -2,7 +2,7 @@
 
 ## Abstract
 
-Git has served as the backbone of collaborative software development for over two decades. As AI coding agents transition from assistants to autonomous contributors, a growing discourse asks whether Git is becoming obsolete. We argue this framing is misguided. Git is not dying — it is undergoing *metadatafication*: a process by which a directly-operated tool becomes automatically-generated background infrastructure, analogous to how EXIF metadata, DNS, and TCP/IP transitioned from hands-on tools to invisible layers. We analyze this transformation across four dimensions — version control, collaboration, software distribution, and reuse — and propose an integrated framework in which developer attention migrates from code-level inspection to context engineering for AI agents, and software distribution shifts from curated app stores to capability-based marketplaces exemplified by protocols such as the Model Context Protocol (MCP). We ground our analysis in historical precedents of infrastructure invisibility and survey emerging evidence from the agentic software engineering literature. Our central claim is that the community which thrives in this transition will be the one that optimizes for *agent-readability*, not human-readability, of code artifacts.
+Git is not dying — it is becoming invisible. As AI coding agents become primary code authors, we argue that version control is undergoing *metadatafication*: a transition from directly-operated tool to automatically-generated infrastructure metadata, following patterns observed in EXIF, DNS, TCP/IP, and compiler optimization. We analyze this transformation across four layers — version control, collaboration, distribution, and reuse — and identify two consequences: developer attention migrates from code inspection to *context engineering* (structuring project knowledge for agent consumption), and software distribution shifts from curated app stores toward capability-based composition. We formalize the attention redistribution using the disambiguation cost conservation principle and illustrate the thesis through Canary, an open-source health dashboard that replaces manual Git inspection with automated grading. Our central claim: the community that thrives will optimize for *agent-readability*, not human-readability.
 
 ## 1. Introduction
 
@@ -36,13 +36,13 @@ Cohen proposes Manyana [11], a CRDT-based VCS where merges always succeed by def
 
 ### 2.3 Spec-Driven Development and Disposable Code
 
-A parallel discourse argues that code itself is becoming a derived artifact. Welch [12] positions specifications as the "actual source" and code as the "compiled binary." Piskala [13] defines three levels of specification rigor — spec-first, spec-anchored, and spec-as-source — with the latter treating code as entirely generated and verified against specifications. GitHub's own Spec Kit [14] operationalizes this vision, and Stoica et al. [15] from UC Berkeley argue that specifications are "the missing link" for reliable LLM systems.
+A parallel discourse argues that code itself is becoming a derived artifact. Welch [12] positions specifications as the "actual source" and code as the "compiled binary." Research on the NL-code interface extends this vision architecturally: if representation-level execution becomes practical, programming languages shift from human-writable specifications to machine-generated projections — "languages become output formats" rather than authoring tools [37]. Piskala [13] defines three levels of specification rigor — spec-first, spec-anchored, and spec-as-source — with the latter treating code as entirely generated and verified against specifications. GitHub's own Spec Kit [14] operationalizes this vision, and Stoica et al. [15] from UC Berkeley argue that specifications are "the missing link" for reliable LLM systems.
 
 The logical endpoint is *ephemeral software* [16, 17, 18]: applications generated on demand, used briefly, and discarded. Harel [19] draws parallels to disposable content in social media: "once the barrier to build collapses, usage patterns evolve." The JIT Coding framework [20] articulates this as "the spec is the program, code is just exhaust."
 
 ### 2.4 The One-Person Company Hypothesis
 
-Anthropic CEO Dario Amodei has stated with "70-80% confidence" that the first billion-dollar single-employee company could appear in 2026 [21]. This is not merely a prediction about productivity tools but a structural claim about the firm: if AI agents can perform the work of an engineering team, the organizational rationale for multi-person software companies weakens. The 2025 sale of Base44 — built by solo founder Maor Shlomo — to Wix for $80 million provides early empirical support [21].
+Anthropic CEO Dario Amodei has stated with "70-80% confidence" that the first billion-dollar single-employee company could appear in 2026 [21]. This is not merely a prediction about productivity tools but a structural claim about the firm: if AI agents can perform the work of an engineering team, the organizational rationale for multi-person software companies weakens. The effect may be multiplicative: non-English-speaking developers currently face a double translation (native thought → English syntax → execution), and research on reasoning-language effects suggests this overhead is substantial [38]. Representation-level systems could eliminate this double translation [37], expanding the global talent pool and further enabling the solo-founder model. The 2025 sale of Base44 — built by solo founder Maor Shlomo — to Wix for $80 million provides early empirical support [21].
 
 ## 3. The Metadatafication Thesis
 
@@ -79,7 +79,7 @@ We analyze how each core Git operation transforms under metadatafication:
 | `git commit` | Developer manually stages and commits | Agent auto-commits after each logical change |
 | `git branch` | Developer creates feature branches | Agent sessions replace branching model |
 | `git diff` / PR review | Line-by-line human inspection | Intent review; test-result verification |
-| `git blame` | Trace authorship for context | Meaningless when agent authored the code |
+| `git blame` | Trace authorship for context | Critical during mixed authorship; diminishes as agent share grows |
 | `git merge` | Human-mediated conflict resolution | Agent-coordinated; CRDT-based auto-merge |
 | `git log` | Developer reads history for context | Equivalent to server access logs: exists, rarely read |
 | `git revert` / rollback | Developer manually identifies and reverts | Agent identifies regression, auto-reverts |
@@ -94,7 +94,9 @@ If Git becomes infrastructure metadata, where does developer attention migrate? 
 
 The traditional developer community derives value from deep code inspection: reading diffs, reviewing pull requests line by line, tracing execution paths through source code. This practice assumes that the code is the primary artifact of intellectual effort.
 
-When AI agents author the majority of code, this assumption breaks down. The intellectual effort shifts upstream — to specifying intent, structuring context, and verifying outcomes. The emergence of AGENTS.md [7] and CLAUDE.md files as version-controlled artifacts signals this transition: developers are already investing effort in documents that instruct agents, not documents that instruct compilers.
+When AI agents author the majority of code, this assumption breaks down. The intellectual effort shifts upstream — to specifying intent, structuring context, and verifying outcomes. This redistribution has an information-theoretic basis: the *disambiguation cost conservation* principle states that the minimum total disambiguation cost for a task is bounded below by its intrinsic complexity, regardless of the interface used to specify it [37]. Reducing the user's upfront specification effort — by accepting natural language instead of code — requires the system to compensate through inference, querying, or defaults. Context engineering is precisely this compensation: the specification complexity that once resided in code now resides in agent configuration files and structured project knowledge.
+
+The emergence of AGENTS.md [7] and CLAUDE.md files as version-controlled artifacts signals this transition: developers are already investing effort in documents that instruct agents, not documents that instruct compilers.
 
 We propose that the competitive axis for developer communities shifts from *code-readability* to *agent-readability*: the ability to structure project context such that AI agents can effectively navigate, understand, and modify a codebase. This is not prompt engineering in the narrow sense of crafting individual queries, but *context engineering* — the systematic organization of specifications, constraints, conventions, and domain knowledge for agent consumption.
 
@@ -106,7 +108,7 @@ The app store model — Apple's App Store (2008), Google Play — is structurall
 
 However, a pure on-demand generation model ignores a persistent user need: not everyone wants to describe their requirements from scratch every time. Some users prefer starting points — templates, presets, proven solutions. This is the same need that sustains template marketplaces (Notion templates, Figma community, WordPress themes) even as the tools themselves become more powerful.
 
-We argue that the **Model Context Protocol (MCP)** [23] and similar capability-based architectures represent the structural resolution of this tension. MCP defines a standard interface through which AI agents discover and invoke external capabilities — analogous to how REST APIs standardized service-to-service communication.
+We argue that the **Model Context Protocol (MCP)** [23] and similar capability-based architectures represent the structural resolution of this tension. MCP defines a standard interface through which AI agents discover and invoke external capabilities — crucially enabling *composability* that app stores structurally prevent: rather than downloading a monolithic application, an agent invokes fine-grained capabilities from multiple providers on demand. Because MCP servers are self-describing and decentralized (any service can expose an MCP endpoint), the architecture avoids the centralized curation bottleneck that characterizes both app stores and package registries.
 
 The critical insight is the shift from *artifact distribution* to *capability composition*:
 
@@ -136,7 +138,7 @@ Across all four layers, Git transitions from a foreground tool that developers d
 
 ## 5. Case Study: Canary
 
-To illustrate that the metadatafication thesis is not merely speculative, we present Canary, an open-source project health dashboard that operationalizes several aspects of the framework described above.
+To illustrate how the metadatafication thesis manifests in practice, we present Canary, an open-source project health dashboard that operationalizes several aspects of the framework described above. Canary replaces manual Git inspection with automated health grading, serving as both a demonstration of how developer attention shifts away from direct version control interaction and an instance of the one-person company hypothesis in action.
 
 ### 5.1 System Overview
 
@@ -162,9 +164,21 @@ Operating Canary across a 25-project portfolio managed by a solo developer with 
 - MCP servers are tracked as a first-class category, reflecting capability marketplace emergence.
 - Context-aware grading (prototypes +10 leniency, maintenance +20) acknowledges that developer attention is a scarce resource to be allocated strategically.
 
+### 5.4 Toward Quantitative Validation: Context Attention Metric
+
+The attention redistribution claim (Section 4.1) is currently supported by structural argument and historical analogy. To move toward empirical grounding, we propose a *Context Attention Metric* (CAM): the fraction of commits in a rolling window that modify at least one *agent-era* context artifact.
+
+We distinguish agent-era artifacts — files that exist specifically to instruct AI agents (AGENTS.md, CLAUDE.md, `.cursorrules`, `copilot-instructions.md`, structured specification files) — from legacy configuration (tsconfig.json, ESLint configs, CI workflows) that predates the agentic turn. Only the former directly evidence attention migration toward context engineering; the latter inflate the ratio without supporting the thesis.
+
+> CAM = |{c in C_90 : c touches at least one agent-era artifact}| / |C_90|
+
+where C_90 is the set of commits in the most recent 90-day window. The metric can be computed from data Canary already collects (commit history via the GitHub API and file tree classification) without additional API calls.
+
+To control for the obvious circularity of measuring a single developer's portfolio (Section 5.3 describes the author's own projects, many of which use Claude Code), validation requires three baselines: (1) a temporal self-comparison showing CAM increasing over quarterly intervals within the portfolio, (2) an external reference sample of 10-20 popular open-source repositories with known agent adoption, and (3) a null baseline of repositories with no agent configuration files. We report methodology here and defer results to a companion empirical study, noting that the metric design itself illustrates our thesis: measuring developer attention through commit-level behavioral signals rather than through direct code inspection is itself a metadatafied approach to evaluation.
+
 ## 6. Implications
 
-### 5.1 For Developer Education
+### 6.1 For Developer Education
 
 If Git becomes infrastructure metadata, teaching Git mechanics to beginning developers becomes analogous to teaching assembly language: valuable for deep understanding but no longer a prerequisite for productive work. Educational curricula should shift emphasis from version control operations to:
 
@@ -175,7 +189,7 @@ If Git becomes infrastructure metadata, teaching Git mechanics to beginning deve
 
 This does not mean Git knowledge becomes worthless — DNS expertise remains valuable for network engineers. But it becomes a *specialization* rather than a *universal prerequisite*.
 
-### 5.2 For Tooling
+### 6.2 For Tooling
 
 Current development tools are designed around the assumption that humans read and write code. The metadatafication thesis implies a need for tools designed around the assumption that agents read and write code, and humans read and write *intent*:
 
@@ -183,7 +197,7 @@ Current development tools are designed around the assumption that humans read an
 - **Intent-level CI/CD**: Build and deployment pipelines triggered not by `git push` but by agent session completion, with validation against specifications rather than code-level linting.
 - **Context-first IDEs**: Development environments organized around specifications, test suites, and agent configuration rather than file trees and text editors.
 
-### 5.3 For Ecosystem Governance
+### 6.3 For Ecosystem Governance
 
 The shift from app stores to capability marketplaces raises governance questions that parallel — but exceed — those faced by package registries like npm and PyPI:
 
@@ -193,11 +207,13 @@ The shift from app stores to capability marketplaces raises governance questions
 
 These questions remain open and represent significant opportunities for both research and entrepreneurship.
 
-## 6. Counterarguments and Limitations
+## 7. Counterarguments and Limitations
 
 We acknowledge several important counterarguments:
 
-**Non-determinism undermines prompt-as-source.** As noted in Hacker News discussions [24], LLMs produce varying outputs from identical inputs, making pure intent-based versioning unreliable. This is why we argue for metadatafication (Git persists as automatically-generated metadata) rather than replacement (prompts substitute for code). The non-determinism argument strengthens, not weakens, the case for retaining version control records — but as metadata, not as primary developer artifacts.
+**Non-determinism undermines prompt-as-source.** As noted in Hacker News discussions [24], LLMs produce varying outputs from identical inputs, making pure intent-based versioning unreliable. This is why we argue for metadatafication (Git persists as automatically-generated metadata) rather than replacement (prompts substitute for code). The non-determinism argument strengthens, not weakens, the case for retaining version control records — but as metadata, not as primary developer artifacts. A deeper structural analysis reveals a *verification paradox*: even if representation-level systems resolve non-determinism at the generation stage, formal verification still requires projection to code form, reintroducing the formal-language constraint at the verification stage [37]. This paradox reinforces our thesis: version control records persist precisely because verification cannot be fully abstracted away.
+
+**Regulatory and compliance pressures.** Standards such as SLSA (Supply-chain Levels for Software Artifacts) and regulations including HIPAA, SOX, and the EU AI Act increasingly require auditable provenance trails for software artifacts. In an agentic regime, these requirements make Git records *more* important for compliance, not less — but the audience shifts from developers to auditors, automated compliance tools, and legal review. This is consistent with metadatafication: the records persist and gain regulatory significance, while ceasing to be a site of daily developer attention.
 
 **Edge cases require deployment history.** Kirsch [25] argues that edge cases emerge only through deployed use, and regenerating software resets this discovery process. This is a valid limitation of the pure ephemeral software thesis. However, it is compatible with metadatafication: deployment history is precisely the kind of automatically-generated metadata that persists without direct developer interaction.
 
@@ -207,7 +223,7 @@ We acknowledge several important counterarguments:
 
 **"Malleable" vs. "ephemeral."** Kirsch [25] proposes "malleable software" — easier to modify but persisted, not discarded — as a more realistic alternative to ephemeral software. We view this as compatible with our framework: malleable software still shifts developer attention from code manipulation to intent specification, and Git still transitions toward metadata in a malleable software regime.
 
-## 7. Conclusion
+## 8. Conclusion
 
 Git is not dying. It is becoming invisible.
 
@@ -290,3 +306,7 @@ The community that thrives in this transition will not be the one with the deepe
 [35] F. Pope, "What Clayton Christensen Would Tell the SaaS Industry Right Now," fredpope.com, January 2026.
 
 [36] Gartner, "40 Percent of Enterprise Apps Will Feature Task-Specific AI Agents by 2026," Gartner Newsroom, August 2025.
+
+[37] Anonymous, "Beyond the Chomsky Wall: Platonic Representations as the Convergence Point of Natural Language and Code," Under review, 2026.
+
+[38] N. Li et al., "Untangling Input Language from Reasoning Language," arXiv:2601.10257, 2026.
