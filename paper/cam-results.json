@@ -1,0 +1,339 @@
+{
+  "timestamp": "2026-04-04T09:53:59.507Z",
+  "window": "90d",
+  "userResults": [
+    {
+      "repo": "heznpc/heznpc",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 25,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/z-gap",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 15,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/canary",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 14,
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "contextCommits90d": 2,
+      "cam": 0.14285714285714285,
+      "camPercent": "14.3%"
+    },
+    {
+      "repo": "heznpc/ai-slop",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 3,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/aichemist",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 1,
+      "agentEraFiles": [
+        "CLAUDE.md"
+      ],
+      "contextCommits90d": 1,
+      "cam": 1,
+      "camPercent": "100.0%"
+    },
+    {
+      "repo": "heznpc/AirMCP",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 257,
+      "agentEraFiles": [
+        ".github/AGENTS.md"
+      ],
+      "contextCommits90d": 11,
+      "cam": 0.042801556420233464,
+      "camPercent": "4.3%"
+    },
+    {
+      "repo": "heznpc/skillBridge",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 129,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/villagent",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 1,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/eddy",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 10,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/analogic-appropriation",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 9,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/PLOIDY",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 52,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/statute-of-limitations",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 1,
+      "agentEraFiles": [
+        "CLAUDE.md"
+      ],
+      "contextCommits90d": 1,
+      "cam": 1,
+      "camPercent": "100.0%"
+    },
+    {
+      "repo": "heznpc/sediment",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 2,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/holder",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 1,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "heznpc/narcissus",
+      "group": "user",
+      "defaultBranch": "main",
+      "totalCommits90d": 1,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    }
+  ],
+  "refResults": [
+    {
+      "repo": "vercel/ai",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 1041,
+      "agentEraFiles": [
+        ".cursor/skills",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "packages/ai/AGENTS.md",
+        "skills/use-ai-sdk/references/type-safe-agents.md"
+      ],
+      "contextCommits90d": 18,
+      "cam": 0.01729106628242075,
+      "camPercent": "1.7%"
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "group": "reference",
+      "defaultBranch": "master",
+      "totalCommits90d": 633,
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "contextCommits90d": 12,
+      "cam": 0.018957345971563982,
+      "camPercent": "1.9%"
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 53,
+      "agentEraFiles": [
+        "CLAUDE.md",
+        "claude_agent_sdk/chief_of_staff_agent/CLAUDE.md",
+        "skills/CLAUDE.md"
+      ],
+      "contextCommits90d": 2,
+      "cam": 0.03773584905660377,
+      "camPercent": "3.8%"
+    },
+    {
+      "repo": "cohere-ai/cohere-toolkit",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 0,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "stackblitz/bolt.new",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 0,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "facebook/react",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 194,
+      "agentEraFiles": [
+        "CLAUDE.md",
+        "compiler/CLAUDE.md"
+      ],
+      "contextCommits90d": 8,
+      "cam": 0.041237113402061855,
+      "camPercent": "4.1%"
+    },
+    {
+      "repo": "vercel/next.js",
+      "group": "reference",
+      "defaultBranch": "canary",
+      "totalCommits90d": 1370,
+      "agentEraFiles": [
+        ".cursor/commands/gt-workflow.md",
+        ".cursor/worktrees.json",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "contextCommits90d": 27,
+      "cam": 0.01970802919708029,
+      "camPercent": "2.0%"
+    },
+    {
+      "repo": "microsoft/typescript",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 77,
+      "agentEraFiles": [
+        ".github/copilot-instructions.md",
+        "AGENTS.md"
+      ],
+      "contextCommits90d": 1,
+      "cam": 0.012987012987012988,
+      "camPercent": "1.3%"
+    },
+    {
+      "repo": "nodejs/node",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 642,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "tailwindlabs/tailwindcss",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 106,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 739,
+      "agentEraFiles": [
+        ".cursor/rules/registry-bases-parity.mdc"
+      ],
+      "contextCommits90d": 1,
+      "cam": 0.0013531799729364006,
+      "camPercent": "0.1%"
+    },
+    {
+      "repo": "t3-oss/create-t3-app",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 0,
+      "agentEraFiles": [],
+      "contextCommits90d": 0,
+      "cam": 0,
+      "camPercent": "0.0%"
+    },
+    {
+      "repo": "sveltejs/svelte",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 317,
+      "agentEraFiles": [
+        "AGENTS.md"
+      ],
+      "contextCommits90d": 1,
+      "cam": 0.0031545741324921135,
+      "camPercent": "0.3%"
+    },
+    {
+      "repo": "remix-run/remix",
+      "group": "reference",
+      "defaultBranch": "main",
+      "totalCommits90d": 601,
+      "agentEraFiles": [
+        "AGENTS.md",
+        "packages/component/AGENTS.md",
+        "packages/route-pattern/src/lib/route-pattern/AGENTS.md"
+      ],
+      "contextCommits90d": 41,
+      "cam": 0.06821963394342762,
+      "camPercent": "6.8%"
+    }
+  ]
+}
