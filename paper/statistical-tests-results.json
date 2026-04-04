@@ -1,0 +1,252 @@
+{
+  "timestamp": "2026-04-04T14:23:45.184Z",
+  "cam": {
+    "bootstrapCI": {
+      "User portfolio": {
+        "n": 8,
+        "mean": 0.020975194552529185,
+        "ci95": [
+          0,
+          0.052225194552529185
+        ],
+        "se": 0.014684743234711299
+      },
+      "AI-adjacent": {
+        "n": 3,
+        "mean": 0.02466142043686283,
+        "ci95": [
+          0.01729106628242075,
+          0.03773584905660377
+        ],
+        "se": 0.005376483061143748
+      },
+      "Traditional (all)": {
+        "n": 21,
+        "mean": 0.007943405308374204,
+        "ci95": [
+          0.002155165347742747,
+          0.01595119082857898
+        ],
+        "se": 0.0035877482326203184
+      },
+      "Developer-led": {
+        "n": 12,
+        "mean": 0.013889524968396164,
+        "ci95": [
+          0.004418620305988296,
+          0.02588751500967068
+        ],
+        "se": 0.005682547632752847
+      },
+      "Foundation-governed": {
+        "n": 9,
+        "mean": 0.000015245761678253446,
+        "ci95": [
+          0,
+          0.000045737285034760334
+        ],
+        "se": 0.000014356041525759019
+      }
+    },
+    "mannWhitneyU": {
+      "devLed": {
+        "n": 12,
+        "repos": [
+          "facebook/react",
+          "vercel/next.js",
+          "microsoft/typescript",
+          "tailwindlabs/tailwindcss",
+          "shadcn-ui/ui",
+          "sveltejs/svelte",
+          "remix-run/remix",
+          "vitejs/vite",
+          "denoland/deno",
+          "prometheus/prometheus",
+          "django/django",
+          "pallets/flask"
+        ],
+        "values": [
+          0.041237113402061855,
+          0.01970802919708029,
+          0.012987012987012988,
+          0,
+          0.0013531799729364006,
+          0.0031545741324921135,
+          0.06821963394342762,
+          0.0031645569620253164,
+          0.005333333333333333,
+          0.007564296520423601,
+          0.003952569169960474,
+          0
+        ]
+      },
+      "foundation": {
+        "n": 9,
+        "repos": [
+          "nodejs/node",
+          "torvalds/linux",
+          "kubernetes/kubernetes",
+          "golang/go",
+          "rust-lang/rust",
+          "docker/cli",
+          "python/cpython",
+          "spring-projects/spring-boot",
+          "apache/kafka"
+        ],
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0.00013721185510428101,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "U": 10,
+      "z": 3.1269438398822866,
+      "p": 0.0017664711422280543,
+      "rankBiserial": 0.8148148148148149
+    }
+  },
+  "acr": {
+    "bootstrapCI": {
+      "User portfolio": {
+        "n": 8,
+        "mean": 0.208651296174246,
+        "ci95": [
+          0.05474302744039586,
+          0.4017901510634069
+        ],
+        "se": 0.0902305791396221
+      },
+      "AI-adjacent": {
+        "n": 3,
+        "mean": 0.05877987421383648,
+        "ci95": [
+          0.01,
+          0.09433962264150945
+        ],
+        "se": 0.020499907105961408
+      },
+      "Traditional (all)": {
+        "n": 21,
+        "mean": 0.049616620076082946,
+        "ci95": [
+          0.01198455228435662,
+          0.1092516148415202
+        ],
+        "se": 0.026475700914196324
+      },
+      "Developer-led": {
+        "n": 12,
+        "mean": 0.08418632845241379,
+        "ci95": [
+          0.02230545800845188,
+          0.181481499632443
+        ],
+        "se": 0.043845015010420485
+      },
+      "Foundation-governed": {
+        "n": 9,
+        "mean": 0.0035236755743084857,
+        "ci95": [
+          0.0013333333333333333,
+          0.006021565869667135
+        ],
+        "se": 0.0012065925981094598
+      }
+    },
+    "mannWhitneyU": {
+      "devLed": {
+        "n": 12,
+        "repos": [
+          "facebook/react",
+          "vercel/next.js",
+          "microsoft/typescript",
+          "tailwindlabs/tailwindcss",
+          "shadcn-ui/ui",
+          "sveltejs/svelte",
+          "remix-run/remix",
+          "vitejs/vite",
+          "denoland/deno",
+          "prometheus/prometheus",
+          "django/django",
+          "pallets/flask"
+        ],
+        "values": [
+          0,
+          0.116,
+          0.12987012987012986,
+          0.0660377358490566,
+          0.032,
+          0.03470031545741325,
+          0.006,
+          0.05362776025236593,
+          0.566,
+          0.006,
+          0,
+          0
+        ]
+      },
+      "foundation": {
+        "n": 9,
+        "repos": [
+          "nodejs/node",
+          "torvalds/linux",
+          "kubernetes/kubernetes",
+          "golang/go",
+          "rust-lang/rust",
+          "docker/cli",
+          "python/cpython",
+          "spring-projects/spring-boot",
+          "apache/kafka"
+        ],
+        "values": [
+          0.008,
+          0,
+          0,
+          0.002,
+          0.002,
+          0.0031645569620253164,
+          0.006,
+          0,
+          0.010548523206751054
+        ]
+      },
+      "U": 27.5,
+      "z": 1.883272994474559,
+      "p": 0.05966325255424265,
+      "rankBiserial": 0.4907407407407407
+    }
+  },
+  "governanceClassification": {
+    "developerLed": [
+      "facebook/react",
+      "vercel/next.js",
+      "microsoft/typescript",
+      "tailwindlabs/tailwindcss",
+      "shadcn-ui/ui",
+      "sveltejs/svelte",
+      "remix-run/remix",
+      "vitejs/vite",
+      "denoland/deno",
+      "prometheus/prometheus",
+      "django/django",
+      "pallets/flask"
+    ],
+    "foundationGoverned": [
+      "torvalds/linux",
+      "kubernetes/kubernetes",
+      "golang/go",
+      "python/cpython",
+      "spring-projects/spring-boot",
+      "apache/kafka",
+      "nodejs/node",
+      "docker/cli",
+      "rust-lang/rust"
+    ]
+  }
+}

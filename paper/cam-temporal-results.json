@@ -1,0 +1,2114 @@
+{
+  "timestamp": "2026-04-04T13:52:26.846Z",
+  "windows": [
+    30,
+    60,
+    90,
+    180,
+    365
+  ],
+  "minCommitsThreshold": 5,
+  "userResults": [
+    {
+      "repo": "heznpc/heznpc",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 28,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 28,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 28,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 28,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 28,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/canary",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 19,
+          "contextCommits": 2,
+          "cam": 0.10526315789473684,
+          "camPercent": "10.5%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 19,
+          "contextCommits": 2,
+          "cam": 0.10526315789473684,
+          "camPercent": "10.5%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 19,
+          "contextCommits": 2,
+          "cam": 0.10526315789473684,
+          "camPercent": "10.5%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 19,
+          "contextCommits": 2,
+          "cam": 0.10526315789473684,
+          "camPercent": "10.5%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 19,
+          "contextCommits": 2,
+          "cam": 0.10526315789473684,
+          "camPercent": "10.5%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/hello-project",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 2,
+          "contextCommits": 1,
+          "cam": 0.5,
+          "camPercent": "50.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 2,
+          "contextCommits": 1,
+          "cam": 0.5,
+          "camPercent": "50.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 2,
+          "contextCommits": 1,
+          "cam": 0.5,
+          "camPercent": "50.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 2,
+          "contextCommits": 1,
+          "cam": 0.5,
+          "camPercent": "50.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 2,
+          "contextCommits": 1,
+          "cam": 0.5,
+          "camPercent": "50.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/z-gap",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 18,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 18,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 18,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 18,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 18,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/ai-slop",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 3,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 3,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 3,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 3,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 3,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/aichemist",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/AirMCP",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".github/AGENTS.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 257,
+          "contextCommits": 11,
+          "cam": 0.042801556420233464,
+          "camPercent": "4.3%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 257,
+          "contextCommits": 11,
+          "cam": 0.042801556420233464,
+          "camPercent": "4.3%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 257,
+          "contextCommits": 11,
+          "cam": 0.042801556420233464,
+          "camPercent": "4.3%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 257,
+          "contextCommits": 11,
+          "cam": 0.042801556420233464,
+          "camPercent": "4.3%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 257,
+          "contextCommits": 11,
+          "cam": 0.042801556420233464,
+          "camPercent": "4.3%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/skillBridge",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 74,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 129,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 129,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 129,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 129,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/villagent",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/eddy",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 10,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 10,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 10,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 10,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 10,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/analogic-appropriation",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 9,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 9,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 9,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 9,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 9,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/PLOIDY",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 52,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 52,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 52,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 52,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 52,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/statute-of-limitations",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "contextCommits": 1,
+          "cam": 1,
+          "camPercent": "100.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/sediment",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 2,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 2,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 2,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 2,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 2,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/holder",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/narcissus",
+      "group": "user",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    }
+  ],
+  "refResults": [
+    {
+      "repo": "vercel/ai",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".cursor/skills",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "packages/ai/AGENTS.md",
+        "skills/use-ai-sdk/references/type-safe-agents.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 304,
+          "contextCommits": 3,
+          "cam": 0.009868421052631578,
+          "camPercent": "1.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 649,
+          "contextCommits": 7,
+          "cam": 0.01078582434514638,
+          "camPercent": "1.1%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 1041,
+          "contextCommits": 18,
+          "cam": 0.01729106628242075,
+          "camPercent": "1.7%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1969,
+          "contextCommits": 18,
+          "cam": 0.009141696292534281,
+          "camPercent": "0.9%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 3456,
+          "contextCommits": 18,
+          "cam": 0.005208333333333333,
+          "camPercent": "0.5%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "defaultBranch": "master",
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 230,
+          "contextCommits": 2,
+          "cam": 0.008695652173913044,
+          "camPercent": "0.9%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 439,
+          "contextCommits": 5,
+          "cam": 0.011389521640091117,
+          "camPercent": "1.1%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 633,
+          "contextCommits": 12,
+          "cam": 0.018957345971563982,
+          "camPercent": "1.9%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1250,
+          "contextCommits": 18,
+          "cam": 0.0144,
+          "camPercent": "1.4%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 2584,
+          "contextCommits": 21,
+          "cam": 0.008126934984520124,
+          "camPercent": "0.8%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "CLAUDE.md",
+        "claude_agent_sdk/chief_of_staff_agent/CLAUDE.md",
+        "skills/CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 26,
+          "contextCommits": 1,
+          "cam": 0.038461538461538464,
+          "camPercent": "3.8%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 35,
+          "contextCommits": 2,
+          "cam": 0.05714285714285714,
+          "camPercent": "5.7%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 53,
+          "contextCommits": 2,
+          "cam": 0.03773584905660377,
+          "camPercent": "3.8%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 202,
+          "contextCommits": 9,
+          "cam": 0.04455445544554455,
+          "camPercent": "4.5%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 296,
+          "contextCommits": 9,
+          "cam": 0.030405405405405407,
+          "camPercent": "3.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "cohere-ai/cohere-toolkit",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "stackblitz/bolt.new",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 60,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 180,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 0,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": true
+        }
+      ]
+    },
+    {
+      "repo": "facebook/react",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "CLAUDE.md",
+        "compiler/CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 31,
+          "contextCommits": 1,
+          "cam": 0.03225806451612903,
+          "camPercent": "3.2%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 122,
+          "contextCommits": 5,
+          "cam": 0.040983606557377046,
+          "camPercent": "4.1%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 194,
+          "contextCommits": 8,
+          "cam": 0.041237113402061855,
+          "camPercent": "4.1%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 426,
+          "contextCommits": 8,
+          "cam": 0.018779342723004695,
+          "camPercent": "1.9%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1228,
+          "contextCommits": 8,
+          "cam": 0.006514657980456026,
+          "camPercent": "0.7%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "vercel/next.js",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "canary",
+      "agentEraFiles": [
+        ".cursor/commands/gt-workflow.md",
+        ".cursor/worktrees.json",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 412,
+          "contextCommits": 5,
+          "cam": 0.012135922330097087,
+          "camPercent": "1.2%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 921,
+          "contextCommits": 13,
+          "cam": 0.014115092290988056,
+          "camPercent": "1.4%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 1370,
+          "contextCommits": 27,
+          "cam": 0.01970802919708029,
+          "camPercent": "2.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 2426,
+          "contextCommits": 27,
+          "cam": 0.011129431162407255,
+          "camPercent": "1.1%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 5430,
+          "contextCommits": 27,
+          "cam": 0.004972375690607734,
+          "camPercent": "0.5%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "microsoft/typescript",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".github/copilot-instructions.md",
+        "AGENTS.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 9,
+          "contextCommits": 1,
+          "cam": 0.1111111111111111,
+          "camPercent": "11.1%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 46,
+          "contextCommits": 1,
+          "cam": 0.021739130434782608,
+          "camPercent": "2.2%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 77,
+          "contextCommits": 1,
+          "cam": 0.012987012987012988,
+          "camPercent": "1.3%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 141,
+          "contextCommits": 1,
+          "cam": 0.0070921985815602835,
+          "camPercent": "0.7%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 270,
+          "contextCommits": 5,
+          "cam": 0.018518518518518517,
+          "camPercent": "1.9%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "nodejs/node",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 206,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 424,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 642,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1235,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 2562,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "tailwindlabs/tailwindcss",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 34,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 68,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 106,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 235,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 495,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".cursor/rules/registry-bases-parity.mdc"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 259,
+          "contextCommits": 1,
+          "cam": 0.003861003861003861,
+          "camPercent": "0.4%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 615,
+          "contextCommits": 1,
+          "cam": 0.0016260162601626016,
+          "camPercent": "0.2%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 739,
+          "contextCommits": 1,
+          "cam": 0.0013531799729364006,
+          "camPercent": "0.1%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 991,
+          "contextCommits": 1,
+          "cam": 0.0010090817356205853,
+          "camPercent": "0.1%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1188,
+          "contextCommits": 1,
+          "cam": 0.0008417508417508417,
+          "camPercent": "0.1%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "sveltejs/svelte",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "AGENTS.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 79,
+          "contextCommits": 1,
+          "cam": 0.012658227848101266,
+          "camPercent": "1.3%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 221,
+          "contextCommits": 1,
+          "cam": 0.004524886877828055,
+          "camPercent": "0.5%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 317,
+          "contextCommits": 1,
+          "cam": 0.0031545741324921135,
+          "camPercent": "0.3%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 510,
+          "contextCommits": 1,
+          "cam": 0.00196078431372549,
+          "camPercent": "0.2%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 995,
+          "contextCommits": 1,
+          "cam": 0.0010050251256281408,
+          "camPercent": "0.1%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "remix-run/remix",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "AGENTS.md",
+        "packages/component/AGENTS.md",
+        "packages/route-pattern/src/lib/route-pattern/AGENTS.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 285,
+          "contextCommits": 12,
+          "cam": 0.042105263157894736,
+          "camPercent": "4.2%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 495,
+          "contextCommits": 30,
+          "cam": 0.06060606060606061,
+          "camPercent": "6.1%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 601,
+          "contextCommits": 41,
+          "cam": 0.06821963394342762,
+          "camPercent": "6.8%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 962,
+          "contextCommits": 53,
+          "cam": 0.0550935550935551,
+          "camPercent": "5.5%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1409,
+          "contextCommits": 53,
+          "cam": 0.03761533002129169,
+          "camPercent": "3.8%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "vitejs/vite",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".github/copilot-instructions.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 124,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 222,
+          "contextCommits": 1,
+          "cam": 0.0045045045045045045,
+          "camPercent": "0.5%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 317,
+          "contextCommits": 1,
+          "cam": 0.0031545741324921135,
+          "camPercent": "0.3%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 603,
+          "contextCommits": 1,
+          "cam": 0.001658374792703151,
+          "camPercent": "0.2%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1416,
+          "contextCommits": 2,
+          "cam": 0.0014124293785310734,
+          "camPercent": "0.1%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "denoland/deno",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".github/copilot-instructions.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 336,
+          "contextCommits": 3,
+          "cam": 0.008928571428571428,
+          "camPercent": "0.9%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 609,
+          "contextCommits": 4,
+          "cam": 0.006568144499178982,
+          "camPercent": "0.7%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 751,
+          "contextCommits": 4,
+          "cam": 0.005326231691078562,
+          "camPercent": "0.5%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1081,
+          "contextCommits": 5,
+          "cam": 0.004625346901017576,
+          "camPercent": "0.5%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 2072,
+          "contextCommits": 5,
+          "cam": 0.002413127413127413,
+          "camPercent": "0.2%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "torvalds/linux",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1666,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 5018,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 13884,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 32726,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 77539,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "kubernetes/kubernetes",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 821,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 1615,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 2352,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 3968,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 7540,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "golang/go",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 333,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 563,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 719,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1626,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 3132,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "rust-lang/rust",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "src/tools/rust-analyzer/AGENTS.md",
+        "src/tools/rust-analyzer/CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1989,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 4671,
+          "contextCommits": 1,
+          "cam": 0.00021408691928923143,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 7272,
+          "contextCommits": 1,
+          "cam": 0.0001375137513751375,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 14120,
+          "contextCommits": 1,
+          "cam": 0.00007082152974504249,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 30953,
+          "contextCommits": 1,
+          "cam": 0.00003230704616676897,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "docker/cli",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "master",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 133,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 235,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 316,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 637,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1599,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 185,
+          "contextCommits": 5,
+          "cam": 0.02702702702702703,
+          "camPercent": "2.7%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 446,
+          "contextCommits": 5,
+          "cam": 0.011210762331838564,
+          "camPercent": "1.1%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 661,
+          "contextCommits": 5,
+          "cam": 0.007564296520423601,
+          "camPercent": "0.8%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 1129,
+          "contextCommits": 5,
+          "cam": 0.0044286979627989375,
+          "camPercent": "0.4%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1850,
+          "contextCommits": 5,
+          "cam": 0.002702702702702703,
+          "camPercent": "0.3%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "python/cpython",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 395,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 746,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 1065,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 2196,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 4604,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "django/django",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [
+        ".github/copilot-instructions.md"
+      ],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 80,
+          "contextCommits": 1,
+          "cam": 0.0125,
+          "camPercent": "1.3%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 166,
+          "contextCommits": 1,
+          "cam": 0.006024096385542169,
+          "camPercent": "0.6%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 253,
+          "contextCommits": 1,
+          "cam": 0.003952569169960474,
+          "camPercent": "0.4%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 507,
+          "contextCommits": 1,
+          "cam": 0.0019723865877712033,
+          "camPercent": "0.2%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 954,
+          "contextCommits": 1,
+          "cam": 0.0010482180293501049,
+          "camPercent": "0.1%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "pallets/flask",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 6,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 25,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 48,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 57,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 113,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "spring-projects/spring-boot",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "main",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 579,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 1037,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 1461,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 3113,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 6743,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    },
+    {
+      "repo": "apache/kafka",
+      "group": "reference",
+      "subgroup": "traditional",
+      "defaultBranch": "trunk",
+      "agentEraFiles": [],
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 238,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 60,
+          "totalCommits": 376,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 474,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 180,
+          "totalCommits": 883,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 1851,
+          "contextCommits": 0,
+          "cam": 0,
+          "camPercent": "0.0%",
+          "excluded": false
+        }
+      ]
+    }
+  ]
+}

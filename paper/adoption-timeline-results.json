@@ -1,0 +1,331 @@
+{
+  "timestamp": "2026-04-04T14:11:56.359Z",
+  "apiCallCount": 114,
+  "adoptions": [
+    {
+      "repo": "microsoft/typescript",
+      "subgroup": "traditional",
+      "filePath": ".github/copilot-instructions.md",
+      "fileType": "copilot",
+      "firstCommitDate": "2025-06-18T21:43:15Z",
+      "firstCommitSha": "479285d",
+      "firstCommitMessage": "Create fourslash syntax, compiler testcase, and build instructions summary (#619"
+    },
+    {
+      "repo": "vitejs/vite",
+      "subgroup": "traditional",
+      "filePath": ".github/copilot-instructions.md",
+      "fileType": "copilot",
+      "firstCommitDate": "2025-07-20T10:04:02Z",
+      "firstCommitSha": "c4d5940",
+      "firstCommitMessage": "chore: add copilot agent configs (#20422)"
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "subgroup": "ai-adjacent",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2025-07-30T23:04:45Z",
+      "firstCommitSha": "32e5040",
+      "firstCommitMessage": "chore: add CLAUDE.md (#32334)"
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "subgroup": "ai-adjacent",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2025-09-24T05:02:14Z",
+      "firstCommitSha": "d99a02b",
+      "firstCommitMessage": "chore: add `AGENTS.md` (#33076)"
+    },
+    {
+      "repo": "remix-run/remix",
+      "subgroup": "traditional",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2025-10-11T20:44:02Z",
+      "firstCommitSha": "8f7c4b7",
+      "firstCommitMessage": "Add AGENTS.md"
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "subgroup": "ai-adjacent",
+      "filePath": "skills/CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2025-10-15T03:55:32Z",
+      "firstCommitSha": "2feff76",
+      "firstCommitMessage": "Complete Skills Cookbook Notebook 1 with working examples"
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "subgroup": "ai-adjacent",
+      "filePath": "claude_agent_sdk/chief_of_staff_agent/CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2025-10-23T01:10:54Z",
+      "firstCommitSha": "2e7b632",
+      "firstCommitMessage": "Update legacy models across non-legacy cookbooks"
+    },
+    {
+      "repo": "denoland/deno",
+      "subgroup": "traditional",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2025-11-06T20:24:40Z",
+      "firstCommitSha": "cf4379d",
+      "firstCommitMessage": "chore: allow triggering pr generation manually, tweak pr generation workflow, ad"
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "subgroup": "ai-adjacent",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2025-11-28T06:44:59Z",
+      "firstCommitSha": "cbcc709",
+      "firstCommitMessage": "Lint + Format all cookbooks/scripts (#305)"
+    },
+    {
+      "repo": "vercel/next.js",
+      "subgroup": "traditional",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-01-05T12:32:27Z",
+      "firstCommitSha": "3c47bd9",
+      "firstCommitMessage": "chore: add Claude Code configuration (#87943)"
+    },
+    {
+      "repo": "vercel/next.js",
+      "subgroup": "traditional",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-05T14:52:09Z",
+      "firstCommitSha": "8fd79ff",
+      "firstCommitMessage": "Rename CLAUDE.md to AGENTS.md with symlink (#88105)"
+    },
+    {
+      "repo": "vercel/ai",
+      "subgroup": "ai-adjacent",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-05T20:04:32Z",
+      "firstCommitSha": "04ad80e",
+      "firstCommitMessage": "chore: add AGENTS.md (#11534)"
+    },
+    {
+      "repo": "vercel/next.js",
+      "subgroup": "traditional",
+      "filePath": ".cursor/worktrees.json",
+      "fileType": "cursor",
+      "firstCommitDate": "2026-01-12T15:18:47Z",
+      "firstCommitSha": "5df44d1",
+      "firstCommitMessage": "Add .cursor/worktrees.json configuration (#88415)"
+    },
+    {
+      "repo": "vercel/ai",
+      "subgroup": "ai-adjacent",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-01-13T13:50:19Z",
+      "firstCommitSha": "ba1912c",
+      "firstCommitMessage": "chore: add CLAUDE.md symlink (#11763)"
+    },
+    {
+      "repo": "remix-run/remix",
+      "subgroup": "traditional",
+      "filePath": "packages/component/AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-13T19:39:47Z",
+      "firstCommitSha": "0b0ca63",
+      "firstCommitMessage": "added agents file, changed \"render props\" to just \"props\" (#10951)"
+    },
+    {
+      "repo": "vercel/ai",
+      "subgroup": "ai-adjacent",
+      "filePath": "packages/ai/AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-14T12:14:11Z",
+      "firstCommitSha": "b3b5624",
+      "firstCommitMessage": "chore(ai): rename examples/ai-core to examples/ai-functions (#11762)"
+    },
+    {
+      "repo": "vercel/ai",
+      "subgroup": "ai-adjacent",
+      "filePath": ".cursor/skills",
+      "fileType": "cursor",
+      "firstCommitDate": "2026-01-22T13:55:13Z",
+      "firstCommitSha": "9b0b6b3",
+      "firstCommitMessage": "chore: add skill for capturing api response test fixtures (#11953)"
+    },
+    {
+      "repo": "vercel/next.js",
+      "subgroup": "traditional",
+      "filePath": ".cursor/commands/gt-workflow.md",
+      "fileType": "cursor",
+      "firstCommitDate": "2026-01-23T12:42:30Z",
+      "firstCommitSha": "631b2c6",
+      "firstCommitMessage": "Add Graphite workflow Cursor command (#88939)"
+    },
+    {
+      "repo": "facebook/react",
+      "subgroup": "traditional",
+      "filePath": "compiler/CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-01-23T18:36:43Z",
+      "firstCommitSha": "2af6822",
+      "firstCommitMessage": "[compiler] Claude file/settings (#35523)"
+    },
+    {
+      "repo": "facebook/react",
+      "subgroup": "traditional",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-01-24T01:16:06Z",
+      "firstCommitSha": "a056625",
+      "firstCommitMessage": "[repo] init claude config (#35617)"
+    },
+    {
+      "repo": "vercel/ai",
+      "subgroup": "ai-adjacent",
+      "filePath": "skills/use-ai-sdk/references/type-safe-agents.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-26T21:00:20Z",
+      "firstCommitSha": "abc1af8",
+      "firstCommitMessage": "skill: update skill with common errors and best practices (#12038)"
+    },
+    {
+      "repo": "remix-run/remix",
+      "subgroup": "traditional",
+      "filePath": "packages/route-pattern/src/lib/route-pattern/AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-01-31T23:27:21Z",
+      "firstCommitSha": "8744728",
+      "firstCommitMessage": "route-pattern: organize route-pattern helpers as PartPattern methods or by featu"
+    },
+    {
+      "repo": "rust-lang/rust",
+      "subgroup": "traditional",
+      "filePath": "src/tools/rust-analyzer/AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-03-02T11:32:20Z",
+      "firstCommitSha": "7bd3c42",
+      "firstCommitMessage": "internal: Define rules for LLMs"
+    },
+    {
+      "repo": "rust-lang/rust",
+      "subgroup": "traditional",
+      "filePath": "src/tools/rust-analyzer/CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-03-02T11:32:20Z",
+      "firstCommitSha": "7bd3c42",
+      "firstCommitMessage": "internal: Define rules for LLMs"
+    },
+    {
+      "repo": "django/django",
+      "subgroup": "traditional",
+      "filePath": ".github/copilot-instructions.md",
+      "fileType": "copilot",
+      "firstCommitDate": "2026-03-05T12:20:07Z",
+      "firstCommitSha": "3180ddb",
+      "firstCommitMessage": "Discouraged automated AI reviews of pull requests."
+    },
+    {
+      "repo": "denoland/deno",
+      "subgroup": "traditional",
+      "filePath": ".github/copilot-instructions.md",
+      "fileType": "copilot",
+      "firstCommitDate": "2026-03-05T16:05:58Z",
+      "firstCommitSha": "8e31633",
+      "firstCommitMessage": "docs: add GitHub Copilot instructions (#32492)"
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "subgroup": "traditional",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-03-12T09:39:26Z",
+      "firstCommitSha": "ac8c436",
+      "firstCommitMessage": "Add AGENTS.md file"
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "subgroup": "traditional",
+      "filePath": "CLAUDE.md",
+      "fileType": "CLAUDE.md",
+      "firstCommitDate": "2026-03-12T11:11:31Z",
+      "firstCommitSha": "1b8efe9",
+      "firstCommitMessage": "Tell Claude to read it too"
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "subgroup": "traditional",
+      "filePath": ".cursor/rules/registry-bases-parity.mdc",
+      "fileType": "cursor",
+      "firstCommitDate": "2026-03-19T19:35:01Z",
+      "firstCommitSha": "687f098",
+      "firstCommitMessage": "feat: chartColor and fontHeading (#10115)"
+    },
+    {
+      "repo": "microsoft/typescript",
+      "subgroup": "traditional",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-03-26T22:20:50Z",
+      "firstCommitSha": "7881fe5",
+      "firstCommitMessage": "Add coding agent instructions: refuse PRs unless maintenance mode is acknowledge"
+    },
+    {
+      "repo": "sveltejs/svelte",
+      "subgroup": "traditional",
+      "filePath": "AGENTS.md",
+      "fileType": "AGENTS.md",
+      "firstCommitDate": "2026-04-02T17:49:23Z",
+      "firstCommitSha": "704e3bb",
+      "firstCommitMessage": "chore: agent hints for perf investigations (#18047)"
+    }
+  ],
+  "repoFirstAdoption": {
+    "microsoft/typescript": "2025-06-18T21:43:15Z",
+    "vitejs/vite": "2025-07-20T10:04:02Z",
+    "langchain-ai/langchain": "2025-07-30T23:04:45Z",
+    "remix-run/remix": "2025-10-11T20:44:02Z",
+    "anthropics/anthropic-cookbook": "2025-10-15T03:55:32Z",
+    "denoland/deno": "2025-11-06T20:24:40Z",
+    "vercel/next.js": "2026-01-05T12:32:27Z",
+    "vercel/ai": "2026-01-05T20:04:32Z",
+    "facebook/react": "2026-01-23T18:36:43Z",
+    "rust-lang/rust": "2026-03-02T11:32:20Z",
+    "django/django": "2026-03-05T12:20:07Z",
+    "prometheus/prometheus": "2026-03-12T09:39:26Z",
+    "shadcn-ui/ui": "2026-03-19T19:35:01Z",
+    "sveltejs/svelte": "2026-04-02T17:49:23Z"
+  },
+  "monthlyAdoptions": {
+    "2025-06": [
+      "microsoft/typescript"
+    ],
+    "2025-07": [
+      "vitejs/vite",
+      "langchain-ai/langchain"
+    ],
+    "2025-10": [
+      "remix-run/remix",
+      "anthropics/anthropic-cookbook"
+    ],
+    "2025-11": [
+      "denoland/deno"
+    ],
+    "2026-01": [
+      "vercel/next.js",
+      "vercel/ai",
+      "facebook/react"
+    ],
+    "2026-03": [
+      "rust-lang/rust",
+      "django/django",
+      "prometheus/prometheus",
+      "shadcn-ui/ui"
+    ],
+    "2026-04": [
+      "sveltejs/svelte"
+    ]
+  }
+}

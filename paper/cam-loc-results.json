@@ -1,0 +1,723 @@
+{
+  "timestamp": "2026-04-04T13:59:16.877Z",
+  "window": "90d",
+  "maxCommitsPerRepo": 200,
+  "minCommitsThreshold": 5,
+  "apiCallCount": 2900,
+  "userResults": [
+    {
+      "repo": "heznpc/AirMCP",
+      "group": "user",
+      "totalCommits90d": 258,
+      "commitsFetched": 200,
+      "totalLinesChanged": 75839,
+      "agentLinesChanged": 102,
+      "camLoc": 0.0013449544429647016,
+      "camLocPercent": "0.13%",
+      "cam": 0.06,
+      "camPercent": "6.0%",
+      "excluded": false,
+      "agentFileStats": {
+        ".github/AGENTS.md": {
+          "additions": 56,
+          "deletions": 46
+        }
+      }
+    },
+    {
+      "repo": "heznpc/heznpc",
+      "group": "user",
+      "totalCommits90d": 28,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/canary",
+      "group": "user",
+      "totalCommits90d": 19,
+      "commitsFetched": 19,
+      "totalLinesChanged": 23236,
+      "agentLinesChanged": 26,
+      "camLoc": 0.0011189533482527114,
+      "camLocPercent": "0.11%",
+      "cam": 0.10526315789473684,
+      "camPercent": "10.5%",
+      "excluded": false,
+      "agentFileStats": {
+        "CLAUDE.md": {
+          "additions": 21,
+          "deletions": 0
+        },
+        "AGENTS.md": {
+          "additions": 5,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "heznpc/hello-project",
+      "group": "user",
+      "totalCommits90d": 2,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/z-gap",
+      "group": "user",
+      "totalCommits90d": 18,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/ai-slop",
+      "group": "user",
+      "totalCommits90d": 3,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/aichemist",
+      "group": "user",
+      "totalCommits90d": 1,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/skillBridge",
+      "group": "user",
+      "totalCommits90d": 129,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/villagent",
+      "group": "user",
+      "totalCommits90d": 1,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/eddy",
+      "group": "user",
+      "totalCommits90d": 10,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/analogic-appropriation",
+      "group": "user",
+      "totalCommits90d": 9,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/PLOIDY",
+      "group": "user",
+      "totalCommits90d": 52,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/statute-of-limitations",
+      "group": "user",
+      "totalCommits90d": 1,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/sediment",
+      "group": "user",
+      "totalCommits90d": 2,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/holder",
+      "group": "user",
+      "totalCommits90d": 1,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "heznpc/narcissus",
+      "group": "user",
+      "totalCommits90d": 1,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    }
+  ],
+  "refResults": [
+    {
+      "repo": "vercel/ai",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "totalCommits90d": 1041,
+      "commitsFetched": 200,
+      "totalLinesChanged": 116504,
+      "agentLinesChanged": 19,
+      "camLoc": 0.0001630845292865481,
+      "camLocPercent": "0.02%",
+      "cam": 0.01,
+      "camPercent": "1.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 9,
+          "deletions": 10
+        }
+      }
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "totalCommits90d": 633,
+      "commitsFetched": 200,
+      "totalLinesChanged": 20864,
+      "agentLinesChanged": 24,
+      "camLoc": 0.0011503067484662577,
+      "camLocPercent": "0.12%",
+      "cam": 0.01,
+      "camPercent": "1.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 6,
+          "deletions": 6
+        },
+        "CLAUDE.md": {
+          "additions": 6,
+          "deletions": 6
+        }
+      }
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "totalCommits90d": 53,
+      "commitsFetched": 53,
+      "totalLinesChanged": 37758,
+      "agentLinesChanged": 15,
+      "camLoc": 0.00039726680438582554,
+      "camLocPercent": "0.04%",
+      "cam": 0.03773584905660377,
+      "camPercent": "3.8%",
+      "excluded": false,
+      "agentFileStats": {
+        "CLAUDE.md": {
+          "additions": 11,
+          "deletions": 4
+        }
+      }
+    },
+    {
+      "repo": "cohere-ai/cohere-toolkit",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "totalCommits90d": 0,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "stackblitz/bolt.new",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "totalCommits90d": 0,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": true,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "facebook/react",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 194,
+      "commitsFetched": 194,
+      "totalLinesChanged": 72025,
+      "agentLinesChanged": 305,
+      "camLoc": 0.004234640749739674,
+      "camLocPercent": "0.42%",
+      "cam": 0.041237113402061855,
+      "camPercent": "4.1%",
+      "excluded": false,
+      "agentFileStats": {
+        "compiler/CLAUDE.md": {
+          "additions": 279,
+          "deletions": 18
+        },
+        "CLAUDE.md": {
+          "additions": 8,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "vercel/next.js",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 1370,
+      "commitsFetched": 200,
+      "totalLinesChanged": 56201,
+      "agentLinesChanged": 24,
+      "camLoc": 0.0004270386647924414,
+      "camLocPercent": "0.04%",
+      "cam": 0.02,
+      "camPercent": "2.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 19,
+          "deletions": 5
+        }
+      }
+    },
+    {
+      "repo": "microsoft/typescript",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 77,
+      "commitsFetched": 77,
+      "totalLinesChanged": 170348,
+      "agentLinesChanged": 59,
+      "camLoc": 0.00034634982506398667,
+      "camLocPercent": "0.03%",
+      "cam": 0.012987012987012988,
+      "camPercent": "1.3%",
+      "excluded": false,
+      "agentFileStats": {
+        ".github/copilot-instructions.md": {
+          "additions": 29,
+          "deletions": 0
+        },
+        "AGENTS.md": {
+          "additions": 30,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "nodejs/node",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 642,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "tailwindlabs/tailwindcss",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 106,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 739,
+      "commitsFetched": 200,
+      "totalLinesChanged": 220966,
+      "agentLinesChanged": 22,
+      "camLoc": 0.00009956282867047419,
+      "camLocPercent": "0.01%",
+      "cam": 0.005,
+      "camPercent": "0.5%",
+      "excluded": false,
+      "agentFileStats": {
+        ".cursor/rules/registry-bases-parity.mdc": {
+          "additions": 22,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "sveltejs/svelte",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 317,
+      "commitsFetched": 200,
+      "totalLinesChanged": 19674,
+      "agentLinesChanged": 9,
+      "camLoc": 0.0004574565416285453,
+      "camLocPercent": "0.05%",
+      "cam": 0.005,
+      "camPercent": "0.5%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 9,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "remix-run/remix",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 601,
+      "commitsFetched": 200,
+      "totalLinesChanged": 88375,
+      "agentLinesChanged": 893,
+      "camLoc": 0.010104667609618105,
+      "camLocPercent": "1.01%",
+      "cam": 0.02,
+      "camPercent": "2.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 62,
+          "deletions": 71
+        },
+        "packages/component/AGENTS.md": {
+          "additions": 406,
+          "deletions": 354
+        }
+      }
+    },
+    {
+      "repo": "vitejs/vite",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 317,
+      "commitsFetched": 200,
+      "totalLinesChanged": 23672,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.00%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "denoland/deno",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 751,
+      "commitsFetched": 200,
+      "totalLinesChanged": 65637,
+      "agentLinesChanged": 151,
+      "camLoc": 0.0023005317122964182,
+      "camLocPercent": "0.23%",
+      "cam": 0.01,
+      "camPercent": "1.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "CLAUDE.md": {
+          "additions": 15,
+          "deletions": 19
+        },
+        ".github/copilot-instructions.md": {
+          "additions": 117,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "torvalds/linux",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 13884,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "kubernetes/kubernetes",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 2352,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "golang/go",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 719,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "rust-lang/rust",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 7272,
+      "commitsFetched": 200,
+      "totalLinesChanged": 40562,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.00%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "docker/cli",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 316,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 661,
+      "commitsFetched": 200,
+      "totalLinesChanged": 55404,
+      "agentLinesChanged": 410,
+      "camLoc": 0.0074001877120785505,
+      "camLocPercent": "0.74%",
+      "cam": 0.03,
+      "camPercent": "3.0%",
+      "excluded": false,
+      "agentFileStats": {
+        "AGENTS.md": {
+          "additions": 352,
+          "deletions": 56
+        },
+        "CLAUDE.md": {
+          "additions": 2,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "python/cpython",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 1065,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "django/django",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 253,
+      "commitsFetched": 200,
+      "totalLinesChanged": 9251,
+      "agentLinesChanged": 10,
+      "camLoc": 0.0010809642200843152,
+      "camLocPercent": "0.11%",
+      "cam": 0.005,
+      "camPercent": "0.5%",
+      "excluded": false,
+      "agentFileStats": {
+        ".github/copilot-instructions.md": {
+          "additions": 10,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "repo": "pallets/flask",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 48,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "spring-projects/spring-boot",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 1461,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    },
+    {
+      "repo": "apache/kafka",
+      "group": "reference",
+      "subgroup": "traditional",
+      "totalCommits90d": 474,
+      "commitsFetched": 0,
+      "totalLinesChanged": 0,
+      "agentLinesChanged": 0,
+      "camLoc": 0,
+      "camLocPercent": "0.0%",
+      "cam": 0,
+      "camPercent": "0.0%",
+      "excluded": false,
+      "agentFileStats": {}
+    }
+  ]
+}
