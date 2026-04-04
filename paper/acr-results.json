@@ -1,0 +1,3117 @@
+{
+  "timestamp": "2026-04-04T14:09:19.716Z",
+  "windows": [
+    30,
+    90,
+    365
+  ],
+  "maxCommitsPerWindow": 500,
+  "minCommitsThreshold": 5,
+  "apiCallCount": 343,
+  "userResults": [
+    {
+      "repo": "heznpc/heznpc",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 29,
+          "commitsFetched": 29,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 29,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 29,
+          "commitsFetched": 29,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 29,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 29,
+          "commitsFetched": 29,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 29,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/AirMCP",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 258,
+          "commitsFetched": 258,
+          "aiAgentCommits": 7,
+          "botCommits": 23,
+          "humanCommits": 228,
+          "acr": 0.027131782945736434,
+          "acrPercent": "2.7%",
+          "botRate": 0.08914728682170543,
+          "botRatePercent": "8.9%",
+          "automationRate": 0.11627906976744186,
+          "automationPercent": "11.6%",
+          "aiToolBreakdown": {
+            "claude": 7
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 258,
+          "commitsFetched": 258,
+          "aiAgentCommits": 7,
+          "botCommits": 23,
+          "humanCommits": 228,
+          "acr": 0.027131782945736434,
+          "acrPercent": "2.7%",
+          "botRate": 0.08914728682170543,
+          "botRatePercent": "8.9%",
+          "automationRate": 0.11627906976744186,
+          "automationPercent": "11.6%",
+          "aiToolBreakdown": {
+            "claude": 7
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 258,
+          "commitsFetched": 258,
+          "aiAgentCommits": 7,
+          "botCommits": 23,
+          "humanCommits": 228,
+          "acr": 0.027131782945736434,
+          "acrPercent": "2.7%",
+          "botRate": 0.08914728682170543,
+          "botRatePercent": "8.9%",
+          "automationRate": 0.11627906976744186,
+          "automationPercent": "11.6%",
+          "aiToolBreakdown": {
+            "claude": 7
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "5c74f96",
+          "tool": "claude",
+          "snippet": "fix: expand sync-version.mjs to cover all version references"
+        },
+        {
+          "sha": "6a630e8",
+          "tool": "claude",
+          "snippet": "chore: release v2.6.0"
+        },
+        {
+          "sha": "8ed1e06",
+          "tool": "claude",
+          "snippet": "fix(security): add gws_raw service/method whitelist; expand outputSchema and tes"
+        },
+        {
+          "sha": "a06bd3d",
+          "tool": "claude",
+          "snippet": "feat: integrate tool graph links into 9 core modules"
+        },
+        {
+          "sha": "47676d0",
+          "tool": "claude",
+          "snippet": "feat: add health, speech, intelligence, pasteboard modules + iOS server"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/canary",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 19,
+          "commitsFetched": 19,
+          "aiAgentCommits": 5,
+          "botCommits": 0,
+          "humanCommits": 14,
+          "acr": 0.2631578947368421,
+          "acrPercent": "26.3%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.2631578947368421,
+          "automationPercent": "26.3%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 19,
+          "commitsFetched": 19,
+          "aiAgentCommits": 5,
+          "botCommits": 0,
+          "humanCommits": 14,
+          "acr": 0.2631578947368421,
+          "acrPercent": "26.3%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.2631578947368421,
+          "automationPercent": "26.3%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 19,
+          "commitsFetched": 19,
+          "aiAgentCommits": 5,
+          "botCommits": 0,
+          "humanCommits": 14,
+          "acr": 0.2631578947368421,
+          "acrPercent": "26.3%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.2631578947368421,
+          "automationPercent": "26.3%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "523a62d",
+          "tool": "claude",
+          "snippet": "refactor: OSS readiness — externalize config, add LICENSE, code cleanup"
+        },
+        {
+          "sha": "f736845",
+          "tool": "claude",
+          "snippet": "chore: remove TODO.md and add to .gitignore"
+        },
+        {
+          "sha": "17488c5",
+          "tool": "claude",
+          "snippet": "feat: add OpenSSF Scorecard integration and Dependabot/Renovate detection"
+        },
+        {
+          "sha": "6847483",
+          "tool": "claude",
+          "snippet": "feat: add English README, multilingual landing page, and GitHub Pages deployment"
+        },
+        {
+          "sha": "62507d6",
+          "tool": "claude",
+          "snippet": "feat: add code quality, activity, and data freshness scanners with grader integr"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/hello-project",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/z-gap",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 18,
+          "commitsFetched": 18,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 17,
+          "acr": 0.05555555555555555,
+          "acrPercent": "5.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.05555555555555555,
+          "automationPercent": "5.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 18,
+          "commitsFetched": 18,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 17,
+          "acr": 0.05555555555555555,
+          "acrPercent": "5.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.05555555555555555,
+          "automationPercent": "5.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 18,
+          "commitsFetched": 18,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 17,
+          "acr": 0.05555555555555555,
+          "acrPercent": "5.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.05555555555555555,
+          "automationPercent": "5.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "d7a9567",
+          "tool": "claude",
+          "snippet": "feat: revise P1/P2 analysis, add disambiguation bound, prepare COLM 2026 submiss"
+        },
+        {
+          "sha": "d7a9567",
+          "tool": "claude",
+          "snippet": "feat: revise P1/P2 analysis, add disambiguation bound, prepare COLM 2026 submiss"
+        },
+        {
+          "sha": "d7a9567",
+          "tool": "claude",
+          "snippet": "feat: revise P1/P2 analysis, add disambiguation bound, prepare COLM 2026 submiss"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/ai-slop",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 3,
+          "commitsFetched": 3,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 3,
+          "commitsFetched": 3,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 3,
+          "commitsFetched": 3,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/aichemist",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/skillBridge",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 74,
+          "commitsFetched": 74,
+          "aiAgentCommits": 54,
+          "botCommits": 0,
+          "humanCommits": 20,
+          "acr": 0.7297297297297297,
+          "acrPercent": "73.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.7297297297297297,
+          "automationPercent": "73.0%",
+          "aiToolBreakdown": {
+            "claude": 54
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 129,
+          "commitsFetched": 129,
+          "aiAgentCommits": 98,
+          "botCommits": 0,
+          "humanCommits": 31,
+          "acr": 0.7596899224806202,
+          "acrPercent": "76.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.7596899224806202,
+          "automationPercent": "76.0%",
+          "aiToolBreakdown": {
+            "claude": 98
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 129,
+          "commitsFetched": 129,
+          "aiAgentCommits": 98,
+          "botCommits": 0,
+          "humanCommits": 31,
+          "acr": 0.7596899224806202,
+          "acrPercent": "76.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.7596899224806202,
+          "automationPercent": "76.0%",
+          "aiToolBreakdown": {
+            "claude": 98
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "7e9a67e",
+          "tool": "claude",
+          "snippet": "chore: add release automation workflow"
+        },
+        {
+          "sha": "89ee2fd",
+          "tool": "claude",
+          "snippet": "chore: v3.5.0 release — bump version, update docs, remove ROADMAP"
+        },
+        {
+          "sha": "f440f72",
+          "tool": "claude",
+          "snippet": "feat: v3.5.0 — infrastructure hardening, new features, deployment pipeline"
+        },
+        {
+          "sha": "85e9dc3",
+          "tool": "claude",
+          "snippet": "chore: update gitignore and store listing for v3.4.0"
+        },
+        {
+          "sha": "7713f42",
+          "tool": "claude",
+          "snippet": "style: apply Prettier formatting to all source files"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/villagent",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/eddy",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 10,
+          "commitsFetched": 10,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 7,
+          "acr": 0.1,
+          "acrPercent": "10.0%",
+          "botRate": 0.2,
+          "botRatePercent": "20.0%",
+          "automationRate": 0.3,
+          "automationPercent": "30.0%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 10,
+          "commitsFetched": 10,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 7,
+          "acr": 0.1,
+          "acrPercent": "10.0%",
+          "botRate": 0.2,
+          "botRatePercent": "20.0%",
+          "automationRate": 0.3,
+          "automationPercent": "30.0%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 10,
+          "commitsFetched": 10,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 7,
+          "acr": 0.1,
+          "acrPercent": "10.0%",
+          "botRate": 0.2,
+          "botRatePercent": "20.0%",
+          "automationRate": 0.3,
+          "automationPercent": "30.0%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "23377c4",
+          "tool": "claude",
+          "snippet": "feat: add verification cost nuance, novelty decay bound, medication condition"
+        },
+        {
+          "sha": "23377c4",
+          "tool": "claude",
+          "snippet": "feat: add verification cost nuance, novelty decay bound, medication condition"
+        },
+        {
+          "sha": "23377c4",
+          "tool": "claude",
+          "snippet": "feat: add verification cost nuance, novelty decay bound, medication condition"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/analogic-appropriation",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 9,
+          "commitsFetched": 9,
+          "aiAgentCommits": 4,
+          "botCommits": 0,
+          "humanCommits": 5,
+          "acr": 0.4444444444444444,
+          "acrPercent": "44.4%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.4444444444444444,
+          "automationPercent": "44.4%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 9,
+          "commitsFetched": 9,
+          "aiAgentCommits": 4,
+          "botCommits": 0,
+          "humanCommits": 5,
+          "acr": 0.4444444444444444,
+          "acrPercent": "44.4%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.4444444444444444,
+          "automationPercent": "44.4%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 9,
+          "commitsFetched": 9,
+          "aiAgentCommits": 4,
+          "botCommits": 0,
+          "humanCommits": 5,
+          "acr": 0.4444444444444444,
+          "acrPercent": "44.4%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.4444444444444444,
+          "automationPercent": "44.4%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "fce7ffd",
+          "tool": "claude",
+          "snippet": "Add i18n support: 8 languages"
+        },
+        {
+          "sha": "21464ac",
+          "tool": "claude",
+          "snippet": "Add GitHub Pages landing page"
+        },
+        {
+          "sha": "1b7cdec",
+          "tool": "claude",
+          "snippet": "Add CC BY 4.0 license and update README header"
+        },
+        {
+          "sha": "8f136d0",
+          "tool": "claude",
+          "snippet": "Initial commit: paper draft, survey instruments, and cultural evidence"
+        },
+        {
+          "sha": "fce7ffd",
+          "tool": "claude",
+          "snippet": "Add i18n support: 8 languages"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/PLOIDY",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 52,
+          "commitsFetched": 52,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 51,
+          "acr": 0.019230769230769232,
+          "acrPercent": "1.9%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.019230769230769232,
+          "automationPercent": "1.9%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 52,
+          "commitsFetched": 52,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 51,
+          "acr": 0.019230769230769232,
+          "acrPercent": "1.9%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.019230769230769232,
+          "automationPercent": "1.9%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 52,
+          "commitsFetched": 52,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 51,
+          "acr": 0.019230769230769232,
+          "acrPercent": "1.9%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.019230769230769232,
+          "automationPercent": "1.9%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "0a4fbde",
+          "tool": "claude",
+          "snippet": "feat: update paper with 28-task expanded results + structural fixes"
+        },
+        {
+          "sha": "0a4fbde",
+          "tool": "claude",
+          "snippet": "feat: update paper with 28-task expanded results + structural fixes"
+        },
+        {
+          "sha": "0a4fbde",
+          "tool": "claude",
+          "snippet": "feat: update paper with 28-task expanded results + structural fixes"
+        }
+      ]
+    },
+    {
+      "repo": "heznpc/statute-of-limitations",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/sediment",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 2,
+          "commitsFetched": 2,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/holder",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "heznpc/narcissus",
+      "group": "user",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 1,
+          "commitsFetched": 1,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    }
+  ],
+  "refResults": [
+    {
+      "repo": "vercel/ai",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 304,
+          "commitsFetched": 304,
+          "aiAgentCommits": 19,
+          "botCommits": 124,
+          "humanCommits": 161,
+          "acr": 0.0625,
+          "acrPercent": "6.3%",
+          "botRate": 0.40789473684210525,
+          "botRatePercent": "40.8%",
+          "automationRate": 0.47039473684210525,
+          "automationPercent": "47.0%",
+          "aiToolBreakdown": {
+            "claude": 18,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 36,
+          "botCommits": 206,
+          "humanCommits": 258,
+          "acr": 0.072,
+          "acrPercent": "7.2%",
+          "botRate": 0.412,
+          "botRatePercent": "41.2%",
+          "automationRate": 0.484,
+          "automationPercent": "48.4%",
+          "aiToolBreakdown": {
+            "claude": 35,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 36,
+          "botCommits": 206,
+          "humanCommits": 258,
+          "acr": 0.072,
+          "acrPercent": "7.2%",
+          "botRate": 0.412,
+          "botRatePercent": "41.2%",
+          "automationRate": 0.484,
+          "automationPercent": "48.4%",
+          "aiToolBreakdown": {
+            "claude": 35,
+            "copilot": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "71b0e7d",
+          "tool": "claude",
+          "snippet": "feat (provider/gateway): add hipaaCompliant provider option (#13614)"
+        },
+        {
+          "sha": "c1227a3",
+          "tool": "claude",
+          "snippet": "docs (provider/gateway): update ZDR and disallowPromptTraining BYOK language (#1"
+        },
+        {
+          "sha": "70a9aae",
+          "tool": "claude",
+          "snippet": "feat (provider/gateway): add disallowPromptTraining provider option (#13726)"
+        },
+        {
+          "sha": "ed313f7",
+          "tool": "copilot",
+          "snippet": "ci(release): delete pre.json before snapshot versioning to support beta releases"
+        },
+        {
+          "sha": "1921625",
+          "tool": "claude",
+          "snippet": "fix(amazon-bedrock): add tool search beta for Anthropic (#13900)"
+        }
+      ]
+    },
+    {
+      "repo": "langchain-ai/langchain",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 230,
+          "commitsFetched": 230,
+          "aiAgentCommits": 3,
+          "botCommits": 90,
+          "humanCommits": 137,
+          "acr": 0.013043478260869565,
+          "acrPercent": "1.3%",
+          "botRate": 0.391304347826087,
+          "botRatePercent": "39.1%",
+          "automationRate": 0.4043478260869565,
+          "automationPercent": "40.4%",
+          "aiToolBreakdown": {
+            "claude": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 5,
+          "botCommits": 143,
+          "humanCommits": 352,
+          "acr": 0.01,
+          "acrPercent": "1.0%",
+          "botRate": 0.286,
+          "botRatePercent": "28.6%",
+          "automationRate": 0.296,
+          "automationPercent": "29.6%",
+          "aiToolBreakdown": {
+            "claude": 4,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 5,
+          "botCommits": 143,
+          "humanCommits": 352,
+          "acr": 0.01,
+          "acrPercent": "1.0%",
+          "botRate": 0.286,
+          "botRatePercent": "28.6%",
+          "automationRate": 0.296,
+          "automationPercent": "29.6%",
+          "aiToolBreakdown": {
+            "claude": 4,
+            "copilot": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "0f4f3f7",
+          "tool": "claude",
+          "snippet": "chore: pygments>=2.20.0 across all packages (CVE-2026-4539) (#36385)"
+        },
+        {
+          "sha": "bb8b057",
+          "tool": "claude",
+          "snippet": "ci(infra): add top-level permissions and SHA-pin third-party actions [INF-0000] "
+        },
+        {
+          "sha": "53e9ca3",
+          "tool": "claude",
+          "snippet": "chore(infra): update dependabot.yml to monthly schedule with update-type split ["
+        },
+        {
+          "sha": "0f4f3f7",
+          "tool": "claude",
+          "snippet": "chore: pygments>=2.20.0 across all packages (CVE-2026-4539) (#36385)"
+        },
+        {
+          "sha": "bb8b057",
+          "tool": "claude",
+          "snippet": "ci(infra): add top-level permissions and SHA-pin third-party actions [INF-0000] "
+        }
+      ]
+    },
+    {
+      "repo": "anthropics/anthropic-cookbook",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 26,
+          "commitsFetched": 26,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 25,
+          "acr": 0.038461538461538464,
+          "acrPercent": "3.8%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.038461538461538464,
+          "automationPercent": "3.8%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 53,
+          "commitsFetched": 53,
+          "aiAgentCommits": 5,
+          "botCommits": 0,
+          "humanCommits": 48,
+          "acr": 0.09433962264150944,
+          "acrPercent": "9.4%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.09433962264150944,
+          "automationPercent": "9.4%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 296,
+          "commitsFetched": 296,
+          "aiAgentCommits": 73,
+          "botCommits": 0,
+          "humanCommits": 223,
+          "acr": 0.24662162162162163,
+          "acrPercent": "24.7%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.24662162162162163,
+          "automationPercent": "24.7%",
+          "aiToolBreakdown": {
+            "claude": 73
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "ee3dfe1",
+          "tool": "claude",
+          "snippet": "feat(tool_use): add context engineering strategies cookbook (#481)"
+        },
+        {
+          "sha": "ee3dfe1",
+          "tool": "claude",
+          "snippet": "feat(tool_use): add context engineering strategies cookbook (#481)"
+        },
+        {
+          "sha": "80b621a",
+          "tool": "claude",
+          "snippet": "docs(claude_agent_sdk): add site reliability agent cookbook (#391)"
+        },
+        {
+          "sha": "7cb72a9",
+          "tool": "claude",
+          "snippet": "docs(tool_use): add Opus 4.6 server-side compaction guidance to context compacti"
+        },
+        {
+          "sha": "968fc16",
+          "tool": "claude",
+          "snippet": "docs: fix broken Google Sheets link in classification evaluation README (#359)"
+        }
+      ]
+    },
+    {
+      "repo": "cohere-ai/cohere-toolkit",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "stackblitz/bolt.new",
+      "group": "reference",
+      "subgroup": "ai-adjacent",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 90,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        },
+        {
+          "window": 365,
+          "totalCommits": 0,
+          "commitsFetched": 0,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 0,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": true
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "facebook/react",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 31,
+          "commitsFetched": 31,
+          "aiAgentCommits": 0,
+          "botCommits": 4,
+          "humanCommits": 27,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.12903225806451613,
+          "botRatePercent": "12.9%",
+          "automationRate": 0.12903225806451613,
+          "automationPercent": "12.9%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 194,
+          "commitsFetched": 194,
+          "aiAgentCommits": 0,
+          "botCommits": 4,
+          "humanCommits": 190,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.020618556701030927,
+          "botRatePercent": "2.1%",
+          "automationRate": 0.020618556701030927,
+          "automationPercent": "2.1%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 4,
+          "humanCommits": 496,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.008,
+          "botRatePercent": "0.8%",
+          "automationRate": 0.008,
+          "automationPercent": "0.8%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "vercel/next.js",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 411,
+          "commitsFetched": 411,
+          "aiAgentCommits": 52,
+          "botCommits": 0,
+          "humanCommits": 359,
+          "acr": 0.12652068126520682,
+          "acrPercent": "12.7%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.12652068126520682,
+          "automationPercent": "12.7%",
+          "aiToolBreakdown": {
+            "claude": 45,
+            "cursor": 6,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 58,
+          "botCommits": 0,
+          "humanCommits": 442,
+          "acr": 0.116,
+          "acrPercent": "11.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.116,
+          "automationPercent": "11.6%",
+          "aiToolBreakdown": {
+            "claude": 47,
+            "cursor": 10,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 58,
+          "botCommits": 0,
+          "humanCommits": 442,
+          "acr": 0.116,
+          "acrPercent": "11.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.116,
+          "automationPercent": "11.6%",
+          "aiToolBreakdown": {
+            "claude": 47,
+            "cursor": 10,
+            "copilot": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "f65b10a",
+          "tool": "claude",
+          "snippet": "turbo-tasks: replace async resolve fns with custom Future types (ResolveRawVcFut"
+        },
+        {
+          "sha": "f6663b7",
+          "tool": "claude",
+          "snippet": "Turbopack: Dedupe our two filesystempath extension/extension_ref functions (#920"
+        },
+        {
+          "sha": "cb0d88f",
+          "tool": "cursor",
+          "snippet": "Improve existing dev server error message to suggest using it (#92317)"
+        },
+        {
+          "sha": "4183928",
+          "tool": "claude",
+          "snippet": "Add MCP `get_compilation_issues` tool and NAPI method (#92062)"
+        },
+        {
+          "sha": "be3ee02",
+          "tool": "claude",
+          "snippet": "turbo-tasks-backend: stability fixes for task cancellation and error handling (#"
+        }
+      ]
+    },
+    {
+      "repo": "microsoft/typescript",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 9,
+          "commitsFetched": 9,
+          "aiAgentCommits": 3,
+          "botCommits": 3,
+          "humanCommits": 3,
+          "acr": 0.3333333333333333,
+          "acrPercent": "33.3%",
+          "botRate": 0.3333333333333333,
+          "botRatePercent": "33.3%",
+          "automationRate": 0.6666666666666666,
+          "automationPercent": "66.7%",
+          "aiToolBreakdown": {
+            "copilot": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 77,
+          "commitsFetched": 77,
+          "aiAgentCommits": 10,
+          "botCommits": 9,
+          "humanCommits": 58,
+          "acr": 0.12987012987012986,
+          "acrPercent": "13.0%",
+          "botRate": 0.11688311688311688,
+          "botRatePercent": "11.7%",
+          "automationRate": 0.24675324675324675,
+          "automationPercent": "24.7%",
+          "aiToolBreakdown": {
+            "copilot": 10
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 270,
+          "commitsFetched": 270,
+          "aiAgentCommits": 20,
+          "botCommits": 23,
+          "humanCommits": 227,
+          "acr": 0.07407407407407407,
+          "acrPercent": "7.4%",
+          "botRate": 0.08518518518518518,
+          "botRatePercent": "8.5%",
+          "automationRate": 0.15925925925925927,
+          "automationPercent": "15.9%",
+          "aiToolBreakdown": {
+            "copilot": 20
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "7b8cb3b",
+          "tool": "copilot",
+          "snippet": "Fix redundant leading apostrophe in TS1344 diagnostic message (#63341)"
+        },
+        {
+          "sha": "0844c43",
+          "tool": "copilot",
+          "snippet": "Mark class property initializers as outside of CFA containers (#63310)"
+        },
+        {
+          "sha": "7881fe5",
+          "tool": "copilot",
+          "snippet": "Add coding agent instructions: refuse PRs unless maintenance mode is acknowledge"
+        },
+        {
+          "sha": "7b8cb3b",
+          "tool": "copilot",
+          "snippet": "Fix redundant leading apostrophe in TS1344 diagnostic message (#63341)"
+        },
+        {
+          "sha": "0844c43",
+          "tool": "copilot",
+          "snippet": "Mark class property initializers as outside of CFA containers (#63310)"
+        }
+      ]
+    },
+    {
+      "repo": "nodejs/node",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 205,
+          "commitsFetched": 205,
+          "aiAgentCommits": 4,
+          "botCommits": 18,
+          "humanCommits": 183,
+          "acr": 0.01951219512195122,
+          "acrPercent": "2.0%",
+          "botRate": 0.08780487804878048,
+          "botRatePercent": "8.8%",
+          "automationRate": 0.1073170731707317,
+          "automationPercent": "10.7%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 4,
+          "botCommits": 37,
+          "humanCommits": 459,
+          "acr": 0.008,
+          "acrPercent": "0.8%",
+          "botRate": 0.074,
+          "botRatePercent": "7.4%",
+          "automationRate": 0.082,
+          "automationPercent": "8.2%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 4,
+          "botCommits": 37,
+          "humanCommits": 459,
+          "acr": 0.008,
+          "acrPercent": "0.8%",
+          "botRate": 0.074,
+          "botRatePercent": "7.4%",
+          "automationRate": 0.082,
+          "automationPercent": "8.2%",
+          "aiToolBreakdown": {
+            "claude": 4
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "02104c0",
+          "tool": "claude",
+          "snippet": "doc: fix overstated Date header requirement in response.sendDate"
+        },
+        {
+          "sha": "193c495",
+          "tool": "claude",
+          "snippet": "doc: clarify fs.ReadStream and fs.WriteStream are not constructable"
+        },
+        {
+          "sha": "e42dbef",
+          "tool": "claude",
+          "snippet": "doc: remove outdated Chrome 66 and ndb references from debugger"
+        },
+        {
+          "sha": "ee41790",
+          "tool": "claude",
+          "snippet": "doc: add throwIfNoEntry version history to fs.stat"
+        },
+        {
+          "sha": "02104c0",
+          "tool": "claude",
+          "snippet": "doc: fix overstated Date header requirement in response.sendDate"
+        }
+      ]
+    },
+    {
+      "repo": "tailwindlabs/tailwindcss",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 34,
+          "commitsFetched": 34,
+          "aiAgentCommits": 0,
+          "botCommits": 1,
+          "humanCommits": 33,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.029411764705882353,
+          "botRatePercent": "2.9%",
+          "automationRate": 0.029411764705882353,
+          "automationPercent": "2.9%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 106,
+          "commitsFetched": 106,
+          "aiAgentCommits": 7,
+          "botCommits": 11,
+          "humanCommits": 88,
+          "acr": 0.0660377358490566,
+          "acrPercent": "6.6%",
+          "botRate": 0.10377358490566038,
+          "botRatePercent": "10.4%",
+          "automationRate": 0.16981132075471697,
+          "automationPercent": "17.0%",
+          "aiToolBreakdown": {
+            "claude": 7
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 495,
+          "commitsFetched": 495,
+          "aiAgentCommits": 8,
+          "botCommits": 159,
+          "humanCommits": 328,
+          "acr": 0.01616161616161616,
+          "acrPercent": "1.6%",
+          "botRate": 0.3212121212121212,
+          "botRatePercent": "32.1%",
+          "automationRate": 0.3373737373737374,
+          "automationPercent": "33.7%",
+          "aiToolBreakdown": {
+            "claude": 8
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "9ded4a2",
+          "tool": "claude",
+          "snippet": "Guard object lookups against inherited prototype properties (#19725)"
+        },
+        {
+          "sha": "d0a5612",
+          "tool": "claude",
+          "snippet": "Add mauve, olive, mist, and taupe color palettes (#19627)"
+        },
+        {
+          "sha": "d52c94f",
+          "tool": "claude",
+          "snippet": "Simplify logical sizing utility theme namespaces (#19625)"
+        },
+        {
+          "sha": "53205f5",
+          "tool": "claude",
+          "snippet": "Add `font-features-*` utility for font-feature-settings (#19623)"
+        },
+        {
+          "sha": "5395c7e",
+          "tool": "claude",
+          "snippet": "Add logical inset utilities (inset-s, inset-e, inset-bs, inset-be) (#19613)"
+        }
+      ]
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 259,
+          "commitsFetched": 259,
+          "aiAgentCommits": 14,
+          "botCommits": 12,
+          "humanCommits": 233,
+          "acr": 0.05405405405405406,
+          "acrPercent": "5.4%",
+          "botRate": 0.04633204633204633,
+          "botRatePercent": "4.6%",
+          "automationRate": 0.10038610038610038,
+          "automationPercent": "10.0%",
+          "aiToolBreakdown": {
+            "claude": 11,
+            "copilot": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 16,
+          "botCommits": 13,
+          "humanCommits": 471,
+          "acr": 0.032,
+          "acrPercent": "3.2%",
+          "botRate": 0.026,
+          "botRatePercent": "2.6%",
+          "automationRate": 0.058,
+          "automationPercent": "5.8%",
+          "aiToolBreakdown": {
+            "claude": 13,
+            "copilot": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 16,
+          "botCommits": 13,
+          "humanCommits": 471,
+          "acr": 0.032,
+          "acrPercent": "3.2%",
+          "botRate": 0.026,
+          "botRatePercent": "2.6%",
+          "automationRate": 0.058,
+          "automationPercent": "5.8%",
+          "aiToolBreakdown": {
+            "claude": 13,
+            "copilot": 3
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "ef78384",
+          "tool": "claude",
+          "snippet": "feat: replace \"Add a block\" button with \"View Components\" linking to /docs/compo"
+        },
+        {
+          "sha": "0319984",
+          "tool": "copilot",
+          "snippet": "feat: add pulkitxm's components (#9775)"
+        },
+        {
+          "sha": "179c0c0",
+          "tool": "claude",
+          "snippet": "Add @react-easy-modals registry (#10064)"
+        },
+        {
+          "sha": "a8bd004",
+          "tool": "claude",
+          "snippet": "chore(templates): bump minor dependencies (#10076)"
+        },
+        {
+          "sha": "dbe1fa7",
+          "tool": "claude",
+          "snippet": "fix(tests): fix e2e sleep (#10061)"
+        }
+      ]
+    },
+    {
+      "repo": "sveltejs/svelte",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 79,
+          "commitsFetched": 79,
+          "aiAgentCommits": 2,
+          "botCommits": 11,
+          "humanCommits": 66,
+          "acr": 0.02531645569620253,
+          "acrPercent": "2.5%",
+          "botRate": 0.13924050632911392,
+          "botRatePercent": "13.9%",
+          "automationRate": 0.16455696202531644,
+          "automationPercent": "16.5%",
+          "aiToolBreakdown": {
+            "copilot": 1,
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 317,
+          "commitsFetched": 317,
+          "aiAgentCommits": 11,
+          "botCommits": 46,
+          "humanCommits": 260,
+          "acr": 0.03470031545741325,
+          "acrPercent": "3.5%",
+          "botRate": 0.14511041009463724,
+          "botRatePercent": "14.5%",
+          "automationRate": 0.17981072555205047,
+          "automationPercent": "18.0%",
+          "aiToolBreakdown": {
+            "copilot": 2,
+            "claude": 9
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 11,
+          "botCommits": 93,
+          "humanCommits": 396,
+          "acr": 0.022,
+          "acrPercent": "2.2%",
+          "botRate": 0.186,
+          "botRatePercent": "18.6%",
+          "automationRate": 0.208,
+          "automationPercent": "20.8%",
+          "aiToolBreakdown": {
+            "copilot": 2,
+            "claude": 9
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "206974a",
+          "tool": "copilot",
+          "snippet": "chore: generate markdown tables of CPU profiles (#18059)"
+        },
+        {
+          "sha": "7123bf3",
+          "tool": "claude",
+          "snippet": "fix: remove trailing semicolon from {@const} tag printer (#17962)"
+        },
+        {
+          "sha": "206974a",
+          "tool": "copilot",
+          "snippet": "chore: generate markdown tables of CPU profiles (#18059)"
+        },
+        {
+          "sha": "7123bf3",
+          "tool": "claude",
+          "snippet": "fix: remove trailing semicolon from {@const} tag printer (#17962)"
+        },
+        {
+          "sha": "0965028",
+          "tool": "claude",
+          "snippet": "perf: optimize CSS selector pruning (#17846)"
+        }
+      ]
+    },
+    {
+      "repo": "remix-run/remix",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 285,
+          "commitsFetched": 285,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 284,
+          "acr": 0.0035087719298245615,
+          "acrPercent": "0.4%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.0035087719298245615,
+          "automationPercent": "0.4%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 0,
+          "humanCommits": 497,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.006,
+          "automationPercent": "0.6%",
+          "aiToolBreakdown": {
+            "claude": 1,
+            "cursor": 2
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 0,
+          "humanCommits": 497,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.006,
+          "automationPercent": "0.6%",
+          "aiToolBreakdown": {
+            "claude": 1,
+            "cursor": 2
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "a92e81c",
+          "tool": "claude",
+          "snippet": "Documentation Updates (#11143)"
+        },
+        {
+          "sha": "a92e81c",
+          "tool": "claude",
+          "snippet": "Documentation Updates (#11143)"
+        },
+        {
+          "sha": "0695601",
+          "tool": "cursor",
+          "snippet": "ryan/multipart perf (#11083)"
+        },
+        {
+          "sha": "fc6ff90",
+          "tool": "cursor",
+          "snippet": "refactor(data-table): add high-level db.count helper"
+        },
+        {
+          "sha": "a92e81c",
+          "tool": "claude",
+          "snippet": "Documentation Updates (#11143)"
+        }
+      ]
+    },
+    {
+      "repo": "vitejs/vite",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 124,
+          "commitsFetched": 124,
+          "aiAgentCommits": 6,
+          "botCommits": 20,
+          "humanCommits": 98,
+          "acr": 0.04838709677419355,
+          "acrPercent": "4.8%",
+          "botRate": 0.16129032258064516,
+          "botRatePercent": "16.1%",
+          "automationRate": 0.20967741935483872,
+          "automationPercent": "21.0%",
+          "aiToolBreakdown": {
+            "claude": 3,
+            "copilot": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 317,
+          "commitsFetched": 317,
+          "aiAgentCommits": 17,
+          "botCommits": 46,
+          "humanCommits": 254,
+          "acr": 0.05362776025236593,
+          "acrPercent": "5.4%",
+          "botRate": 0.14511041009463724,
+          "botRatePercent": "14.5%",
+          "automationRate": 0.19873817034700317,
+          "automationPercent": "19.9%",
+          "aiToolBreakdown": {
+            "claude": 6,
+            "copilot": 11
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 22,
+          "botCommits": 67,
+          "humanCommits": 411,
+          "acr": 0.044,
+          "acrPercent": "4.4%",
+          "botRate": 0.134,
+          "botRatePercent": "13.4%",
+          "automationRate": 0.178,
+          "automationPercent": "17.8%",
+          "aiToolBreakdown": {
+            "claude": 8,
+            "copilot": 14
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "f61a1ab",
+          "tool": "claude",
+          "snippet": "feat(optimizer): log when dependency scanning or bundling takes over 1s (#21797)"
+        },
+        {
+          "sha": "cff5f0c",
+          "tool": "copilot",
+          "snippet": "fix(ssr): ssrTransform incorrectly rewrites `meta` identifier inside `import.met"
+        },
+        {
+          "sha": "86db93d",
+          "tool": "copilot",
+          "snippet": "fix: handle `+` symbol in package subpath exports during dep optimization (#2188"
+        },
+        {
+          "sha": "dbe41bd",
+          "tool": "claude",
+          "snippet": "fix: use precise regexes for transform filter to avoid backtracking (#21800)"
+        },
+        {
+          "sha": "6d97142",
+          "tool": "claude",
+          "snippet": "fix(bundled-dev): properly disable `inlineConst` optimization (#21865)"
+        }
+      ]
+    },
+    {
+      "repo": "denoland/deno",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 336,
+          "commitsFetched": 336,
+          "aiAgentCommits": 228,
+          "botCommits": 2,
+          "humanCommits": 106,
+          "acr": 0.6785714285714286,
+          "acrPercent": "67.9%",
+          "botRate": 0.005952380952380952,
+          "botRatePercent": "0.6%",
+          "automationRate": 0.6845238095238095,
+          "automationPercent": "68.5%",
+          "aiToolBreakdown": {
+            "claude": 226,
+            "copilot": 2
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 283,
+          "botCommits": 3,
+          "humanCommits": 214,
+          "acr": 0.566,
+          "acrPercent": "56.6%",
+          "botRate": 0.006,
+          "botRatePercent": "0.6%",
+          "automationRate": 0.572,
+          "automationPercent": "57.2%",
+          "aiToolBreakdown": {
+            "claude": 278,
+            "copilot": 5
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 283,
+          "botCommits": 3,
+          "humanCommits": 214,
+          "acr": 0.566,
+          "acrPercent": "56.6%",
+          "botRate": 0.006,
+          "botRatePercent": "0.6%",
+          "automationRate": 0.572,
+          "automationPercent": "57.2%",
+          "aiToolBreakdown": {
+            "claude": 278,
+            "copilot": 5
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "d6b5810",
+          "tool": "claude",
+          "snippet": "feat(unstable): add `deno tsconfig` subcommand (#33160)"
+        },
+        {
+          "sha": "43deeb2",
+          "tool": "claude",
+          "snippet": "fix(ext/node): implement timeout, killSignal, and pid for child_process spawnSyn"
+        },
+        {
+          "sha": "fee0589",
+          "tool": "claude",
+          "snippet": "feat: disable ops and resources sanitizers by default in deno test (#33158)"
+        },
+        {
+          "sha": "607c73f",
+          "tool": "claude",
+          "snippet": "fix(ext/node): implement TCP.open(fd) (#33155)"
+        },
+        {
+          "sha": "6b44f6d",
+          "tool": "claude",
+          "snippet": "feat(add/install): default to npm registry for unprefixed packages (#33156)"
+        }
+      ]
+    },
+    {
+      "repo": "torvalds/linux",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "kubernetes/kubernetes",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "golang/go",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 333,
+          "commitsFetched": 333,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 332,
+          "acr": 0.003003003003003003,
+          "acrPercent": "0.3%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.003003003003003003,
+          "automationPercent": "0.3%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 499,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.002,
+          "automationPercent": "0.2%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 0,
+          "humanCommits": 499,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0.002,
+          "automationPercent": "0.2%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "26d5e16",
+          "tool": "claude",
+          "snippet": "runtime/cgo: clarify pinning requirement in Handle example"
+        },
+        {
+          "sha": "26d5e16",
+          "tool": "claude",
+          "snippet": "runtime/cgo: clarify pinning requirement in Handle example"
+        },
+        {
+          "sha": "26d5e16",
+          "tool": "claude",
+          "snippet": "runtime/cgo: clarify pinning requirement in Handle example"
+        }
+      ]
+    },
+    {
+      "repo": "rust-lang/rust",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 497,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0.004,
+          "botRatePercent": "0.4%",
+          "automationRate": 0.006,
+          "automationPercent": "0.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 497,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0.004,
+          "botRatePercent": "0.4%",
+          "automationRate": 0.006,
+          "automationPercent": "0.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 2,
+          "humanCommits": 497,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0.004,
+          "botRatePercent": "0.4%",
+          "automationRate": 0.006,
+          "automationPercent": "0.6%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "684bff7",
+          "tool": "claude",
+          "snippet": "Add aarch64 CRC32 intrinsic shims"
+        },
+        {
+          "sha": "684bff7",
+          "tool": "claude",
+          "snippet": "Add aarch64 CRC32 intrinsic shims"
+        },
+        {
+          "sha": "684bff7",
+          "tool": "claude",
+          "snippet": "Add aarch64 CRC32 intrinsic shims"
+        }
+      ]
+    },
+    {
+      "repo": "docker/cli",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 133,
+          "commitsFetched": 133,
+          "aiAgentCommits": 1,
+          "botCommits": 3,
+          "humanCommits": 129,
+          "acr": 0.007518796992481203,
+          "acrPercent": "0.8%",
+          "botRate": 0.022556390977443608,
+          "botRatePercent": "2.3%",
+          "automationRate": 0.03007518796992481,
+          "automationPercent": "3.0%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 316,
+          "commitsFetched": 316,
+          "aiAgentCommits": 1,
+          "botCommits": 8,
+          "humanCommits": 307,
+          "acr": 0.0031645569620253164,
+          "acrPercent": "0.3%",
+          "botRate": 0.02531645569620253,
+          "botRatePercent": "2.5%",
+          "automationRate": 0.028481012658227847,
+          "automationPercent": "2.8%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 1,
+          "botCommits": 10,
+          "humanCommits": 489,
+          "acr": 0.002,
+          "acrPercent": "0.2%",
+          "botRate": 0.02,
+          "botRatePercent": "2.0%",
+          "automationRate": 0.022,
+          "automationPercent": "2.2%",
+          "aiToolBreakdown": {
+            "claude": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "2bc4307",
+          "tool": "claude",
+          "snippet": "fix(cmd/docker): prevent race between force-exit goroutine and plugin wait"
+        },
+        {
+          "sha": "2bc4307",
+          "tool": "claude",
+          "snippet": "fix(cmd/docker): prevent race between force-exit goroutine and plugin wait"
+        },
+        {
+          "sha": "2bc4307",
+          "tool": "claude",
+          "snippet": "fix(cmd/docker): prevent race between force-exit goroutine and plugin wait"
+        }
+      ]
+    },
+    {
+      "repo": "prometheus/prometheus",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 184,
+          "commitsFetched": 184,
+          "aiAgentCommits": 3,
+          "botCommits": 1,
+          "humanCommits": 180,
+          "acr": 0.016304347826086956,
+          "acrPercent": "1.6%",
+          "botRate": 0.005434782608695652,
+          "botRatePercent": "0.5%",
+          "automationRate": 0.021739130434782608,
+          "automationPercent": "2.2%",
+          "aiToolBreakdown": {
+            "claude": 2,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 27,
+          "humanCommits": 470,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0.054,
+          "botRatePercent": "5.4%",
+          "automationRate": 0.06,
+          "automationPercent": "6.0%",
+          "aiToolBreakdown": {
+            "claude": 2,
+            "copilot": 1
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 27,
+          "humanCommits": 470,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0.054,
+          "botRatePercent": "5.4%",
+          "automationRate": 0.06,
+          "automationPercent": "6.0%",
+          "aiToolBreakdown": {
+            "claude": 2,
+            "copilot": 1
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "4b562bb",
+          "tool": "claude",
+          "snippet": "tsdb: fix prometheus_tsdb_head_chunks going negative after WAL replay (#18401)"
+        },
+        {
+          "sha": "2ba3046",
+          "tool": "claude",
+          "snippet": "Merge float `st-storage` implementation (PROM-60) and initial `xor2-encoding` (#"
+        },
+        {
+          "sha": "f7c60bf",
+          "tool": "copilot",
+          "snippet": "Apply suggestions from code review"
+        },
+        {
+          "sha": "4b562bb",
+          "tool": "claude",
+          "snippet": "tsdb: fix prometheus_tsdb_head_chunks going negative after WAL replay (#18401)"
+        },
+        {
+          "sha": "2ba3046",
+          "tool": "claude",
+          "snippet": "Merge float `st-storage` implementation (PROM-60) and initial `xor2-encoding` (#"
+        }
+      ]
+    },
+    {
+      "repo": "python/cpython",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 395,
+          "commitsFetched": 395,
+          "aiAgentCommits": 3,
+          "botCommits": 3,
+          "humanCommits": 389,
+          "acr": 0.007594936708860759,
+          "acrPercent": "0.8%",
+          "botRate": 0.007594936708860759,
+          "botRatePercent": "0.8%",
+          "automationRate": 0.015189873417721518,
+          "automationPercent": "1.5%",
+          "aiToolBreakdown": {
+            "claude": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 3,
+          "humanCommits": 494,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0.006,
+          "botRatePercent": "0.6%",
+          "automationRate": 0.012,
+          "automationPercent": "1.2%",
+          "aiToolBreakdown": {
+            "claude": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 3,
+          "botCommits": 3,
+          "humanCommits": 494,
+          "acr": 0.006,
+          "acrPercent": "0.6%",
+          "botRate": 0.006,
+          "botRatePercent": "0.6%",
+          "automationRate": 0.012,
+          "automationPercent": "1.2%",
+          "aiToolBreakdown": {
+            "claude": 3
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "951675c",
+          "tool": "claude",
+          "snippet": "gh-146306: JIT: Optimize float operations by mutating uniquely-referenced operan"
+        },
+        {
+          "sha": "36b5284",
+          "tool": "claude",
+          "snippet": "gh-145649: Fix man page text wrapping for -X option (#145656)"
+        },
+        {
+          "sha": "ee53180",
+          "tool": "claude",
+          "snippet": "gh-140814: Fix freeze_support() setting start method as side effect (GH-144608)"
+        },
+        {
+          "sha": "951675c",
+          "tool": "claude",
+          "snippet": "gh-146306: JIT: Optimize float operations by mutating uniquely-referenced operan"
+        },
+        {
+          "sha": "36b5284",
+          "tool": "claude",
+          "snippet": "gh-145649: Fix man page text wrapping for -X option (#145656)"
+        }
+      ]
+    },
+    {
+      "repo": "django/django",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 80,
+          "commitsFetched": 80,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 80,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 253,
+          "commitsFetched": 253,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 253,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 500,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "pallets/flask",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 6,
+          "commitsFetched": 6,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 6,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 48,
+          "commitsFetched": 48,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 48,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 113,
+          "commitsFetched": 113,
+          "aiAgentCommits": 0,
+          "botCommits": 0,
+          "humanCommits": 113,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0,
+          "botRatePercent": "0.0%",
+          "automationRate": 0,
+          "automationPercent": "0.0%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "spring-projects/spring-boot",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 8,
+          "humanCommits": 492,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.016,
+          "botRatePercent": "1.6%",
+          "automationRate": 0.016,
+          "automationPercent": "1.6%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 8,
+          "humanCommits": 492,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.016,
+          "botRatePercent": "1.6%",
+          "automationRate": 0.016,
+          "automationPercent": "1.6%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 0,
+          "botCommits": 8,
+          "humanCommits": 492,
+          "acr": 0,
+          "acrPercent": "0.0%",
+          "botRate": 0.016,
+          "botRatePercent": "1.6%",
+          "automationRate": 0.016,
+          "automationPercent": "1.6%",
+          "aiToolBreakdown": {},
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": []
+    },
+    {
+      "repo": "apache/kafka",
+      "group": "reference",
+      "subgroup": "traditional",
+      "windows": [
+        {
+          "window": 30,
+          "totalCommits": 236,
+          "commitsFetched": 236,
+          "aiAgentCommits": 3,
+          "botCommits": 1,
+          "humanCommits": 232,
+          "acr": 0.012711864406779662,
+          "acrPercent": "1.3%",
+          "botRate": 0.00423728813559322,
+          "botRatePercent": "0.4%",
+          "automationRate": 0.01694915254237288,
+          "automationPercent": "1.7%",
+          "aiToolBreakdown": {
+            "claude": 3
+          },
+          "excluded": false
+        },
+        {
+          "window": 90,
+          "totalCommits": 474,
+          "commitsFetched": 474,
+          "aiAgentCommits": 5,
+          "botCommits": 1,
+          "humanCommits": 468,
+          "acr": 0.010548523206751054,
+          "acrPercent": "1.1%",
+          "botRate": 0.002109704641350211,
+          "botRatePercent": "0.2%",
+          "automationRate": 0.012658227848101266,
+          "automationPercent": "1.3%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        },
+        {
+          "window": 365,
+          "totalCommits": 500,
+          "commitsFetched": 500,
+          "aiAgentCommits": 5,
+          "botCommits": 1,
+          "humanCommits": 494,
+          "acr": 0.01,
+          "acrPercent": "1.0%",
+          "botRate": 0.002,
+          "botRatePercent": "0.2%",
+          "automationRate": 0.012,
+          "automationPercent": "1.2%",
+          "aiToolBreakdown": {
+            "claude": 5
+          },
+          "excluded": false
+        }
+      ],
+      "sampleAICommits": [
+        {
+          "sha": "a40c876",
+          "tool": "claude",
+          "snippet": "KAFKA-19712: Simplify StateManager interface and checkpoint logic (#21778)"
+        },
+        {
+          "sha": "5740a26",
+          "tool": "claude",
+          "snippet": "KAFKA-19712: ProcessorStateManager delegates offset tracking to stores (#21738)"
+        },
+        {
+          "sha": "823f0cf",
+          "tool": "claude",
+          "snippet": "KAFKA-20257: GlobalStateManagerImpl delegates offset tracking to stores (#21739)"
+        },
+        {
+          "sha": "a40c876",
+          "tool": "claude",
+          "snippet": "KAFKA-19712: Simplify StateManager interface and checkpoint logic (#21778)"
+        },
+        {
+          "sha": "5740a26",
+          "tool": "claude",
+          "snippet": "KAFKA-19712: ProcessorStateManager delegates offset tracking to stores (#21738)"
+        }
+      ]
+    }
+  ]
+}
