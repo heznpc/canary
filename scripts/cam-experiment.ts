@@ -84,7 +84,7 @@ const REFERENCE_REPOS: { repo: string; subgroup: "ai-adjacent" | "traditional" }
   { repo: "anthropics/anthropic-cookbook", subgroup: "ai-adjacent" },
   { repo: "cohere-ai/cohere-toolkit", subgroup: "ai-adjacent" },
   { repo: "stackblitz/bolt.new", subgroup: "ai-adjacent" },
-  // Traditional: established OSS with no inherent AI connection
+  // Traditional: JS/TS ecosystem
   { repo: "facebook/react", subgroup: "traditional" },
   { repo: "vercel/next.js", subgroup: "traditional" },
   { repo: "microsoft/typescript", subgroup: "traditional" },
@@ -95,6 +95,19 @@ const REFERENCE_REPOS: { repo: string; subgroup: "ai-adjacent" | "traditional" }
   { repo: "remix-run/remix", subgroup: "traditional" },
   { repo: "vitejs/vite", subgroup: "traditional" },
   { repo: "denoland/deno", subgroup: "traditional" },
+  // Traditional: Systems / Go / Rust / C
+  { repo: "torvalds/linux", subgroup: "traditional" },
+  { repo: "kubernetes/kubernetes", subgroup: "traditional" },
+  { repo: "golang/go", subgroup: "traditional" },
+  { repo: "rust-lang/rust", subgroup: "traditional" },
+  { repo: "docker/cli", subgroup: "traditional" },
+  { repo: "prometheus/prometheus", subgroup: "traditional" },
+  // Traditional: Python / Java
+  { repo: "python/cpython", subgroup: "traditional" },
+  { repo: "django/django", subgroup: "traditional" },
+  { repo: "pallets/flask", subgroup: "traditional" },
+  { repo: "spring-projects/spring-boot", subgroup: "traditional" },
+  { repo: "apache/kafka", subgroup: "traditional" },
 ];
 
 // --- Types ---
