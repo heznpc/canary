@@ -55,48 +55,61 @@ const AGENT_ERA_FILES = [
   ".roomodes",
 ];
 
-// Also track broader context files (specs, ADRs) by pattern
+// Pattern matching for nested agent-era files (e.g. packages/foo/AGENTS.md)
 const AGENT_ERA_PATTERNS = [
   /^\.cursor\//,
-  /^specs?\//i,
-  /^adr\//i,
   /agents\.md$/i,
   /claude\.md$/i,
   /copilot-instructions/i,
 ];
 
-// --- Reference repos (mix of agent-adopting and traditional) ---
-const REFERENCE_REPOS = [
-  // Known agent adoption
-  "vercel/ai",
-  "langchain-ai/langchain",
-  "anthropics/anthropic-cookbook",
-  "cohere-ai/cohere-toolkit",
-  "stackblitz/bolt.new",
-  // Major OSS (likely no agent-era files)
-  "facebook/react",
-  "vercel/next.js",
-  "microsoft/typescript",
-  "nodejs/node",
-  "tailwindlabs/tailwindcss",
-  // Mid-size, diverse
-  "shadcn-ui/ui",
-  "t3-oss/create-t3-app",
-  "astro-build/astro",
-  "sveltejs/svelte",
-  "remix-run/remix",
+// File type classification for reporting
+type FileCategory = "agents-md" | "claude-md" | "cursor" | "copilot" | "other-agent";
+function classifyAgentFile(path: string): FileCategory {
+  const lower = path.toLowerCase();
+  if (lower.endsWith("agents.md")) return "agents-md";
+  if (lower.endsWith("claude.md")) return "claude-md";
+  if (lower.includes(".cursor") || lower.endsWith(".cursorrules")) return "cursor";
+  if (lower.includes("copilot-instructions")) return "copilot";
+  return "other-agent";
+}
+
+const MIN_COMMITS_THRESHOLD = 5;
+
+// --- Reference repos: explicitly tagged by subgroup ---
+const REFERENCE_REPOS: { repo: string; subgroup: "ai-adjacent" | "traditional" }[] = [
+  // AI-adjacent: projects in the AI/LLM ecosystem
+  { repo: "vercel/ai", subgroup: "ai-adjacent" },
+  { repo: "langchain-ai/langchain", subgroup: "ai-adjacent" },
+  { repo: "anthropics/anthropic-cookbook", subgroup: "ai-adjacent" },
+  { repo: "cohere-ai/cohere-toolkit", subgroup: "ai-adjacent" },
+  { repo: "stackblitz/bolt.new", subgroup: "ai-adjacent" },
+  // Traditional: established OSS with no inherent AI connection
+  { repo: "facebook/react", subgroup: "traditional" },
+  { repo: "vercel/next.js", subgroup: "traditional" },
+  { repo: "microsoft/typescript", subgroup: "traditional" },
+  { repo: "nodejs/node", subgroup: "traditional" },
+  { repo: "tailwindlabs/tailwindcss", subgroup: "traditional" },
+  { repo: "shadcn-ui/ui", subgroup: "traditional" },
+  { repo: "sveltejs/svelte", subgroup: "traditional" },
+  { repo: "remix-run/remix", subgroup: "traditional" },
+  { repo: "vitejs/vite", subgroup: "traditional" },
+  { repo: "denoland/deno", subgroup: "traditional" },
 ];
 
 // --- Types ---
 interface CAMResult {
   repo: string;
   group: "user" | "reference";
+  subgroup?: "ai-adjacent" | "traditional";
   defaultBranch: string;
   totalCommits90d: number;
   agentEraFiles: string[];
+  fileBreakdown: Record<FileCategory, string[]>;
   contextCommits90d: number;
   cam: number;
   camPercent: string;
+  excluded: boolean; // true if below MIN_COMMITS_THRESHOLD
 }
 
 // --- API helpers ---
@@ -193,7 +206,11 @@ async function getContextCommitSHAs(
   return shas;
 }
 
-async function computeCAM(repo: string, group: "user" | "reference"): Promise<CAMResult | null> {
+async function computeCAM(
+  repo: string,
+  group: "user" | "reference",
+  subgroup?: "ai-adjacent" | "traditional",
+): Promise<CAMResult | null> {
   const parts = repo.split("/");
   if (parts.length !== 2) return null;
   const [owner, name] = parts;
@@ -211,6 +228,8 @@ async function computeCAM(repo: string, group: "user" | "reference"): Promise<CA
     countCommits90d(owner, name),
   ]);
 
+  const excluded = totalCommits < MIN_COMMITS_THRESHOLD;
+
   let contextCommits = 0;
   if (agentEraFiles.length > 0 && totalCommits > 0) {
     const shas = await getContextCommitSHAs(owner, name, agentEraFiles);
@@ -219,19 +238,27 @@ async function computeCAM(repo: string, group: "user" | "reference"): Promise<CA
 
   const cam = totalCommits > 0 ? contextCommits / totalCommits : 0;
 
+  // Classify files by type
+  const fileBreakdown: Record<FileCategory, string[]> = {
+    "agents-md": [], "claude-md": [], "cursor": [], "copilot": [], "other-agent": [],
+  };
+  for (const f of agentEraFiles) {
+    fileBreakdown[classifyAgentFile(f)].push(f);
+  }
+
+  const tag = excluded ? " [EXCLUDED <5 commits]" : "";
   console.log(
-    ` ${agentEraFiles.length} agent-era files, ${contextCommits}/${totalCommits} commits, CAM=${(cam * 100).toFixed(1)}%`,
+    ` ${agentEraFiles.length} files, ${contextCommits}/${totalCommits} commits, CAM=${(cam * 100).toFixed(1)}%${tag}`,
   );
 
   return {
-    repo,
-    group,
+    repo, group, subgroup,
     defaultBranch: branch,
     totalCommits90d: totalCommits,
-    agentEraFiles,
+    agentEraFiles, fileBreakdown,
     contextCommits90d: contextCommits,
-    cam,
-    camPercent: (cam * 100).toFixed(1) + "%",
+    cam, camPercent: (cam * 100).toFixed(1) + "%",
+    excluded,
   };
 }
 
@@ -274,74 +301,104 @@ async function main() {
   }
 
   // 2. Reference repos
-  console.log("\n--- Reference repos ---");
+  console.log("\n--- Reference repos (AI-adjacent) ---");
   const refResults: CAMResult[] = [];
-  for (const repo of REFERENCE_REPOS) {
-    const r = await computeCAM(repo, "reference");
+  for (const { repo, subgroup } of REFERENCE_REPOS.filter((r) => r.subgroup === "ai-adjacent")) {
+    const r = await computeCAM(repo, "reference", subgroup);
+    if (r) refResults.push(r);
+  }
+  console.log("\n--- Reference repos (Traditional) ---");
+  for (const { repo, subgroup } of REFERENCE_REPOS.filter((r) => r.subgroup === "traditional")) {
+    const r = await computeCAM(repo, "reference", subgroup);
     if (r) refResults.push(r);
   }
 
-  // 3. Output
-  const all = [...userResults, ...refResults].sort((a, b) => b.cam - a.cam);
-
-  console.log("\n\n========================================");
-  console.log("           CAM RESULTS TABLE");
-  console.log("========================================\n");
-
-  const header = [
-    "Repo".padEnd(40),
-    "Group".padEnd(10),
-    "Total".padStart(6),
-    "Ctx".padStart(5),
-    "CAM".padStart(7),
-    "Agent-era files",
-  ].join(" | ");
-  console.log(header);
-  console.log("-".repeat(header.length));
-
-  for (const r of all) {
-    console.log(
-      [
-        r.repo.padEnd(40),
-        r.group.padEnd(10),
-        String(r.totalCommits90d).padStart(6),
-        String(r.contextCommits90d).padStart(5),
-        r.camPercent.padStart(7),
-        r.agentEraFiles.join(", ") || "(none)",
-      ].join(" | "),
-    );
-  }
-
-  // 4. Summary statistics
-  const userCAMs = userResults.filter((r) => r.totalCommits90d > 0).map((r) => r.cam);
-  const refCAMs = refResults.filter((r) => r.totalCommits90d > 0).map((r) => r.cam);
+  // 3. Helpers
   const mean = (arr: number[]) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
   const median = (arr: number[]) => {
     const s = [...arr].sort((a, b) => a - b);
     const m = Math.floor(s.length / 2);
-    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    return s.length === 0 ? 0 : s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
   };
 
-  console.log("\n--- Summary ---");
-  console.log(
-    `User repos (n=${userCAMs.length}):  mean CAM = ${(mean(userCAMs) * 100).toFixed(1)}%,  median = ${(median(userCAMs) * 100).toFixed(1)}%`,
-  );
-  console.log(
-    `Ref repos  (n=${refCAMs.length}):  mean CAM = ${(mean(refCAMs) * 100).toFixed(1)}%,  median = ${(median(refCAMs) * 100).toFixed(1)}%`,
-  );
+  const all = [...userResults, ...refResults];
+  const included = all.filter((r) => !r.excluded);
+  const excluded = all.filter((r) => r.excluded);
 
-  const userWithAgent = userResults.filter((r) => r.agentEraFiles.length > 0).length;
-  const refWithAgent = refResults.filter((r) => r.agentEraFiles.length > 0).length;
-  console.log(
-    `\nRepos with agent-era files: user ${userWithAgent}/${userResults.length}, ref ${refWithAgent}/${refResults.length}`,
-  );
+  // 4. Main table (included only)
+  console.log("\n\n========================================");
+  console.log("    CAM RESULTS (≥5 commits only)");
+  console.log("========================================\n");
 
-  // 5. Save raw JSON
+  const header = [
+    "Repo".padEnd(40), "Subgroup".padEnd(14),
+    "Total".padStart(6), "Ctx".padStart(5), "CAM".padStart(7),
+    "Agent-era files",
+  ].join(" | ");
+  console.log(header);
+  console.log("-".repeat(120));
+
+  for (const r of included.sort((a, b) => b.cam - a.cam)) {
+    const sg = r.subgroup || r.group;
+    console.log([
+      r.repo.padEnd(40), sg.padEnd(14),
+      String(r.totalCommits90d).padStart(6), String(r.contextCommits90d).padStart(5),
+      r.camPercent.padStart(7),
+      r.agentEraFiles.join(", ") || "(none)",
+    ].join(" | "));
+  }
+
+  if (excluded.length > 0) {
+    console.log(`\nExcluded (< ${MIN_COMMITS_THRESHOLD} commits): ${excluded.map((r) => r.repo).join(", ")}`);
+  }
+
+  // 5. File type breakdown
+  console.log("\n--- File Type Breakdown (across all repos) ---");
+  const allCategories: FileCategory[] = ["agents-md", "claude-md", "cursor", "copilot", "other-agent"];
+  for (const cat of allCategories) {
+    const repos = included.filter((r) => r.fileBreakdown[cat].length > 0);
+    if (repos.length > 0) {
+      console.log(`  ${cat}: ${repos.length} repos — ${repos.map((r) => `${r.repo}(${r.fileBreakdown[cat].join(",")})` ).join(", ")}`);
+    }
+  }
+
+  // 6. Summary by subgroup
+  const groups = [
+    { label: "User (≥5 commits)", data: included.filter((r) => r.group === "user") },
+    { label: "Ref: AI-adjacent",  data: included.filter((r) => r.subgroup === "ai-adjacent") },
+    { label: "Ref: Traditional",  data: included.filter((r) => r.subgroup === "traditional") },
+    { label: "Ref: All",          data: included.filter((r) => r.group === "reference") },
+  ];
+
+  console.log("\n--- Summary by Subgroup ---");
+  console.log(
+    ["Group".padEnd(22), "n".padStart(3), "w/ files".padStart(9),
+     "mean CAM".padStart(10), "median".padStart(8)].join(" | "),
+  );
+  console.log("-".repeat(60));
+  for (const g of groups) {
+    const cams = g.data.map((r) => r.cam);
+    const withFiles = g.data.filter((r) => r.agentEraFiles.length > 0).length;
+    console.log([
+      g.label.padEnd(22), String(g.data.length).padStart(3),
+      `${withFiles}/${g.data.length}`.padStart(9),
+      ((mean(cams) * 100).toFixed(1) + "%").padStart(10),
+      ((median(cams) * 100).toFixed(1) + "%").padStart(8),
+    ].join(" | "));
+  }
+
+  // 7. Save raw JSON
   const outputPath = new URL("../paper/cam-results.json", import.meta.url).pathname;
-  const Bun = globalThis as any;
   await (await import("fs/promises")).writeFile(
     outputPath,
-    JSON.stringify({ timestamp: new Date().toISOString(), window: "90d", userResults, refResults }, null, 2),
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      window: "90d",
+      minCommitsThreshold: MIN_COMMITS_THRESHOLD,
+      userResults, refResults,
+      includedCount: included.length,
+      excludedCount: excluded.length,
+    }, null, 2),
   );
   console.log(`\nRaw data saved to ${outputPath}`);
 }
