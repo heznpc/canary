@@ -20,19 +20,53 @@ const camTemporalResults = JSON.parse(readFileSync(resolve(basePath, "cam-tempor
 const acrResults = JSON.parse(readFileSync(resolve(basePath, "acr-results.json"), "utf-8"));
 
 // --- Governance classification ---
-// Foundation-governed: formal contribution process, foundation/corporate governance
+// Operationalized criterion: a project is "foundation-governed" if its primary
+// governance authority is a non-profit foundation (Apache Software Foundation,
+// Linux Foundation / CNCF, Python Software Foundation, OpenJS Foundation,
+// Rust Foundation, Django Software Foundation) OR it follows a formal proposal
+// process (PEP, KEP, Go proposals, RFC). All others are "developer-led."
+//
+// Classification table:
+//   torvalds/linux           → Linux Foundation
+//   kubernetes/kubernetes    → CNCF (Linux Foundation)
+//   golang/go                → Google + Go proposal process
+//   python/cpython           → PSF + PEP process
+//   spring-projects/spring-boot → VMware/Broadcom (corporate governance, formal process)
+//   apache/kafka             → Apache Software Foundation
+//   nodejs/node              → OpenJS Foundation
+//   docker/cli               → Moby project governance
+//   rust-lang/rust           → Rust Foundation + RFC process
+//   prometheus/prometheus    → CNCF (Linux Foundation)
+//   django/django            → Django Software Foundation (DSF)
+//
 const FOUNDATION_GOVERNED = new Set([
   "torvalds/linux", "kubernetes/kubernetes", "golang/go", "python/cpython",
   "spring-projects/spring-boot", "apache/kafka", "nodejs/node",
   "docker/cli", "rust-lang/rust",
+  "prometheus/prometheus",  // CNCF graduated project
+  "django/django",          // Django Software Foundation
 ]);
 
-// Developer-led: individual/small-team governed, more agile adoption
+// Developer-led: maintainer-driven governance, no formal foundation or
+// proposal process required for contribution.
+//
+// Classification table:
+//   facebook/react           → Meta Open Source (corporate, no foundation)
+//   vercel/next.js           → Vercel (corporate)
+//   microsoft/typescript     → Microsoft (corporate)
+//   tailwindlabs/tailwindcss → Tailwind Labs (small company)
+//   shadcn-ui/ui             → Individual maintainer
+//   sveltejs/svelte          → Community + Vercel sponsorship
+//   remix-run/remix          → Shopify (corporate)
+//   vitejs/vite              → Community + corporate sponsors
+//   denoland/deno            → Deno Land Inc (small company)
+//   pallets/flask            → Pallets community org (no formal foundation)
+//
 const DEVELOPER_LED = new Set([
   "facebook/react", "vercel/next.js", "microsoft/typescript",
   "tailwindlabs/tailwindcss", "shadcn-ui/ui", "sveltejs/svelte",
   "remix-run/remix", "vitejs/vite", "denoland/deno",
-  "prometheus/prometheus", "django/django", "pallets/flask",
+  "pallets/flask",
 ]);
 
 // --- Statistical utilities ---
