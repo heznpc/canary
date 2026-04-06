@@ -32,7 +32,7 @@ jobs:
         run: |
           # Start Next.js in background, hit the sync API, save output
           npm run build
-          node -e "
+          npx tsx -e "
             const { scanAll } = require('./lib/scanners');
             const { generateProjectsJson } = require('./lib/sync/heznpc');
             (async () => {
@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.HEZNPC_PAT }}
         run: |
-          node -e "
+          npx tsx -e "
             const { scanAll } = require('./lib/scanners');
             (async () => {
               const data = await scanAll();
