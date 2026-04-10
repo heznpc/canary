@@ -21,13 +21,17 @@ This paper makes four contributions:
 
 ## 2. Background and Related Work
 
-### 2.1 The Agentic Turn in Software Engineering
+### 2.1 Infrastructure Studies
+
+The idea that technologies become invisible as they mature has deep roots in science and technology studies (STS). Star and Ruhleder [43] identified eight dimensions of infrastructure, including *transparency* ("it does not have to be reinvented each time") and *learned as part of membership* ("strangers and outsiders encounter infrastructure as a target object to be learned about"). Edwards [44] traced how sociotechnical systems evolve from artisanal operation to automated background processes, with human expertise progressively encoded into the infrastructure itself. Bowker and Star [45] showed how classification systems and their metadata become "naturalized" — accepted as given rather than designed. We draw on this tradition to frame Git's trajectory, while introducing "metadatafication" as a specific mechanism within the broader phenomenon of infrastructure transparency (Section 3).
+
+### 2.2 The Agentic Turn in Software Engineering
 
 Hassan et al. [4] propose recognizing a fundamental duality in software engineering: "SE for Humans" and "SE for Agents," arguing that the field must radically reimagine its foundational pillars — actors, processes, tools, and artifacts. This framework, termed SE 3.0, extends beyond the AI-augmented development of SE 2.0 (copilots and code completion) into a regime where agents autonomously plan, execute, and iterate on software tasks.
 
 The empirical reality of SE 3.0 is documented by Li et al. [2], whose AIDev dataset spans 456,000+ pull requests across 61,000 repositories. Complementary studies examine the adoption patterns of coding agents on GitHub [5], the barriers to merging agent-authored pull requests [6], and the emergence of AGENTS.md files as version-controlled agent configuration artifacts [7]. A growing body of work specifically examines these context files: Chatlatanagulchai et al. [39] analyze 2,303 context files from 1,925 repositories, finding that developers prioritize functional context (build commands, implementation details) over non-functional requirements; Mohsenimofidi et al. [40] study 466 projects and find no established content structure, indicating the convention is still emergent; and Wang et al. [42] explore structured configuration schemas as alternatives to free-form markdown. Critically, Gloaguen et al. [41] find that LLM-generated context files can *reduce* task success rates while increasing inference costs — a finding we address in Section 7.
 
-### 2.2 Rethinking Version Control
+### 2.3 Rethinking Version Control
 
 Piñera [8] argues that Git's 2005 design assumes "humans writing code in isolation, occasionally syncing their work — an assumption that is breaking down." He proposes replacing branches with *sessions* that capture prompts, reasoning, code, and tests as unified contribution units, and replacing pull requests with *prompt requests* where contributors submit intent rather than implementation.
 
@@ -35,19 +39,23 @@ The All Things Open editorial [9] highlights the scalability crisis: "When a tho
 
 Cohen proposes Manyana [11], a CRDT-based VCS where merges always succeed by definition, eliminating traditional conflict resolution — a design that implicitly acknowledges that human-mediated merge conflicts become untenable at machine speed.
 
-### 2.3 Spec-Driven Development and Disposable Code
+### 2.4 Spec-Driven Development and Disposable Code
 
 A parallel discourse argues that code itself is becoming a derived artifact. Welch [12] positions specifications as the "actual source" and code as the "compiled binary." Research on the NL-code interface extends this vision architecturally: if representation-level execution becomes practical, programming languages shift from human-writable specifications to machine-generated projections — "languages become output formats" rather than authoring tools [37]. Piskala [13] defines three levels of specification rigor — spec-first, spec-anchored, and spec-as-source — with the latter treating code as entirely generated and verified against specifications. GitHub's own Spec Kit [14] operationalizes this vision, and Stoica et al. [15] from UC Berkeley argue that specifications are "the missing link" for reliable LLM systems.
 
 The logical endpoint is *ephemeral software* [16, 17, 18]: applications generated on demand, used briefly, and discarded. Harel [19] draws parallels to disposable content in social media: "once the barrier to build collapses, usage patterns evolve." The JIT Coding framework [20] articulates this as "the spec is the program, code is just exhaust."
 
-### 2.4 The One-Person Company Hypothesis
+### 2.5 The One-Person Company Hypothesis
 
 Anthropic CEO Dario Amodei has stated with "70-80% confidence" that the first billion-dollar single-employee company could appear in 2026 [21]. This is not merely a prediction about productivity tools but a structural claim about the firm: if AI agents can perform the work of an engineering team, the organizational rationale for multi-person software companies weakens. The effect may be multiplicative: non-English-speaking developers currently face a double translation (native thought → English syntax → execution), and research on reasoning-language effects suggests this overhead is substantial [38]. Representation-level systems could eliminate this double translation [37], expanding the global talent pool and further enabling the solo-founder model. The 2025 sale of Base44 — built by solo founder Maor Shlomo — to Wix for $80 million provides early empirical support [21].
 
 ## 3. The Metadatafication Thesis
 
 ### 3.1 Definition
+
+Our concept of metadatafication builds on a rich tradition in infrastructure studies. Star and Ruhleder [43] established the foundational insight that infrastructure becomes visible only upon breakdown: mature infrastructure is characterized by "transparency" — it is "invisibly [supporting] tasks" without requiring active attention. Edwards [44] extended this to show how sociotechnical systems embed human knowledge into automated processes over time, with the original human expertise becoming "black-boxed" within the infrastructure. Bowker and Star [45] further demonstrated how classification systems — including the metadata they generate — become invisible as they mature, shaping practice without being noticed.
+
+Metadatafication describes a specific trajectory within this broader pattern: the transition from direct tool operation to automatic metadata generation, where the tool's *outputs* persist but the *interaction* disappears. This is narrower than Star and Ruhleder's "infrastructure transparency," which encompasses all forms of background operation. The distinction matters because metadatafication makes a stronger empirical claim: not merely that the tool fades from attention, but that its outputs become automatically generated records — metadata in the literal sense — that accumulate without human authorship.
 
 We define **metadatafication** as the process by which a technology transitions through three phases:
 
@@ -57,7 +65,7 @@ We define **metadatafication** as the process by which a technology transitions 
 
 Critically, metadatafication is not obsolescence. The technology continues to function and its outputs remain valuable. What changes is the *locus of agency*: from human operator to automated system.
 
-**Boundary conditions.** Not all technologies metadatafy. Spreadsheets, text editors, and email remain directly operated after decades. We propose two necessary conditions: (1) the technology's outputs can be generated without human intervention while preserving information fidelity (EXIF captures what photographers would have noted; Git commits record what developers would have committed), and (2) a faster operator class emerges that makes human operation a throughput bottleneck (digital cameras for EXIF; AI agents for Git). Technologies where the *process* of operation is itself the valued output — interactive data exploration in spreadsheets, compositional authorship in email — resist metadatafication because automating the process eliminates the value. Our CAM data (Section 5.4) suggest a third moderating factor: governance structure. Foundation-governed projects with formal contribution processes (Linux, Kubernetes, CPython) show zero agent-era file adoption, while developer-led projects adopt readily, suggesting that institutional inertia mediates the pace of metadatafication even when the technical conditions are met.
+**Boundary conditions.** Not all technologies metadatafy. Spreadsheets, text editors, and email remain directly operated after decades. We propose two necessary conditions: (1) the technology's outputs can be generated without human intervention while preserving information fidelity (EXIF captures what photographers would have noted; Git commits record what developers would have committed), and (2) a faster operator class emerges that makes human operation a throughput bottleneck (digital cameras for EXIF; AI agents for Git). Technologies where the *process* of operation is itself the valued output — interactive data exploration in spreadsheets, compositional authorship in email — resist metadatafication because automating the process eliminates the value. Our CAM data (Section 5.4) suggest a third moderating factor: governance structure. Foundation-governed projects with formal contribution processes show significantly lower agent-era file adoption than developer-led projects (*p* = 0.017, Mann-Whitney U; Section 5.4), suggesting that institutional governance mediates the pace of metadatafication even when the technical conditions are met.
 
 ### 3.2 Historical Precedents
 
@@ -147,7 +155,15 @@ Canary is an open-source project health dashboard whose design decisions are der
 
 Canary is a Next.js application that scans GitHub repositories and grades them A–F (on a 100-point scale) based on automatically collected health metrics. It monitors 25+ projects across a solo developer's portfolio spanning four categories: applications, research papers, MCP servers, and infrastructure.
 
-Seven parallel scanners collect data via the GitHub REST API, npm/PyPI/Maven registries, and external services: dependency analysis, stack version tracking, code quality checks, activity monitoring, deploy status, documentation freshness, and VibeCoding Intel (AI agent configuration detection).
+The system comprises seven parallel scanners that collect data via the GitHub REST API, npm/PyPI/Maven registries, and external services (Semantic Scholar, Vercel, pub.dev):
+
+1. **Dependency scanner**: Version gap analysis across Node.js, Python, Flutter, and JVM ecosystems, with vulnerability detection.
+2. **Stack scanner**: Tracks framework versions (Next.js, React, Spring Boot, etc.) against latest releases and EOL dates.
+3. **Code quality scanner**: Detects CI/CD pipelines, test frameworks, linting, type checking, license, and security policies.
+4. **Activity scanner**: Measures commit frequency, open PRs/issues, and contributor count over rolling windows.
+5. **Deploy scanner**: Checks deployment status across Vercel, GitHub Pages, npm, Chrome Web Store, and Zenodo.
+6. **Documentation scanner**: Identifies README version drift, CHANGELOG staleness, and TODO accumulation.
+7. **VibeCoding Intel scanner**: Detects AGENTS.md and CLAUDE.md files and provides stack-version-specific guidance for AI coding agents.
 
 ### 5.2 Metadatafication in Practice
 
@@ -188,9 +204,86 @@ To control for circularity (the author's portfolio is biased toward AI-assisted 
 | Reference: Traditional | 21 | 11 (52%) | 0.8% | 0.0% |
 | **Reference: All** | **24** | **14 (58%)** | **1.0%** | **0.2%** |
 
-Two findings stand out. First, *adoption is ecosystem-dependent*: 11 of 21 traditional repositories (52%) contain agent-era files, but adoption concentrates in developer-led projects — React (CLAUDE.md), Next.js (AGENTS.md, CLAUDE.md), TypeScript (AGENTS.md, copilot-instructions.md), Remix (AGENTS.md in multiple packages, CAM = 6.8%), Rust (rust-analyzer subproject), Prometheus (AGENTS.md, CLAUDE.md), Django (copilot-instructions.md). By contrast, foundation-governed projects with formal contribution processes — Linux (n=13,891 commits), Kubernetes (n=2,353), CPython (n=1,062), Go (n=719), Spring Boot (n=1,461), Kafka (n=473) — show zero adoption. This pattern suggests that institutional governance mediates the pace of metadatafication even when the technical conditions are met (see Section 3.1).
+Two findings stand out. First, *adoption is governance-dependent*: 11 of 21 traditional repositories (52%) contain agent-era files, but commit activity on them concentrates in developer-led projects — React (CLAUDE.md, CAM = 4.1%), Next.js (AGENTS.md, CLAUDE.md, CAM = 2.0%), TypeScript (AGENTS.md, copilot-instructions.md), Remix (AGENTS.md in multiple packages, CAM = 6.8%), Deno (CLAUDE.md), Svelte (AGENTS.md), and Vite (copilot-instructions.md). Foundation-governed projects show a qualitatively different pattern: while three have adopted agent-era files — Prometheus (AGENTS.md, CLAUDE.md, CAM = 0.8%), Django (copilot-instructions.md, CAM = 0.4%), and Rust (rust-analyzer subproject, CAM ≈ 0.0%) — the remaining eight (Linux, Kubernetes, CPython, Go, Node.js, Docker, Spring Boot, Kafka) show zero adoption. We classify projects as *foundation-governed* if their primary governance authority is a non-profit foundation (Apache, CNCF, PSF, OpenJS, Rust Foundation, DSF) or they follow a formal proposal process (PEP, KEP, Go proposals); all others are *developer-led* (full classification table in replication package). A Mann-Whitney U test confirms the difference: developer-led projects (n = 10, mean CAM = 1.6%) differ significantly from foundation-governed projects (n = 11, mean CAM = 0.1%) with U = 21.0, z = 2.39, *p* = 0.017, rank-biserial *r* = 0.62 (large effect). Bootstrap 95% CIs are [0.4%, 3.0%] for developer-led and [0.0%, 0.3%] for foundation-governed.
 
-Second, *creation outpaces maintenance*: by file type, AGENTS.md appears in 10 repos, CLAUDE.md in 9, copilot-instructions.md in 4, and .cursor configurations in 3, yet median CAM across all reference repos is only 0.2%. Agent-era files are proliferating but not yet intensively maintained — commit activity on them remains <1% for most adopters. This is consistent with early Phase 2 of the metadatafication model and with the finding by Gloaguen et al. [41] that context file quality, not merely presence, determines agent effectiveness. A longitudinal study tracking CAM quarterly would test whether this fraction increases as predicted.
+Second, *creation outpaces maintenance*: by file type, AGENTS.md appears in 10 repos, CLAUDE.md in 9, copilot-instructions.md in 4, and .cursor configurations in 3, yet median CAM across all reference repos is only 0.2%. Agent-era files are proliferating but not yet intensively maintained — commit activity on them remains <1% for most adopters. This is consistent with early Phase 2 of the metadatafication model and with the finding by Gloaguen et al. [41] that context file quality, not merely presence, determines agent effectiveness.
+
+#### 5.4.1 Temporal Trajectory
+
+To approximate the longitudinal trend without waiting for quarterly data, we computed CAM across five overlapping windows (30, 60, 90, 180, and 365 days) for the same repository set. Subgroup means by window:
+
+| Subgroup | 30d | 60d | 90d | 180d | 365d |
+|---|---|---|---|---|---|
+| AI-adjacent (n=3) | 1.9% | 2.6% | 2.5% | 2.3% | 1.5% |
+| Traditional (n=21) | 1.3% | 0.8% | 0.8% | 0.5% | 0.4% |
+| All reference (n=24) | 1.3% | 1.0% | 1.0% | 0.7% | 0.5% |
+
+The monotonic increase from 365d to 30d in traditional OSS — 0.4% → 1.3%, a 3× increase — indicates that context-file activity is *accelerating*, not merely present. Per-repo trends reinforce this: TypeScript surged from 1.9% (365d) to 11.1% (30d), React from 0.7% to 3.2%, Svelte from 0.1% to 1.3%, and Deno from 0.2% to 1.3%. Most foundation-governed projects remain at 0.0% across all windows (Linux, Kubernetes, CPython, Go, Node.js, Docker, Spring Boot, Kafka), though two foundation-governed adopters — Prometheus (0.3% → 2.7%) and Django (0.1% → 1.3%) — show the same accelerating pattern, suggesting that governance slows initial adoption but does not prevent intensification once it occurs. Because the windows overlap, these are not independent samples; however, they provide strong descriptive evidence that the trend direction is upward for adopting projects regardless of governance model.
+
+#### 5.4.2 Diff Volume: CAM-LOC
+
+Commit count alone may overstate attention if context-file commits are trivially small (e.g., initial file creation). To control for this, we define a complementary metric:
+
+> CAM-LOC = (sum of lines changed in agent-era files) / (sum of lines changed across all files), 90-day window
+
+CAM (commit-based) vs CAM-LOC (diff-volume-based) for the 14 repositories that contain agent-era files:
+
+| Repository | CAM | CAM-LOC | Agent LOC | Total LOC | Ratio |
+|---|---|---|---|---|---|
+| remix-run/remix | 2.0% | 1.01% | 893 | 88,375 | 0.51 |
+| prometheus/prometheus | 3.0% | 0.74% | 410 | 55,404 | 0.25 |
+| facebook/react | 4.1% | 0.42% | 305 | 72,025 | 0.10 |
+| denoland/deno | 1.0% | 0.23% | 151 | 65,637 | 0.23 |
+| django/django | 0.5% | 0.11% | 10 | 9,251 | 0.22 |
+| sveltejs/svelte | 0.5% | 0.05% | 9 | 19,674 | 0.09 |
+| vercel/next.js | 2.0% | 0.04% | 24 | 56,201 | 0.02 |
+| microsoft/typescript | 1.3% | 0.03% | 59 | 170,348 | 0.03 |
+| vercel/ai | 1.0% | 0.02% | 19 | 116,504 | 0.02 |
+
+The Ratio column (CAM-LOC / CAM) reveals a bifurcation. Three projects invest substantial diff volume in context files: Remix (893 LOC across multiple package-level AGENTS.md files, Ratio = 0.51), Prometheus (410 LOC, primarily AGENTS.md creation, Ratio = 0.25), and React (305 LOC, primarily `compiler/CLAUDE.md`, Ratio = 0.10). These represent early *refinement-phase* projects where context engineering is receiving genuine editorial attention. By contrast, most adopters show Ratios ≤ 0.03 — context-file commits exist but are trivially small, consistent with the creation-before-refinement pattern noted above.
+
+The per-file breakdown corroborates this reading. React's `compiler/CLAUDE.md` accumulated 297 LOC of changes (+279 −18), indicating iterative refinement rather than one-time creation. Prometheus's AGENTS.md shows +352 −56, similarly suggesting active maintenance. In contrast, several repos show purely additive patterns (e.g., Django `copilot-instructions.md`: +10 −0; Svelte AGENTS.md: +9 −0), characteristic of initial creation without subsequent iteration.
+
+Taken together, the temporal and diff-volume analyses strengthen the original CAM finding: agent-era files are not merely appearing but are receiving increasing commit attention (temporal CAM) and, in a subset of projects, substantive editorial investment (CAM-LOC). The ecosystem appears to be transitioning from Phase 2 (creation) toward Phase 3 (refinement) in the metadatafication model, with developer-led projects leading and foundation-governed projects yet to begin.
+
+#### 5.4.3 Agent-Authored Commit Ratio
+
+CAM measures the "input" side of metadatafication — developer attention flowing *toward* context engineering. But the thesis also predicts that Git records themselves become automatically generated. To measure this "output" side directly, we define the *Agent-Authored Commit Ratio* (ACR): the fraction of commits whose metadata contains AI-agent co-authorship markers.
+
+> ACR = |{c in C_w : c has AI-agent marker}| / |C_w|
+
+We detect markers via `Co-authored-by` trailers referencing known AI tools (Claude, Copilot, Cursor, Devin) and bot-account login patterns. We separately classify traditional automation (Dependabot, Renovate, GitHub Actions) to distinguish pre-AI automation from agent authorship. Because many AI-assisted commits lack markers (Copilot and Cursor rarely annotate), ACR is a conservative lower bound: the true fraction of agent-influenced commits is higher.
+
+| Subgroup | n | 30d ACR | 90d ACR | 365d ACR | 90d Bot | 90d Auto |
+|---|---|---|---|---|---|---|
+| User portfolio | 8 | 20.5% | 20.9% | 20.9% | 3.6% | 24.5% |
+| AI-adjacent | 3 | 3.8% | 5.9% | 11.0% | 23.3% | 29.1% |
+| Traditional | 21 | 6.4% | 5.0% | 4.3% | 3.5% | 8.5% |
+| **All reference** | **24** | **6.1%** | **5.1%** | **5.2%** | **6.0%** | **11.1%** |
+
+Three findings emerge. First, *agent authorship is already substantial*: even as a lower bound, mean ACR for traditional OSS is 5.0% (bootstrap 95% CI: [1.2%, 10.9%]) at 90 days. Individual projects far exceed this — Deno (56.6%), TypeScript (13.0% at 90d, 33.3% at 30d), Next.js (11.6%), Tailwind CSS (6.6%), and Vite (5.4%). These are not peripheral projects; they are foundational infrastructure of the modern web ecosystem.
+
+Second, *agent authorship is accelerating in traditional OSS*: mean ACR rises from 4.3% (365d) to 6.4% (30d). TypeScript's surge from 7.4% (365d) to 33.3% (30d) is particularly striking. Claude dominates the detected markers (539 commits across all repos at 90d), followed by Copilot (35) and Cursor (12), though Copilot's true contribution is likely understated due to its inconsistent use of co-authorship markers.
+
+Third, *the governance divide persists*: developer-led projects (mean ACR = 10.0%, CI: [2.8%, 21.4%]) significantly exceed foundation-governed projects (mean ACR = 0.3%, CI: [0.1%, 0.6%]). A Mann-Whitney U test yields U = 21.0, z = 2.39, *p* = 0.017, rank-biserial *r* = 0.62 (large effect). Linux (0.0%), Kubernetes (0.0%), Django (0.0%), and Spring Boot (0.0%) show zero detected AI authorship, while Go (0.2%), Rust (0.2%), Docker (0.3%), and CPython (0.6%) show only trace amounts. Notably, Django's agent-era file (`copilot-instructions.md`) was created explicitly to *discourage* automated AI reviews of pull requests — an instance of governance using the mechanism of context engineering to *limit* rather than enable agent participation. Even among foundation-governed repos, sporadic agent-authored contributions appear (Apache Kafka 1.1%, Prometheus 0.6%, CPython 0.6%) — agents submit patches to these projects regardless of project-level adoption, a pattern consistent with externally-driven agent use by individual contributors.
+
+ACR provides the missing "output" evidence for metadatafication: Git commit records are not merely being consumed differently (CAM) but are being *produced* by agents at scale. When over half of Deno's recent commits and a third of TypeScript's carry AI co-authorship markers — and these are conservative lower bounds — the characterization of Git as "automatically-generated metadata" is not aspirational but descriptive.
+
+#### 5.4.4 Adoption Timeline
+
+To distinguish a sustained wave of adoption from legacy file presence, we traced the first commit date for each agent-era file across the 26 reference repositories. Cumulative adoption curve:
+
+| Month | Cumulative | New adopters |
+|---|---|---|
+| 2025-06 | 1/26 | TypeScript (copilot-instructions.md) |
+| 2025-07 | 3/26 | Vite, LangChain |
+| 2025-10 | 5/26 | Remix, Anthropic Cookbook |
+| 2025-11 | 6/26 | Deno |
+| 2026-01 | 9/26 | Next.js, Vercel AI, React |
+| 2026-03 | 13/26 | Rust, Django, Prometheus, shadcn/ui |
+| 2026-04 | 14/26 | Svelte |
+
+The adoption curve is convex: 1 repo in the first 7 months (June–December 2025), then 8 repos in the next 4 months (January–April 2026). The earliest adopter was TypeScript's `copilot-instructions.md` (June 2025); by file type, `copilot-instructions.md` appeared first (2025-06), followed by CLAUDE.md (2025-07), AGENTS.md (2025-09), and `.cursor` configurations (2026-01) — a progression from tool-specific to tool-agnostic formats. The 12 non-adopting repos are exclusively foundation-governed (Linux, Kubernetes, Go, CPython, Node.js, Docker, Spring Boot, Kafka) or projects with low recent activity (Flask, Tailwind CSS), reinforcing the governance moderation finding.
 
 ## 6. Implications
 
@@ -240,6 +333,16 @@ We acknowledge several important counterarguments:
 **"Malleable" vs. "ephemeral."** Kirsch [25] proposes "malleable software" — easier to modify but persisted, not discarded — as a more realistic alternative to ephemeral software. We view this as compatible with our framework: malleable software still shifts developer attention from code manipulation to intent specification, and Git still transitions toward metadata in a malleable software regime.
 
 **Context files can hurt agent performance.** Gloaguen et al. [41] find that LLM-generated AGENTS.md files reduce task success rates by up to 3% and increase inference costs by over 20%. This is an important finding that we do not dismiss. However, it does not undermine the metadatafication thesis — it constrains it. The finding shows that *quality* of context artifacts matters more than their mere presence, and that the convention is not yet mature. This parallels early-stage patterns in other metadatafied technologies: misconfigured DNS records caused more failures than absent ones, but the solution was better configuration standards, not abandoning DNS. Our CAM data corroborate this reading: context files are proliferating (52% adoption among traditional OSS) but are not yet intensively maintained (median CAM < 1%), suggesting the ecosystem is in the *creation* phase before the *refinement* phase that would produce performance gains.
+
+### 7.1 Threats to Validity
+
+**Construct validity.** CAM and ACR are proxy metrics for "attention migration" and "automated record generation," respectively. CAM measures commit frequency touching agent-era files, not the cognitive attention developers invest; a developer may spend hours crafting an AGENTS.md file in a single commit, or may auto-generate it in seconds. CAM-LOC partially mitigates this by measuring diff volume, but neither metric captures time spent or cognitive effort. ACR relies on co-authorship markers, which are voluntarily applied and inconsistently adopted across tools. Copilot and Cursor rarely annotate commits, so ACR systematically undercounts agent involvement. We frame ACR as a conservative lower bound, but the magnitude of undercounting is unknown — the true agent-authored fraction could be substantially higher. Additionally, "attention migration" implies a zero-sum shift *away from* code inspection, but our metrics only measure the *toward context* direction; we present no direct evidence that developers are spending less time reading diffs or reviewing code.
+
+**Internal validity.** The reference repository sample was selected purposively, not randomly. We chose well-known projects across 7 ecosystems to maximize diversity, but the selection is vulnerable to post-hoc bias: we may have unconsciously included projects known to have adopted agent-era files. The governance classification (developer-led vs. foundation-governed) is operationalized based on whether the project's primary governance authority is a non-profit foundation or it follows a formal proposal process (Section 5.4). While this criterion is more objectively verifiable than ad-hoc assignment, edge cases exist (e.g., corporate-backed projects with informal but gatekept review processes), and independent validation of the classification was not performed. The temporal CAM analysis uses overlapping windows (30d ⊂ 60d ⊂ 90d ⊂ 180d ⊂ 365d), so the observed "acceleration" could reflect a small number of recent file-creation events amplified in shorter windows rather than a sustained trend. Both Mann-Whitney U tests (CAM and ACR) reach significance at *p* = 0.017, but with n = 21 the tests have limited power, and the result is sensitive to governance classification choices (reclassifying two repositories shifted the ACR result from *p* = 0.060 to *p* = 0.017).
+
+**External validity.** The sample of 26 reference repositories, while spanning 7 ecosystems, is small and skewed toward popular, English-language open-source projects. Adoption patterns may differ substantially in enterprise codebases, non-English developer communities, or smaller projects. The user portfolio (n = 8) introduces circularity: the author uses Claude Code, which encourages CLAUDE.md creation. We control for this by reporting user and reference results separately and grounding our claims primarily in the reference sample. The ACR tool distribution (Claude: 539, Copilot: 35, Cursor: 12) reflects the current state of marker adoption, not the true market share of AI coding tools; conclusions about which tools drive metadatafication should be drawn cautiously.
+
+**Reliability.** All experiments query the GitHub API at a specific point in time (April 2026). Results are inherently non-reproducible in the strict sense: re-running the scripts will produce different numbers as new commits accumulate and repositories evolve. We mitigate this by archiving raw JSON results alongside the scripts in a replication package. The bootstrap confidence intervals provide a measure of sampling uncertainty but do not account for temporal instability of the underlying data.
 
 ## 8. Conclusion
 
@@ -336,3 +439,9 @@ The community that thrives in this transition will not be the one with the deepe
 [41] T. Gloaguen et al., "Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?" arXiv:2602.11988, 2026.
 
 [42] X. Wang et al., "Configuring Agentic AI Coding Tools: An Exploratory Study," arXiv:2602.14690, 2026.
+
+[43] S. L. Star and K. Ruhleder, "Steps Toward an Ecology of Infrastructure: Design and Access for Large Information Spaces," *Information Systems Research*, vol. 7, no. 1, pp. 111–134, 1996.
+
+[44] P. N. Edwards, "Infrastructure and Modernity: Force, Time, and Social Organization in the History of Sociotechnical Systems," in *Modernity and Technology*, MIT Press, 2003, pp. 185–225.
+
+[45] G. C. Bowker and S. L. Star, *Sorting Things Out: Classification and Its Consequences*, MIT Press, 1999.
