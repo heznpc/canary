@@ -172,6 +172,16 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
     );
   }
 
+  // ── Metadatafication phase awareness ──
+  // Recognition only — no penalty. The phase reflects ecosystem position,
+  // not project quality. We surface it as a positive signal where applicable.
+  if (health.metadatafication && project.tag === "active") {
+    const meta = health.metadatafication;
+    if (meta.phase === "infrastructure-metadata") {
+      reasons.push(`Metadatafication ${meta.rationale}`);
+    }
+  }
+
   // ── Maintenance mode leniency ──
   if (project.tag === "maintenance") {
     score = Math.min(100, score + 20); // More lenient

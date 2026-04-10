@@ -11,6 +11,9 @@ import { checkDataFreshness } from "./data-freshness";
 import { checkCodeQuality } from "./code-quality";
 import { checkScorecard } from "./scorecard";
 import { checkActivity } from "./activity";
+import { checkContextAttention } from "./cam";
+import { checkAgentAuthorship } from "./acr";
+import { classifyMetadatafication } from "./metadatafication";
 import { gradeProject } from "./grader";
 import { logger } from "../logger";
 
@@ -64,7 +67,17 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     ? generateUpdateActions(dependencies)
     : [];
 
-  const [vibeCoding, research, docFreshness, dataFreshness, codeQuality, scorecard, activity] = await Promise.all([
+  const [
+    vibeCoding,
+    research,
+    docFreshness,
+    dataFreshness,
+    codeQuality,
+    scorecard,
+    activity,
+    contextAttention,
+    agentAuthorship,
+  ] = await Promise.all([
     withTimeout(
       analyzeVibeCoding(project.repo, project.stack, stackVersions),
       8000,
@@ -88,7 +101,15 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     project.repo
       ? withTimeout(checkActivity(project.repo), 10000, null)
       : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkContextAttention(project.repo), 15000, null)
+      : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkAgentAuthorship(project.repo), 15000, null)
+      : Promise.resolve(null),
   ]);
+
+  const metadatafication = classifyMetadatafication(contextAttention, agentAuthorship);
 
   const partial = {
     project,
@@ -104,6 +125,9 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     activity,
     docFreshness,
     dataFreshness,
+    contextAttention,
+    agentAuthorship,
+    metadatafication,
     scannedAt: new Date().toISOString(),
   };
   const { grade, recommendation, reasons } = gradeProject(partial);

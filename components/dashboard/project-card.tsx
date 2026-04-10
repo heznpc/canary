@@ -10,6 +10,7 @@ import { UpdateActions } from "./update-actions";
 import { VibeCodingPanel } from "./vibecoding-intel";
 import { ResearchPanel } from "./research-intel";
 import { CodeHealthPanel } from "./code-health-intel";
+import { MetadataficationPanel } from "./metadatafication-panel";
 import type { ProjectHealth } from "@/lib/types";
 import {
   GitBranch,
@@ -20,11 +21,12 @@ import {
   Sparkles,
   BookOpen,
   ShieldCheck,
+  Layers,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 
-type DetailTab = "updates" | "vibecoding" | "research" | "codehealth";
+type DetailTab = "updates" | "vibecoding" | "research" | "codehealth" | "metadatafication";
 
 export function ProjectCard({ health }: { health: ProjectHealth }) {
   const [expanded, setExpanded] = useState(false);
@@ -42,6 +44,9 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
     codeQuality,
     scorecard,
     activity,
+    contextAttention,
+    agentAuthorship,
+    metadatafication,
     grade,
     recommendation,
     reasons,
@@ -58,6 +63,15 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
   const hasGotchas = vibeCoding.gotchas.length > 0;
   const hasResearch = research !== null && research.recentPapers.length > 0;
   const hasCodeHealth = codeQuality !== null || activity !== null;
+  const hasMetadatafication =
+    contextAttention !== null || agentAuthorship !== null || metadatafication !== null;
+  const phaseShort = metadatafication
+    ? metadatafication.phase === "infrastructure-metadata"
+      ? "P3"
+      : metadatafication.phase === "assisted-tool"
+        ? "P2"
+        : "P1"
+    : null;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -142,7 +156,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
         </div>
 
         {/* Expand toggle */}
-        {(outdatedCount > 0 || hasGotchas || vibeCoding.tips.length > 0 || hasResearch || hasCodeHealth) && (
+        {(outdatedCount > 0 || hasGotchas || vibeCoding.tips.length > 0 || hasResearch || hasCodeHealth || hasMetadatafication) && (
           <button
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors w-full pt-1"
@@ -175,6 +189,12 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                   <span className="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400">
                     <BookOpen className="h-3 w-3" />
                     리서치 동향
+                  </span>
+                )}
+                {hasMetadatafication && phaseShort && (
+                  <span className="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400">
+                    <Layers className="h-3 w-3" />
+                    Meta {phaseShort}
                   </span>
                 )}
               </span>
@@ -219,6 +239,15 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                   count={research!.recentPapers.length}
                 />
               )}
+              {hasMetadatafication && (
+                <TabButton
+                  active={activeTab === "metadatafication"}
+                  onClick={() => setActiveTab("metadatafication")}
+                  icon={<Layers className="h-3 w-3" />}
+                  label="Meta"
+                  count={metadatafication?.progressScore ?? 0}
+                />
+              )}
             </div>
 
             {/* Tab content */}
@@ -233,6 +262,13 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
             )}
             {activeTab === "research" && research && (
               <ResearchPanel intel={research} />
+            )}
+            {activeTab === "metadatafication" && (
+              <MetadataficationPanel
+                contextAttention={contextAttention}
+                agentAuthorship={agentAuthorship}
+                metadatafication={metadatafication}
+              />
             )}
           </div>
         )}

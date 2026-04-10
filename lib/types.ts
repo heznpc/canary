@@ -179,6 +179,67 @@ export interface DataFreshnessStatus {
   lastChecked: string;
 }
 
+/* ── Context Attention Metric (CAM) ── */
+
+export type AgentFileCategory =
+  | "agents-md"
+  | "claude-md"
+  | "cursor"
+  | "copilot"
+  | "other-agent";
+
+export interface ContextAttention {
+  /** CAM = contextCommits / totalCommits over the 90-day window. 0 if no commits. */
+  cam: number;
+  /** Total commits in the 90-day window. */
+  totalCommits: number;
+  /** Commits touching at least one agent-era file. */
+  contextCommits: number;
+  /** Detected agent-era files in the repository tree. */
+  agentEraFiles: string[];
+  /** Files grouped by category for display. */
+  fileBreakdown: Record<AgentFileCategory, string[]>;
+  /** Window length in days. */
+  windowDays: number;
+  lastChecked: string;
+}
+
+/* ── Agent-Authored Commit Ratio (ACR) ── */
+
+export type AgentTool = "claude" | "copilot" | "cursor" | "devin" | "other";
+
+export interface AgentAuthorship {
+  /** ACR = agentCommits / totalCommits over the 90-day window. */
+  acr: number;
+  /** Total commits inspected (sampled if very large). */
+  totalCommits: number;
+  /** Commits with detected AI co-author markers. */
+  agentCommits: number;
+  /** Commits authored/co-authored by traditional automation (Dependabot, Renovate, etc.). */
+  botCommits: number;
+  /** Per-tool commit counts for the AI markers detected. */
+  toolBreakdown: Record<AgentTool, number>;
+  /** Tool with the most detected commits, or null if none. */
+  dominantTool: AgentTool | null;
+  /** Whether the totalCommits was sampled (cap reached). */
+  sampled: boolean;
+  windowDays: number;
+  lastChecked: string;
+}
+
+/* ── Metadatafication Phase ── */
+
+export type MetadataficationPhase = "active-tool" | "assisted-tool" | "infrastructure-metadata";
+
+export interface MetadataficationStatus {
+  /** Current phase classification per the §3.1 definition. */
+  phase: MetadataficationPhase;
+  /** Short rationale string explaining the classification. */
+  rationale: string;
+  /** 0-100 score indicating how far along the metadatafication trajectory the project is. */
+  progressScore: number;
+}
+
 export interface ProjectHealth {
   project: ProjectConfig;
   git: GitStatus | null;
@@ -193,6 +254,9 @@ export interface ProjectHealth {
   activity: ActivityPulse | null;
   docFreshness: DocFreshness | null;
   dataFreshness: DataFreshnessStatus | null;
+  contextAttention: ContextAttention | null;
+  agentAuthorship: AgentAuthorship | null;
+  metadatafication: MetadataficationStatus | null;
   grade: HealthGrade;
   recommendation: Recommendation;
   reasons: string[];
