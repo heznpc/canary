@@ -75,21 +75,33 @@ describe("gradeProject", () => {
     expect(result.recommendation).toBe("archive");
   });
 
-  it("penalizes projects with many uncommitted files", () => {
+  it("penalizes active projects whose last commit is older than 90 days", () => {
+    const ninetyOneDaysAgo = new Date(Date.now() - 91 * 24 * 60 * 60 * 1000).toISOString();
     const result = gradeProject(
       makeHealth({
         git: {
           branch: "main",
-          aheadBy: 0,
-          behindBy: 0,
-          uncommittedCount: 10,
-          lastCommitDate: new Date().toISOString(),
-          lastCommitMessage: "latest",
+          lastCommitDate: ninetyOneDaysAgo,
+          lastCommitMessage: "stale",
         },
       }),
     );
-    expect(result.grade).toBe("A"); // -10 => 90 => still A
-    expect(result.reasons.some((r) => r.includes("미커밋"))).toBe(true);
+    // -15 => 85 => still B
+    expect(result.grade).toBe("B");
+    expect(result.reasons.some((r) => r.includes("active 프로젝트치고 오래됨"))).toBe(true);
+  });
+
+  it("does not penalize fresh active commits", () => {
+    const result = gradeProject(
+      makeHealth({
+        git: {
+          branch: "main",
+          lastCommitDate: new Date().toISOString(),
+          lastCommitMessage: "fresh",
+        },
+      }),
+    );
+    expect(result.grade).toBe("A");
   });
 
   it("penalizes outdated major dependencies heavily", () => {

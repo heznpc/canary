@@ -1,7 +1,7 @@
 import type { AgentAuthorship, AgentTool } from "../types";
 import { fetchWithTimeout, githubHeaders, parseRepoSlug } from "./version-utils";
 import { cacheGet, cacheSet } from "../cache";
-import { logger } from "../logger";
+import { runGuarded } from "./shared-breaker";
 
 /**
  * Agent-Authored Commit Ratio scanner.
@@ -187,7 +187,7 @@ export async function checkAgentAuthorship(
   const cached = cacheGet<AgentAuthorship>(cacheKey);
   if (cached) return cached;
 
-  try {
+  return runGuarded("acr", repo, async () => {
     const sinceISO = new Date(
       Date.now() - WINDOW_DAYS * 24 * 60 * 60 * 1000,
     ).toISOString();
@@ -237,11 +237,5 @@ export async function checkAgentAuthorship(
 
     cacheSet(cacheKey, result, ACR_TTL_MS);
     return result;
-  } catch (err) {
-    logger.error("acr: scan failed", {
-      repo,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }

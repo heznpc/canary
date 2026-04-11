@@ -1,5 +1,6 @@
 import type { CodeQuality } from "../types";
 import { fetchWithTimeout, parseRepoSlug, githubHeaders } from "./version-utils";
+import { runGuarded } from "./shared-breaker";
 import { logger } from "../logger";
 
 interface TreeEntry {
@@ -36,7 +37,7 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
   const { owner, name } = parsed;
   const h = githubHeaders();
 
-  try {
+  return runGuarded("code-quality", repo, async () => {
     const repoRes = await fetchWithTimeout(
       `https://api.github.com/repos/${owner}/${name}`, { headers: h }, 8000,
     );
@@ -47,7 +48,6 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
     const repoData = await repoRes.json();
     const defaultBranch: string = repoData.default_branch ?? "main";
 
-    // Recursive tree — one API call gives us all file paths
     const treeRes = await fetchWithTimeout(
       `https://api.github.com/repos/${owner}/${name}/git/trees/${defaultBranch}?recursive=1`,
       { headers: h }, 8000,
@@ -78,7 +78,6 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
     const hasContributing = rootNames.has("CONTRIBUTING.md") || rootNames.has("CONTRIBUTING");
     const hasSecurityPolicy = rootNames.has("SECURITY.md") || rootNames.has("SECURITY");
 
-    // Dependency bot — check tree paths directly (no extra API calls)
     let hasDependencyBot = false;
     let dependencyBotName: string | null = null;
     if (rootNames.has("renovate.json") || rootNames.has(".renovaterc") || rootNames.has(".renovaterc.json")) {
@@ -89,7 +88,6 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
       dependencyBotName = "dependabot";
     }
 
-    // CI — check via tree paths
     let hasCI = false;
     const ciPlatforms: string[] = [];
     if (tree.tree.some((e) => e.path.startsWith(".github/workflows/") && e.type === "blob")) {
@@ -119,10 +117,5 @@ export async function checkCodeQuality(repo: string): Promise<CodeQuality | null
       score,
       lastChecked: new Date().toISOString(),
     };
-  } catch (err) {
-    logger.error("code-quality: scan failed", {
-      repo, error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }

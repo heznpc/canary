@@ -1,6 +1,10 @@
 import type { DeployStatus } from "../types";
 import type { ProjectConfig } from "../projects";
 import { fetchWithTimeout } from "./version-utils";
+import { logger } from "../logger";
+
+const CHROME_STORE_BASE = "https://chromewebstore.google.com/detail";
+const DOI_BASE = "https://doi.org";
 
 export async function checkDeployStatus(project: ProjectConfig): Promise<DeployStatus> {
   const base: DeployStatus = {
@@ -16,9 +20,9 @@ export async function checkDeployStatus(project: ProjectConfig): Promise<DeployS
     case "npm":
       return checkNpm(project, base);
     case "zenodo":
-      return { ...base, status: "up", url: `https://zenodo.org/search?q=${project.id}` };
+      return checkZenodo(project, base);
     case "chrome-store":
-      return { ...base, status: "up", url: "https://chromewebstore.google.com" };
+      return checkChromeStore(project, base);
     default:
       return base;
   }
@@ -26,13 +30,7 @@ export async function checkDeployStatus(project: ProjectConfig): Promise<DeployS
 
 async function checkUrlStatus(project: ProjectConfig, base: DeployStatus): Promise<DeployStatus> {
   if (!project.deployUrl) return base;
-
-  try {
-    const res = await fetchWithTimeout(project.deployUrl, { method: "HEAD", redirect: "follow" });
-    return { ...base, status: res.ok ? "up" : "down", url: project.deployUrl };
-  } catch {
-    return { ...base, status: "unknown", url: project.deployUrl };
-  }
+  return probeUrl(project.deployUrl, base);
 }
 
 async function checkNpm(project: ProjectConfig, base: DeployStatus): Promise<DeployStatus> {
@@ -54,3 +52,29 @@ async function checkNpm(project: ProjectConfig, base: DeployStatus): Promise<Dep
   }
 }
 
+async function checkZenodo(project: ProjectConfig, base: DeployStatus): Promise<DeployStatus> {
+  if (!project.zenodoDoi) {
+    return { ...base, status: "unknown" };
+  }
+  return probeUrl(`${DOI_BASE}/${project.zenodoDoi}`, base);
+}
+
+async function checkChromeStore(project: ProjectConfig, base: DeployStatus): Promise<DeployStatus> {
+  if (!project.chromeExtensionId) {
+    return { ...base, status: "unknown" };
+  }
+  return probeUrl(`${CHROME_STORE_BASE}/${project.chromeExtensionId}`, base);
+}
+
+async function probeUrl(url: string, base: DeployStatus): Promise<DeployStatus> {
+  try {
+    const res = await fetchWithTimeout(url, { method: "HEAD", redirect: "follow" });
+    return { ...base, status: res.ok ? "up" : "down", url };
+  } catch (err) {
+    logger.warn("deploy: probe failed", {
+      url,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return { ...base, status: "unknown", url };
+  }
+}

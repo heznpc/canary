@@ -1,0 +1,12 @@
+{
+  "next": "https://nextjs.org/docs/app/building-your-application/upgrading/version-{to}",
+  "react": "https://react.dev/blog/react-{to}",
+  "tailwindcss": "https://tailwindcss.com/docs/upgrade-guide#upgrading-to-v{to}",
+  "typescript": "https://www.typescriptlang.org/docs/handbook/release-notes/overview.html",
+  "vue": "https://v3-migration.vuejs.org/",
+  "nuxt": "https://nuxt.com/docs/migration/overview",
+  "svelte": "https://svelte.dev/docs/svelte/v5-migration-guide",
+  "@angular/core": "https://angular.dev/update-guide",
+  "express": "https://expressjs.com/en/guide/migrating-{to}.html",
+  "prisma": "https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions"
+}

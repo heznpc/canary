@@ -1,5 +1,6 @@
 import type { ScorecardResult, ScorecardCheck } from "../types";
 import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
+import { runGuarded } from "./shared-breaker";
 import { logger } from "../logger";
 
 interface ApiCheck {
@@ -21,7 +22,7 @@ export async function checkScorecard(repo: string): Promise<ScorecardResult | nu
   if (!parsed) return null;
   const { owner, name } = parsed;
 
-  try {
+  return runGuarded("scorecard", repo, async () => {
     const res = await fetchWithTimeout(
       `https://api.securityscorecards.dev/projects/github.com/${owner}/${name}`,
       { headers: { Accept: "application/json" } },
@@ -53,11 +54,5 @@ export async function checkScorecard(repo: string): Promise<ScorecardResult | nu
       date: data.date,
       lastChecked: new Date().toISOString(),
     };
-  } catch (err) {
-    logger.error("scorecard: fetch failed", {
-      repo,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }

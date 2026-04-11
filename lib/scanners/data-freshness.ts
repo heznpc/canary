@@ -1,6 +1,7 @@
 import type { DataFreshnessStatus } from "../types";
 import type { DataFreshnessConfig, DataCycle } from "../projects";
 import { fetchWithTimeout, parseRepoSlug, githubHeaders } from "./version-utils";
+import { runGuarded } from "./shared-breaker";
 import { logger } from "../logger";
 
 interface CommitInfo {
@@ -20,7 +21,7 @@ export async function checkDataFreshness(
 
   const { owner, name } = parsed;
 
-  try {
+  return runGuarded("data-freshness", repo, async () => {
     const headers = githubHeaders();
 
     const url =
@@ -70,13 +71,7 @@ export async function checkDataFreshness(
       nextExpectedDate: nextExpected?.toISOString() ?? null,
       lastChecked: now.toISOString(),
     };
-  } catch (err) {
-    logger.error("data-freshness: scan failed", {
-      repo,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }
 
 function computeNextExpected(lastUpdate: Date, cycle: DataCycle): Date {

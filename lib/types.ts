@@ -2,9 +2,7 @@ import type { ProjectConfig } from "./projects";
 
 export interface GitStatus {
   branch: string;
-  aheadBy: number;
-  behindBy: number;
-  uncommittedCount: number;
+  /** ISO timestamp of the last commit on the default branch, if available. */
   lastCommitDate: string | null;
   lastCommitMessage: string | null;
 }

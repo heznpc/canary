@@ -1,13 +1,8 @@
 import type { ReleaseNoteSummary } from "../types";
-import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
+import { fetchWithTimeout, parseRepoSlug, githubHeaders } from "./version-utils";
+import migrationGuidesData from "../data/migration-guides.json";
 
-function githubHeaders(): HeadersInit {
-  const headers: HeadersInit = { Accept: "application/vnd.github+json" };
-  if (process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  }
-  return headers;
-}
+const MIGRATION_GUIDES = migrationGuidesData as Record<string, string>;
 
 /**
  * npm registry → GitHub owner/repo 추출
@@ -189,7 +184,7 @@ function extractHighlights(body: string): string[] {
   return results.slice(0, 5);
 }
 
-function guessMigrationGuideUrl(
+export function guessMigrationGuideUrl(
   githubRepo: string,
   packageName: string,
   fromVersion: string,
@@ -198,19 +193,13 @@ function guessMigrationGuideUrl(
   const fromMajor = parseMajor(fromVersion);
   const toMajor = parseMajor(toVersion);
 
-  const guides: Record<string, (from: number, to: number) => string> = {
-    next: (_, to) =>
-      `https://nextjs.org/docs/app/building-your-application/upgrading/version-${to}`,
-    react: (_, to) => `https://react.dev/blog/react-${to}`,
-    tailwindcss: (_, to) =>
-      `https://tailwindcss.com/docs/upgrade-guide#upgrading-to-v${to}`,
-    typescript: () => `https://www.typescriptlang.org/docs/handbook/release-notes/overview.html`,
-  };
+  // Only emit a guide URL when crossing a major version boundary.
+  if (fromMajor === toMajor) return undefined;
 
-  const fn = guides[packageName];
-  if (fn && fromMajor !== toMajor) {
-    return fn(fromMajor, toMajor);
-  }
+  const template = MIGRATION_GUIDES[packageName];
+  if (!template) return undefined;
 
-  return undefined;
+  return template
+    .replaceAll("{from}", String(fromMajor))
+    .replaceAll("{to}", String(toMajor));
 }
