@@ -16,15 +16,9 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   }
 
   // ── Git health ──
+  // Only signals derivable from the GitHub REST API. Local working-tree
+  // state (uncommitted/ahead/behind) cannot be measured remotely.
   if (git) {
-    if (git.uncommittedCount > 5) {
-      score -= 10;
-      reasons.push(`미커밋 파일 ${git.uncommittedCount}개`);
-    }
-    if (git.aheadBy > 0) {
-      score -= 5;
-      reasons.push(`리모트 대비 ${git.aheadBy}커밋 앞서 있음 (push 필요)`);
-    }
     const daysSinceCommit = git.lastCommitDate
       ? Math.floor((Date.now() - new Date(git.lastCommitDate).getTime()) / (1000 * 60 * 60 * 24))
       : null;

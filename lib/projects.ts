@@ -20,6 +20,10 @@ export interface ProjectConfig {
   deployTarget: DeployTarget;
   deployUrl?: string;
   npmPackage?: string;
+  /** Chrome Web Store extension ID — required for `chrome-store` deploy verification. */
+  chromeExtensionId?: string;
+  /** Zenodo DOI (e.g., "10.5281/zenodo.1234567") — required for `zenodo` deploy verification. */
+  zenodoDoi?: string;
   category: "app" | "paper" | "mcp" | "infra";
   // 논문 프로젝트용
   keywords?: string[];

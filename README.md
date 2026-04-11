@@ -32,7 +32,7 @@ Git is not dying — it is becoming invisible. Like EXIF metadata on photos or D
 
 - **Framework**: Next.js 16 (App Router), React 19, TypeScript
 - **Styling**: Tailwind CSS 4, shadcn/ui
-- **Testing**: Vitest (86 tests)
+- **Testing**: Vitest
 - **APIs**: GitHub REST API (Octokit), Semantic Scholar, npm/PyPI/pub.dev/Maven Central
 - **Infrastructure**: In-memory cache, sliding-window rate limiter, circuit breaker, structured logging
 

@@ -1,6 +1,6 @@
 import type { ActivityPulse } from "../types";
 import { fetchWithTimeout, parseRepoSlug, githubHeaders } from "./version-utils";
-import { logger } from "../logger";
+import { runGuarded } from "./shared-breaker";
 
 interface ParticipationStats {
   all: number[];
@@ -20,7 +20,7 @@ export async function checkActivity(repo: string): Promise<ActivityPulse | null>
   const h = githubHeaders();
   const base = `https://api.github.com/repos/${owner}/${name}`;
 
-  try {
+  return runGuarded("activity", repo, async () => {
     const [participationRes, prsRes, repoRes, contribRes] = await Promise.all([
       fetchWithTimeout(`${base}/stats/participation`, { headers: h }, 10000),
       fetchWithTimeout(`${base}/pulls?state=open&per_page=1`, { headers: h }, 8000),
@@ -74,10 +74,5 @@ export async function checkActivity(repo: string): Promise<ActivityPulse | null>
       weeklyCommitAvg,
       lastChecked: new Date().toISOString(),
     };
-  } catch (err) {
-    logger.error("activity: scan failed", {
-      repo, error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }

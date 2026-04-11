@@ -1,0 +1,114 @@
+import { fetchWithTimeout } from "./version-utils";
+import { cacheGet, cacheSet } from "../cache";
+import { logger } from "../logger";
+
+/**
+ * Vulnerability scanner — queries OSV.dev for advisories affecting specific
+ * (package, version) pairs across multiple ecosystems. OSV is free, requires
+ * no auth, and accepts batched queries.
+ */
+
+export type OsvEcosystem = "npm" | "PyPI" | "Pub" | "Maven";
+
+export interface VulnQuery {
+  name: string;
+  version: string;
+  ecosystem: OsvEcosystem;
+}
+
+interface OsvVuln {
+  id: string;
+  summary?: string;
+  severity?: { type: string; score: string }[];
+}
+
+interface OsvBatchResponse {
+  results?: { vulns?: OsvVuln[] }[];
+}
+
+const OSV_URL = "https://api.osv.dev/v1/querybatch";
+const OSV_BATCH_LIMIT = 100;
+const OSV_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h
+
+/**
+ * Strip range operators from a version spec, leaving only the concrete
+ * version. Returns null when the spec is a wildcard, SCM URL, or otherwise
+ * has no comparable version.
+ *
+ *   "^1.2.3"      → "1.2.3"
+ *   ">=2.0.0"     → "2.0.0"
+ *   "1.0.0-beta1" → "1.0.0-beta1"
+ *   "*"           → null
+ */
+export function extractConcreteVersion(spec: string): string | null {
+  if (!spec) return null;
+  const cleaned = spec.replace(/^[\^~>=<!]+\s*/, "").trim();
+  if (!/^[0-9]/.test(cleaned)) return null;
+  const match = cleaned.match(/^([0-9][0-9a-zA-Z._+-]*)/);
+  return match ? match[1] : null;
+}
+
+async function fetchBatch(slice: VulnQuery[]): Promise<number> {
+  try {
+    const res = await fetchWithTimeout(
+      OSV_URL,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          queries: slice.map((q) => ({
+            package: { name: q.name, ecosystem: q.ecosystem },
+            version: q.version,
+          })),
+        }),
+      },
+      10_000,
+    );
+    if (!res.ok) {
+      logger.warn(`vulnerabilities: OSV ${res.status}`, { batchSize: slice.length });
+      return 0;
+    }
+    const data = (await res.json()) as OsvBatchResponse;
+    let count = 0;
+    for (const r of data.results ?? []) {
+      count += (r.vulns ?? []).length;
+    }
+    return count;
+  } catch (err) {
+    logger.warn("vulnerabilities: OSV batch failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return 0;
+  }
+}
+
+function cacheKey(queries: VulnQuery[]): string {
+  // Order-insensitive key so different dep-orderings share cache entries.
+  const sorted = [...queries]
+    .map((q) => `${q.ecosystem}:${q.name}@${q.version}`)
+    .sort();
+  return `vuln:${sorted.join("|")}`;
+}
+
+/**
+ * Query OSV for the total number of advisories across the given package
+ * versions. Batches run in parallel and the result is cached for 6 hours so
+ * repeat scans of the same dep set cost nothing.
+ */
+export async function countVulnerabilities(queries: VulnQuery[]): Promise<number> {
+  if (queries.length === 0) return 0;
+
+  const key = cacheKey(queries);
+  const cached = cacheGet<number>(key);
+  if (cached !== null) return cached;
+
+  const slices: VulnQuery[][] = [];
+  for (let i = 0; i < queries.length; i += OSV_BATCH_LIMIT) {
+    slices.push(queries.slice(i, i + OSV_BATCH_LIMIT));
+  }
+
+  const counts = await Promise.all(slices.map(fetchBatch));
+  const total = counts.reduce((a, b) => a + b, 0);
+  cacheSet(key, total, OSV_CACHE_TTL_MS);
+  return total;
+}

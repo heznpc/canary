@@ -15,6 +15,7 @@
 import { readFileSync } from "fs";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { execSync } from "child_process";
 
 // --- Token loading ---
 if (!process.env.GITHUB_TOKEN) {
@@ -29,7 +30,6 @@ if (!process.env.GITHUB_TOKEN) {
 }
 if (!process.env.GITHUB_TOKEN) {
   try {
-    const { execSync } = require("child_process") as typeof import("child_process");
     const token = execSync("gh auth token", { encoding: "utf-8" }).trim();
     if (token) process.env.GITHUB_TOKEN = token;
   } catch { /* ignore */ }
@@ -148,6 +148,8 @@ async function getDefaultBranch(owner: string, name: string): Promise<string | n
   return (await res.json()).default_branch;
 }
 
+interface TreeBlob { type: string; path: string }
+
 async function getAgentEraFiles(owner: string, name: string, branch: string): Promise<string[]> {
   const res = await apiFetch(
     `https://api.github.com/repos/${owner}/${name}/git/trees/${branch}?recursive=1`,
@@ -155,9 +157,9 @@ async function getAgentEraFiles(owner: string, name: string, branch: string): Pr
   if (!res.ok) return [];
   const tree = await res.json();
   if (!tree.tree) return [];
-  return tree.tree
-    .filter((e: any) => e.type === "blob" && isAgentEraFile(e.path))
-    .map((e: any) => e.path);
+  return (tree.tree as TreeBlob[])
+    .filter((e) => e.type === "blob" && isAgentEraFile(e.path))
+    .map((e) => e.path);
 }
 
 async function countCommits90d(owner: string, name: string): Promise<number> {
@@ -196,6 +198,8 @@ async function getCommitSHAs(
 }
 
 // Fetch single commit's file-level stats
+interface CommitFile { filename: string; additions?: number; deletions?: number }
+
 async function getCommitStats(
   owner: string, name: string, sha: string,
 ): Promise<{ files: { filename: string; additions: number; deletions: number }[] } | null> {
@@ -205,7 +209,7 @@ async function getCommitStats(
   const data = await res.json();
   if (!data.files) return null;
   return {
-    files: data.files.map((f: any) => ({
+    files: (data.files as CommitFile[]).map((f) => ({
       filename: f.filename,
       additions: f.additions || 0,
       deletions: f.deletions || 0,

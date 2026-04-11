@@ -21,7 +21,11 @@ export class CircuitBreaker {
     this.options = options;
   }
 
-  async execute<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
+  async execute<T>(
+    fn: () => Promise<T>,
+    fallback: T,
+    context?: Record<string, unknown>,
+  ): Promise<T> {
     if (this.state === "open") {
       if (Date.now() - this.lastFailureTime >= this.options.resetTimeoutMs) {
         this.state = "half-open";
@@ -31,6 +35,7 @@ export class CircuitBreaker {
       } else {
         logger.warn("Circuit breaker is open, returning fallback", {
           name: this.options.name,
+          ...context,
         });
         return fallback;
       }
@@ -47,6 +52,7 @@ export class CircuitBreaker {
         state: this.state,
         failureCount: this.failureCount,
         error: err instanceof Error ? err.message : String(err),
+        ...context,
       });
       return fallback;
     }

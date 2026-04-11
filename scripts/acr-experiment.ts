@@ -20,6 +20,7 @@
 import { readFileSync } from "fs";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { execSync } from "child_process";
 
 // --- Token loading ---
 if (!process.env.GITHUB_TOKEN) {
@@ -34,7 +35,6 @@ if (!process.env.GITHUB_TOKEN) {
 }
 if (!process.env.GITHUB_TOKEN) {
   try {
-    const { execSync } = require("child_process") as typeof import("child_process");
     const token = execSync("gh auth token", { encoding: "utf-8" }).trim();
     if (token) process.env.GITHUB_TOKEN = token;
   } catch { /* ignore */ }
@@ -107,19 +107,18 @@ const BOT_PATTERNS = {
 type CommitClass = "ai-agent" | "traditional-bot" | "human";
 type AITool = "claude" | "copilot" | "devin" | "cody" | "aider" | "sweep" | "cursor" | "coderabbit" | "sourcery" | "other-ai";
 
-interface CommitInfo {
-  sha: string;
-  date: string;
-  authorLogin: string;
-  authorEmail: string;
-  committerLogin: string;
-  committerEmail: string;
-  message: string;
-  classification: CommitClass;
-  aiTool?: AITool;
+interface RawCommit {
+  sha?: string;
+  commit?: {
+    message?: string;
+    author?: { email?: string; date?: string };
+    committer?: { email?: string; date?: string };
+  };
+  author?: { login?: string };
+  committer?: { login?: string };
 }
 
-function classifyCommit(commit: any): { classification: CommitClass; aiTool?: AITool } {
+function classifyCommit(commit: RawCommit): { classification: CommitClass; aiTool?: AITool } {
   const message = commit.commit?.message || "";
   const authorLogin = commit.author?.login || "";
   const authorEmail = commit.commit?.author?.email || "";
@@ -263,8 +262,8 @@ async function apiFetch(url: string): Promise<Response> {
 
 async function fetchCommits(
   owner: string, name: string, since: string, max: number,
-): Promise<any[]> {
-  const commits: any[] = [];
+): Promise<RawCommit[]> {
+  const commits: RawCommit[] = [];
   let page = 1;
   while (commits.length < max) {
     const url =
@@ -325,7 +324,7 @@ async function computeACR(
         // Collect samples (up to 5 per repo)
         if (sampleAICommits.length < 5) {
           const msg = (c.commit?.message || "").split("\n")[0].slice(0, 80);
-          sampleAICommits.push({ sha: c.sha?.slice(0, 7), tool, snippet: msg });
+          sampleAICommits.push({ sha: (c.sha ?? "").slice(0, 7), tool, snippet: msg });
         }
       } else if (classification === "traditional-bot") {
         botCount++;

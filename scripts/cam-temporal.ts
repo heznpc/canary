@@ -11,6 +11,7 @@
 import { readFileSync } from "fs";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { execSync } from "child_process";
 
 // --- Token loading (same as cam-experiment.ts) ---
 if (!process.env.GITHUB_TOKEN) {
@@ -25,7 +26,6 @@ if (!process.env.GITHUB_TOKEN) {
 }
 if (!process.env.GITHUB_TOKEN) {
   try {
-    const { execSync } = require("child_process") as typeof import("child_process");
     const token = execSync("gh auth token", { encoding: "utf-8" }).trim();
     if (token) process.env.GITHUB_TOKEN = token;
   } catch { /* ignore */ }

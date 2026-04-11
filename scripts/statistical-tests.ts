@@ -16,7 +16,6 @@ import { resolve } from "path";
 const basePath = resolve(new URL("../paper", import.meta.url).pathname);
 
 const camResults = JSON.parse(readFileSync(resolve(basePath, "cam-results.json"), "utf-8"));
-const camTemporalResults = JSON.parse(readFileSync(resolve(basePath, "cam-temporal-results.json"), "utf-8"));
 const acrResults = JSON.parse(readFileSync(resolve(basePath, "acr-results.json"), "utf-8"));
 
 // --- Governance classification ---
@@ -177,22 +176,41 @@ function formatCI(ci: [number, number]): string {
 
 // --- Extract data ---
 
+interface CAMRecord {
+  repo: string;
+  cam: number;
+  subgroup?: string;
+  excluded?: boolean;
+}
+
+interface ACRWindow {
+  window: number;
+  acr: number;
+  excluded?: boolean;
+}
+
+interface ACRRecord {
+  repo: string;
+  subgroup?: string;
+  windows?: ACRWindow[];
+}
+
 // CAM 90d from cam-results.json
-function extractCAM90d(results: any[], group: "user" | "reference"): { repo: string; cam: number; subgroup?: string }[] {
+function extractCAM90d(results: CAMRecord[]): { repo: string; cam: number; subgroup?: string }[] {
   return results
-    .filter((r: any) => !r.excluded)
-    .map((r: any) => ({ repo: r.repo, cam: r.cam, subgroup: r.subgroup }));
+    .filter((r) => !r.excluded)
+    .map((r) => ({ repo: r.repo, cam: r.cam, subgroup: r.subgroup }));
 }
 
 // ACR 90d from acr-results.json
-function extractACR90d(results: any[]): { repo: string; acr: number; subgroup?: string }[] {
-  return results
-    .map((r: any) => {
-      const w90 = r.windows?.find((w: any) => w.window === 90);
-      if (!w90 || w90.excluded) return null;
-      return { repo: r.repo, acr: w90.acr, subgroup: r.subgroup };
-    })
-    .filter(Boolean) as any[];
+function extractACR90d(results: ACRRecord[]): { repo: string; acr: number; subgroup?: string }[] {
+  const out: { repo: string; acr: number; subgroup?: string }[] = [];
+  for (const r of results) {
+    const w90 = r.windows?.find((w) => w.window === 90);
+    if (!w90 || w90.excluded) continue;
+    out.push({ repo: r.repo, acr: w90.acr, subgroup: r.subgroup });
+  }
+  return out;
 }
 
 // --- Main ---
@@ -200,8 +218,8 @@ async function main() {
   console.log("=== Statistical Tests for CAM / ACR ===\n");
 
   // 1. Extract data
-  const camRef = extractCAM90d(camResults.refResults, "reference");
-  const camUser = extractCAM90d(camResults.userResults, "user");
+  const camRef = extractCAM90d(camResults.refResults);
+  const camUser = extractCAM90d(camResults.userResults);
   const acrRef = extractACR90d(acrResults.refResults);
   const acrUser = extractACR90d(acrResults.userResults);
 

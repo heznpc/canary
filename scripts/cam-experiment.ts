@@ -9,6 +9,7 @@
 
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { execSync } from "child_process";
 
 // Load token: env var → .env.local → gh auth token
 if (!process.env.GITHUB_TOKEN) {
@@ -23,7 +24,6 @@ if (!process.env.GITHUB_TOKEN) {
 }
 if (!process.env.GITHUB_TOKEN) {
   try {
-    const { execSync } = require("child_process") as typeof import("child_process");
     const token = execSync("gh auth token", { encoding: "utf-8" }).trim();
     if (token) process.env.GITHUB_TOKEN = token;
   } catch { /* ignore */ }

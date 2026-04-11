@@ -1,7 +1,7 @@
 import type { ContextAttention, AgentFileCategory } from "../types";
 import { fetchWithTimeout, githubHeaders, parseRepoSlug } from "./version-utils";
 import { cacheGet, cacheSet } from "../cache";
-import { logger } from "../logger";
+import { runGuarded } from "./shared-breaker";
 
 /**
  * Context Attention Metric scanner.
@@ -153,7 +153,7 @@ export async function checkContextAttention(
   const cached = cacheGet<ContextAttention>(cacheKey);
   if (cached) return cached;
 
-  try {
+  return runGuarded("cam", repo, async () => {
     const sinceISO = new Date(
       Date.now() - WINDOW_DAYS * 24 * 60 * 60 * 1000,
     ).toISOString();
@@ -191,11 +191,5 @@ export async function checkContextAttention(
 
     cacheSet(cacheKey, result, CAM_TTL_MS);
     return result;
-  } catch (err) {
-    logger.error("cam: scan failed", {
-      repo,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
+  });
 }

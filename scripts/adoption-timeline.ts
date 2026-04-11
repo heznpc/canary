@@ -11,6 +11,7 @@
 import { readFileSync } from "fs";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { execSync } from "child_process";
 
 // --- Token loading ---
 if (!process.env.GITHUB_TOKEN) {
@@ -25,7 +26,6 @@ if (!process.env.GITHUB_TOKEN) {
 }
 if (!process.env.GITHUB_TOKEN) {
   try {
-    const { execSync } = require("child_process") as typeof import("child_process");
     const token = execSync("gh auth token", { encoding: "utf-8" }).trim();
     if (token) process.env.GITHUB_TOKEN = token;
   } catch { /* ignore */ }
@@ -141,9 +141,10 @@ async function getAgentEraFiles(owner: string, name: string, branch: string): Pr
   if (!res.ok) return [];
   const tree = await res.json();
   if (!tree.tree) return [];
-  return tree.tree
-    .filter((e: any) => e.type === "blob" && isAgentEraFile(e.path))
-    .map((e: any) => e.path);
+  interface TreeEntry { type: string; path: string }
+  return (tree.tree as TreeEntry[])
+    .filter((e) => e.type === "blob" && isAgentEraFile(e.path))
+    .map((e) => e.path);
 }
 
 async function getFirstCommitForFile(

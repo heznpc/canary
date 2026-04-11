@@ -9,14 +9,16 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Clean up stale entries every 5 minutes
-setInterval(() => {
+// Clean up stale entries every 5 minutes. `unref()` lets Node exit (and lets
+// vitest finish) without waiting for this timer to fire.
+const cleanupTimer: NodeJS.Timeout = setInterval(() => {
   const now = Date.now();
   for (const [key, entry] of store) {
     entry.timestamps = entry.timestamps.filter((t) => now - t < 2 * entry.windowMs);
     if (entry.timestamps.length === 0) store.delete(key);
   }
 }, 5 * 60_000);
+cleanupTimer.unref?.();
 
 /**
  * Check if a request from the given IP is allowed.

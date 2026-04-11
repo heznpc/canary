@@ -4,16 +4,16 @@ import { compareVersions, batchCheckDeps, fetchWithTimeout, parseRepoSlug } from
 import { parsePythonManifest, checkPypiVersion } from "./deps-python";
 import { parsePubspecYaml, checkPubVersion } from "./deps-flutter";
 import { parseGradle, parsePomXml, checkMavenVersion } from "./deps-jvm";
+import {
+  countVulnerabilities,
+  extractConcreteVersion,
+  type OsvEcosystem,
+  type VulnQuery,
+} from "./vulnerabilities";
 import { logger } from "../logger";
-import { CircuitBreaker } from "../circuit-breaker";
+import { runGuarded } from "./shared-breaker";
 
 let _tokenWarned = false;
-
-const githubCircuitBreaker = new CircuitBreaker({
-  failureThreshold: 5,
-  resetTimeoutMs: 60_000,
-  name: "github-api",
-});
 
 function getOctokit() {
   if (!process.env.GITHUB_TOKEN && !_tokenWarned) {
@@ -41,9 +41,10 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
 }
 
 export async function getGitStatus(repo: string): Promise<GitStatus | null> {
-  return githubCircuitBreaker.execute(async () => {
-    const parsed = parseRepoSlug(repo);
-    if (!parsed) return null;
+  const parsed = parseRepoSlug(repo);
+  if (!parsed) return null;
+
+  return runGuarded("github-status", repo, async () => {
     const { owner, name } = parsed;
     const octokit = getOctokit();
 
@@ -65,13 +66,10 @@ export async function getGitStatus(repo: string): Promise<GitStatus | null> {
 
     return {
       branch: defaultBranch,
-      aheadBy: 0,
-      behindBy: 0,
-      uncommittedCount: 0,
       lastCommitDate: lastCommit?.commit.committer?.date ?? null,
       lastCommitMessage: lastCommit?.commit.message ?? null,
     };
-  }, null);
+  });
 }
 
 export interface DepScanResult {
@@ -80,9 +78,10 @@ export interface DepScanResult {
 }
 
 export async function getDependencyHealth(repo: string): Promise<DepScanResult | null> {
-  return githubCircuitBreaker.execute(async () => {
-    const parsed = parseRepoSlug(repo);
-    if (!parsed) return null;
+  const parsed = parseRepoSlug(repo);
+  if (!parsed) return null;
+
+  return runGuarded("github-deps", repo, async () => {
     const { owner, name } = parsed;
     const rawUrl = (file: string) =>
       `https://raw.githubusercontent.com/${owner}/${name}/HEAD/${file}`;
@@ -152,7 +151,19 @@ export async function getDependencyHealth(repo: string): Promise<DepScanResult |
     }
 
     return null;
-  }, null);
+  });
+}
+
+function buildVulnQueries(
+  declared: Record<string, string>,
+  ecosystem: OsvEcosystem,
+): VulnQuery[] {
+  const out: VulnQuery[] = [];
+  for (const [name, spec] of Object.entries(declared)) {
+    const version = extractConcreteVersion(spec);
+    if (version) out.push({ name, version, ecosystem });
+  }
+  return out;
 }
 
 async function scanNodeDeps(
@@ -165,12 +176,15 @@ async function scanNodeDeps(
   };
 
   const entries = Object.entries(allDeps);
-  const result = await batchCheckDeps(entries, ([depName, currentVersion]) => {
-    const isKey = isKeyDependency(depName);
-    return checkNpmVersion(depName, currentVersion, isKey);
-  });
+  const [result, vulnerabilities] = await Promise.all([
+    batchCheckDeps(entries, ([depName, currentVersion]) => {
+      const isKey = isKeyDependency(depName);
+      return checkNpmVersion(depName, currentVersion, isKey);
+    }),
+    countVulnerabilities(buildVulnQueries(allDeps, "npm")),
+  ]);
 
-  return { ...result, vulnerabilities: 0, packageManager };
+  return { ...result, vulnerabilities, packageManager };
 }
 
 async function scanPythonDeps(
@@ -181,11 +195,14 @@ async function scanPythonDeps(
   if (!parsed) return null;
 
   const entries = Object.entries(parsed.deps);
-  const result = await batchCheckDeps(entries, ([name, ver]) =>
-    checkPypiVersion(name, ver, boundFetch),
-  );
+  const [result, vulnerabilities] = await Promise.all([
+    batchCheckDeps(entries, ([name, ver]) =>
+      checkPypiVersion(name, ver, boundFetch),
+    ),
+    countVulnerabilities(buildVulnQueries(parsed.deps, "PyPI")),
+  ]);
 
-  return { ...result, vulnerabilities: 0, packageManager: parsed.packageManager };
+  return { ...result, vulnerabilities, packageManager: parsed.packageManager };
 }
 
 async function scanFlutterDeps(
@@ -195,11 +212,14 @@ async function scanFlutterDeps(
   if (!parsed) return null;
 
   const entries = Object.entries(parsed);
-  const result = await batchCheckDeps(entries, ([name, ver]) =>
-    checkPubVersion(name, ver, boundFetch),
-  );
+  const [result, vulnerabilities] = await Promise.all([
+    batchCheckDeps(entries, ([name, ver]) =>
+      checkPubVersion(name, ver, boundFetch),
+    ),
+    countVulnerabilities(buildVulnQueries(parsed, "Pub")),
+  ]);
 
-  return { ...result, vulnerabilities: 0, packageManager: "flutter" };
+  return { ...result, vulnerabilities, packageManager: "flutter" };
 }
 
 async function scanJvmDeps(
@@ -210,13 +230,20 @@ async function scanJvmDeps(
     type === "gradle" ? parseGradle(content) : parsePomXml(content);
   if (jvmDeps.length === 0) return null;
 
-  const result = await batchCheckDeps(
-    jvmDeps,
-    (d) => checkMavenVersion(d, boundFetch),
-    6,
-  );
+  const vulnQueries: VulnQuery[] = [];
+  for (const d of jvmDeps) {
+    const v = extractConcreteVersion(d.version);
+    if (v) {
+      vulnQueries.push({ name: `${d.group}:${d.artifact}`, version: v, ecosystem: "Maven" });
+    }
+  }
 
-  return { ...result, vulnerabilities: 0, packageManager: type };
+  const [result, vulnerabilities] = await Promise.all([
+    batchCheckDeps(jvmDeps, (d) => checkMavenVersion(d, boundFetch), 6),
+    countVulnerabilities(vulnQueries),
+  ]);
+
+  return { ...result, vulnerabilities, packageManager: type };
 }
 
 function boundFetch(url: string): Promise<Response> {
