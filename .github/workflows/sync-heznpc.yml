@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Canary
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -44,7 +44,7 @@ jobs:
           "
 
       - name: Checkout heznpc
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: heznpc/heznpc
           path: heznpc-repo
