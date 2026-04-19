@@ -526,7 +526,7 @@ async function main() {
   }
 
   // 7. Save
-  const outputPath = new URL("../paper/acr-results.json", import.meta.url).pathname;
+  const outputPath = new URL("../results/acr-results.json", import.meta.url).pathname;
   await writeFile(
     outputPath,
     JSON.stringify({
