@@ -227,6 +227,31 @@ export interface AgentAuthorship {
   lastChecked: string;
 }
 
+/* ── Anthropic API Usage ── */
+
+export interface AnthropicUsageByModel {
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheCreateTokens: number;
+  estimatedUsd: number;
+}
+
+export interface AnthropicUsage {
+  /** Start of the reporting window (inclusive, ISO 8601). */
+  startingAt: string;
+  /** End of the reporting window (exclusive, ISO 8601). */
+  endingAt: string;
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  totalCacheReadTokens: number;
+  totalCacheCreateTokens: number;
+  totalEstimatedUsd: number;
+  byModel: AnthropicUsageByModel[];
+  lastChecked: string;
+}
+
 /* ── Metadatafication Phase ── */
 
 export type MetadataficationPhase = "active-tool" | "assisted-tool" | "infrastructure-metadata";
