@@ -10,6 +10,12 @@ interface UsageResponse {
   configured: boolean;
 }
 
+type PanelState =
+  | { kind: "loading" }
+  | { kind: "not-configured" }
+  | { kind: "ready"; usage: AnthropicUsage }
+  | { kind: "error" };
+
 function fmtTokens(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
@@ -21,8 +27,7 @@ function fmtUsd(n: number): string {
 }
 
 export function AnthropicUsagePanel() {
-  const [state, setState] = useState<UsageResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<PanelState>({ kind: "loading" });
 
   useEffect(() => {
     let cancelled = false;
@@ -32,17 +37,19 @@ export function AnthropicUsagePanel() {
         return r.json() as Promise<UsageResponse>;
       })
       .then((data) => {
-        if (!cancelled) setState(data);
+        if (cancelled) return;
+        if (data.configured && data.usage) setState({ kind: "ready", usage: data.usage });
+        else setState({ kind: "not-configured" });
       })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+      .catch(() => {
+        if (!cancelled) setState({ kind: "error" });
       });
     return () => { cancelled = true; };
   }, []);
 
-  if (error) return null;
+  if (state.kind === "error") return null;
 
-  if (!state) {
+  if (state.kind === "loading") {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -52,7 +59,7 @@ export function AnthropicUsagePanel() {
     );
   }
 
-  if (!state.configured || !state.usage) {
+  if (state.kind === "not-configured") {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -78,6 +85,7 @@ export function AnthropicUsagePanel() {
     );
   }
 
+  if (state.kind !== "ready") return null;
   const u = state.usage;
 
   return (

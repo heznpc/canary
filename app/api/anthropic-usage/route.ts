@@ -33,7 +33,16 @@ export async function GET(req: Request) {
 
   try {
     const usage = await checkAnthropicUsage(days);
-    return Response.json({ usage, configured: usage !== null });
+    return Response.json(
+      { usage, configured: usage !== null },
+      {
+        headers: {
+          // Matches the scanner's in-memory TTL so a quick remount doesn't
+          // hit even this route's handler; browsers respect it per-tab.
+          "Cache-Control": "private, max-age=300",
+        },
+      },
+    );
   } catch (err) {
     logger.error("anthropic-usage route failed", {
       error: err instanceof Error ? err.message : String(err),
