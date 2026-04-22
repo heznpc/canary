@@ -13,7 +13,7 @@ import { writeFile } from "fs/promises";
 import { resolve } from "path";
 
 // --- Load result files ---
-const basePath = resolve(new URL("../paper", import.meta.url).pathname);
+const basePath = resolve(new URL("../results", import.meta.url).pathname);
 
 const camResults = JSON.parse(readFileSync(resolve(basePath, "cam-results.json"), "utf-8"));
 const acrResults = JSON.parse(readFileSync(resolve(basePath, "acr-results.json"), "utf-8"));

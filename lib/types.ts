@@ -21,7 +21,9 @@ export interface DependencyHealth {
   outdatedMajor: number;
   outdatedMinor: number;
   outdatedPatch: number;
-  vulnerabilities: number;
+  /** OSV advisory count. `null` means the scan could not be completed (network
+   *  error, timeout) — do not treat as zero. */
+  vulnerabilities: number | null;
   deps: DependencyInfo[];
   packageManager:
     | "pnpm" | "npm" | "yarn"

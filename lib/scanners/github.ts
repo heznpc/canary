@@ -23,13 +23,25 @@ function getOctokit() {
   return new Octokit({ auth: process.env.GITHUB_TOKEN || undefined });
 }
 
+function hasNumericStatus(err: unknown): err is { status: number } {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "status" in err &&
+    typeof err.status === "number"
+  );
+}
+
 async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       return await fn();
     } catch (err: unknown) {
-      const status = (err as { status?: number }).status;
-      if (status === 429 && attempt < maxAttempts - 1) {
+      if (
+        hasNumericStatus(err) &&
+        err.status === 429 &&
+        attempt < maxAttempts - 1
+      ) {
         const delay = 1000 * 2 ** attempt;
         await new Promise((r) => setTimeout(r, delay));
         continue;

@@ -296,7 +296,7 @@ async function main() {
   console.log(`  Non-adopters: ${traditionalRepos.filter((r) => !repoFirstAdoption.has(r)).join(", ")}`);
 
   // Save
-  const outputPath = new URL("../paper/adoption-timeline-results.json", import.meta.url).pathname;
+  const outputPath = new URL("../results/adoption-timeline-results.json", import.meta.url).pathname;
   await writeFile(
     outputPath,
     JSON.stringify({

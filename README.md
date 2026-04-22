@@ -12,8 +12,10 @@ This repository is a monorepo containing both the service and the accompanying r
 
 Git is not dying — it is becoming invisible. Like EXIF metadata on photos or DNS in networking, Git records will persist as automatically-generated background data that developers rarely inspect directly. Canary operationalizes this thesis by replacing manual Git inspection with automated health grading and agent-readability scoring.
 
-- Paper source: [`paper/`](paper/)
-- Manuscript draft: [`manuscript.md`](manuscript.md)
+- Paper source: [`paper/`](paper/) (single source of truth)
+- Experiment code: [`experiments/src/`](experiments/src/)
+- Experiment results: [`experiments/results/`](experiments/results/)
+- Superseded Markdown drafts: [`planning/drafts/`](planning/drafts/)
 
 ## Features
 

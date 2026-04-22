@@ -47,7 +47,10 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
       score -= 5;
       reasons.push(`${dependencies.outdatedMinor}개 마이너 업데이트 대기 중`);
     }
-    if (dependencies.vulnerabilities > 0) {
+    if (dependencies.vulnerabilities === null) {
+      score -= 5;
+      reasons.push("취약점 스캔 실패 — OSV 응답 없음, 수동 확인 필요");
+    } else if (dependencies.vulnerabilities > 0) {
       score -= dependencies.vulnerabilities * 20;
       reasons.push(`보안 취약점 ${dependencies.vulnerabilities}개 발견`);
     }

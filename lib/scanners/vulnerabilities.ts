@@ -48,7 +48,13 @@ export function extractConcreteVersion(spec: string): string | null {
   return match ? match[1] : null;
 }
 
-async function fetchBatch(slice: VulnQuery[]): Promise<number> {
+/**
+ * Returns the number of vulnerabilities in the batch, or `null` if the batch
+ * could not be scanned (HTTP error, timeout, network failure). Callers must
+ * distinguish "zero vulns" from "scan failed" — silently treating a failed
+ * scan as zero hides real security issues.
+ */
+async function fetchBatch(slice: VulnQuery[]): Promise<number | null> {
   try {
     const res = await fetchWithTimeout(
       OSV_URL,
@@ -66,7 +72,7 @@ async function fetchBatch(slice: VulnQuery[]): Promise<number> {
     );
     if (!res.ok) {
       logger.warn(`vulnerabilities: OSV ${res.status}`, { batchSize: slice.length });
-      return 0;
+      return null;
     }
     const data = (await res.json()) as OsvBatchResponse;
     let count = 0;
@@ -78,7 +84,7 @@ async function fetchBatch(slice: VulnQuery[]): Promise<number> {
     logger.warn("vulnerabilities: OSV batch failed", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return 0;
+    return null;
   }
 }
 
@@ -92,10 +98,13 @@ function cacheKey(queries: VulnQuery[]): string {
 
 /**
  * Query OSV for the total number of advisories across the given package
- * versions. Batches run in parallel and the result is cached for 6 hours so
- * repeat scans of the same dep set cost nothing.
+ * versions. Returns `null` if any batch failed — the result would be a lower
+ * bound, and reporting it as a concrete number would silently understate risk.
+ * Batches run in parallel and successful results are cached for 6 hours.
  */
-export async function countVulnerabilities(queries: VulnQuery[]): Promise<number> {
+export async function countVulnerabilities(
+  queries: VulnQuery[],
+): Promise<number | null> {
   if (queries.length === 0) return 0;
 
   const key = cacheKey(queries);
@@ -108,7 +117,11 @@ export async function countVulnerabilities(queries: VulnQuery[]): Promise<number
   }
 
   const counts = await Promise.all(slices.map(fetchBatch));
-  const total = counts.reduce((a, b) => a + b, 0);
+  let total = 0;
+  for (const c of counts) {
+    if (c === null) return null;
+    total += c;
+  }
   cacheSet(key, total, OSV_CACHE_TTL_MS);
   return total;
 }

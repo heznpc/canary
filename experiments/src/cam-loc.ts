@@ -451,7 +451,7 @@ async function main() {
   }
 
   // 7. Save
-  const outputPath = new URL("../paper/cam-loc-results.json", import.meta.url).pathname;
+  const outputPath = new URL("../results/cam-loc-results.json", import.meta.url).pathname;
   await writeFile(
     outputPath,
     JSON.stringify({
