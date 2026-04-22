@@ -56,6 +56,44 @@ npm test
 
 Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
+## Claude Integration
+
+Canary coexists with Claude's own dashboards via three complementary layers:
+
+### 1. Claude API usage panel (dashboard tile)
+
+If `ANTHROPIC_ADMIN_API_KEY` (an Admin key starting `sk-ant-admin-...`) is set, the dashboard shows a 7-day token + cost summary broken down by model, alongside a link to the official Anthropic Console. Without the key the tile renders a "not configured" placeholder — the rest of canary is unaffected.
+
+### 2. MCP server
+
+Canary ships a stdio MCP server that exposes scanner results as tools so Claude Code / Claude Desktop can call them natively.
+
+```bash
+# First-time build (also runs automatically via `npm run mcp`)
+npm run mcp:build
+
+# Run standalone
+npm run mcp
+```
+
+Register it with Claude Code (bundle path is absolute so Claude can spawn it from any cwd):
+
+```bash
+claude mcp add canary -- node /absolute/path/to/canary/mcp/dist/server.mjs
+```
+
+Tools exposed:
+
+- `scan_project(projectId)` — run the full pipeline on one project in `canary.config.ts`
+- `scan_all()` — dashboard summary + per-project grades
+- `get_anthropic_usage(days?)` — token/cost totals from the Admin API (requires the env var above)
+
+The MCP layer is a thin adapter (`mcp/adapters.ts`) over the existing scanners, so scanner refactors don't force protocol changes.
+
+### 3. Footer link
+
+The landing page footer links straight to the Anthropic Console usage page, so visitors with their own keys can jump to the canonical source of truth for billing.
+
 ## Project Structure
 
 ```
