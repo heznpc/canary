@@ -142,6 +142,25 @@ describe("gradeProject", () => {
     expect(result.recommendation).toBe("upgrade");
   });
 
+  it("flags a failed vulnerability scan as a small penalty (not zero)", () => {
+    // null must not be silently treated as "no vulns found".
+    const result = gradeProject(
+      makeHealth({
+        dependencies: {
+          total: 5,
+          outdatedMajor: 0,
+          outdatedMinor: 0,
+          outdatedPatch: 0,
+          vulnerabilities: null,
+          deps: [],
+          packageManager: "npm",
+        },
+      }),
+    );
+    expect(result.reasons.some((r) => r.includes("취약점 스캔 실패"))).toBe(true);
+    expect(result.grade).toBe("A");
+  });
+
   it("penalizes EOL stack versions", () => {
     const result = gradeProject(
       makeHealth({
