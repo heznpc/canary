@@ -2,6 +2,7 @@ import type {
   AnthropicUsage,
   DashboardData,
   ProjectHealth,
+  UpdateAction,
 } from "@/lib/types";
 
 /**
@@ -108,6 +109,42 @@ export interface UsagePayload {
     cacheCreateTokens: number;
     estimatedUsd: number;
   }[];
+}
+
+export interface UpdateActionsPayload {
+  projectId: string;
+  projectName: string;
+  repo?: string;
+  packageManager: string | null;
+  counts: { major: number; minor: number; patch: number };
+  actions: {
+    name: string;
+    current: string;
+    latest: string;
+    severity: UpdateAction["severity"];
+    command: string;
+    changelogUrl?: string;
+  }[];
+}
+
+export function buildUpdateActionsPayload(h: ProjectHealth): UpdateActionsPayload {
+  const counts = { major: 0, minor: 0, patch: 0 };
+  for (const a of h.updateActions) counts[a.severity]++;
+  return {
+    projectId: h.project.id,
+    projectName: h.project.name,
+    repo: h.project.repo,
+    packageManager: h.dependencies?.packageManager ?? null,
+    counts,
+    actions: h.updateActions.map((a) => ({
+      name: a.name,
+      current: a.current,
+      latest: a.latest,
+      severity: a.severity,
+      command: a.command,
+      changelogUrl: a.changelogUrl,
+    })),
+  };
 }
 
 export function buildUsagePayload(u: AnthropicUsage): UsagePayload {

@@ -3,8 +3,9 @@ import {
   buildScanProjectPayload,
   buildScanAllPayload,
   buildUsagePayload,
+  buildUpdateActionsPayload,
 } from "../mcp/adapters";
-import type { ProjectHealth, DashboardData, AnthropicUsage } from "../lib/types";
+import type { ProjectHealth, DashboardData, AnthropicUsage, UpdateAction } from "../lib/types";
 
 function makeHealth(overrides: Partial<ProjectHealth> = {}): ProjectHealth {
   return {
@@ -121,6 +122,56 @@ describe("buildScanAllPayload", () => {
     expect(payload.projects).toHaveLength(2);
     expect(payload.projects[0].id).toBe("a");
     expect(payload.summary.total).toBe(2);
+  });
+});
+
+describe("buildUpdateActionsPayload", () => {
+  function makeAction(overrides: Partial<UpdateAction> = {}): UpdateAction {
+    return {
+      name: "foo",
+      current: "1.0.0",
+      latest: "2.0.0",
+      severity: "major",
+      command: "npm install foo@2.0.0",
+      ...overrides,
+    };
+  }
+
+  it("bucket-counts actions by severity", () => {
+    const h = makeHealth({
+      updateActions: [
+        makeAction({ name: "a", severity: "major" }),
+        makeAction({ name: "b", severity: "major" }),
+        makeAction({ name: "c", severity: "minor" }),
+        makeAction({ name: "d", severity: "patch" }),
+      ],
+    });
+    const payload = buildUpdateActionsPayload(h);
+    expect(payload.counts).toEqual({ major: 2, minor: 1, patch: 1 });
+    expect(payload.actions).toHaveLength(4);
+  });
+
+  it("surfaces repo + package manager for the LLM to craft PR descriptions", () => {
+    const h = makeHealth({
+      project: { ...makeHealth().project, repo: "owner/name" },
+      updateActions: [makeAction()],
+    });
+    const payload = buildUpdateActionsPayload(h);
+    expect(payload.repo).toBe("owner/name");
+    expect(payload.packageManager).toBe("npm");
+  });
+
+  it("returns zero counts and empty actions when nothing is outdated", () => {
+    const payload = buildUpdateActionsPayload(makeHealth({ updateActions: [] }));
+    expect(payload.counts).toEqual({ major: 0, minor: 0, patch: 0 });
+    expect(payload.actions).toEqual([]);
+  });
+
+  it("reports null package manager when dependency scan is missing", () => {
+    const payload = buildUpdateActionsPayload(
+      makeHealth({ dependencies: null, updateActions: [] }),
+    );
+    expect(payload.packageManager).toBeNull();
   });
 });
 
