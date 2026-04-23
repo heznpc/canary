@@ -5,7 +5,12 @@ import { z } from "zod";
 import { scanAll, scanProject } from "@/lib/scanners";
 import { projects } from "@/lib/projects";
 import { checkAnthropicUsage } from "@/lib/scanners/anthropic-usage";
-import { buildScanProjectPayload, buildScanAllPayload, buildUsagePayload } from "./adapters";
+import {
+  buildScanProjectPayload,
+  buildScanAllPayload,
+  buildUsagePayload,
+  buildUpdateActionsPayload,
+} from "./adapters";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -55,6 +60,29 @@ async function main() {
       const data = await scanAll();
       return {
         content: [{ type: "text", text: JSON.stringify(buildScanAllPayload(data), null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    "list_update_actions",
+    {
+      title: "List pending dependency update actions for a project",
+      description:
+        "Return the concrete update commands (e.g. `pnpm up foo@1.2.3`) and changelog links for every outdated dependency in one project, grouped by severity. Use this to answer 'what should I update?' without re-running a full scan analysis.",
+      inputSchema: { projectId: z.string().describe("Project ID as defined in canary.config.ts") },
+    },
+    async ({ projectId }) => {
+      const project = projects.find((p) => p.id === projectId);
+      if (!project) {
+        return {
+          content: [{ type: "text", text: `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}` }],
+          isError: true,
+        };
+      }
+      const health = await scanProject(project);
+      return {
+        content: [{ type: "text", text: JSON.stringify(buildUpdateActionsPayload(health), null, 2) }],
       };
     },
   );
