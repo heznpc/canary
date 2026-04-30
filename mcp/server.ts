@@ -23,14 +23,17 @@ import {
  * transport-layer file.
  */
 
-function unknownProjectError(projectId: string) {
+function errorResponse(text: string) {
   return {
-    content: [{
-      type: "text" as const,
-      text: `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}`,
-    }],
+    content: [{ type: "text" as const, text }],
     isError: true,
   };
+}
+
+function unknownProjectError(projectId: string) {
+  return errorResponse(
+    `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}`,
+  );
 }
 
 async function main() {
@@ -82,17 +85,11 @@ async function main() {
       const project = projects.find((p) => p.id === projectId);
       if (!project) return unknownProjectError(projectId);
       if (!project.repo) {
-        return {
-          content: [{ type: "text", text: `Project '${projectId}' has no GitHub repo configured; nothing to update-scan.` }],
-          isError: true,
-        };
+        return errorResponse(`Project '${projectId}' has no GitHub repo configured; nothing to update-scan.`);
       }
       const depResult = await getDependencyHealth(project.repo);
       if (!depResult) {
-        return {
-          content: [{ type: "text", text: `No dependency manifest detected for '${projectId}'.` }],
-          isError: true,
-        };
+        return errorResponse(`No dependency manifest detected for '${projectId}'.`);
       }
       const actions = generateUpdateActions(depResult.health);
       return {
@@ -131,15 +128,9 @@ async function main() {
     async ({ days }) => {
       const usage = await checkAnthropicUsage(days ?? 7);
       if (!usage) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: "ANTHROPIC_ADMIN_API_KEY is not set or the Admin API request failed. Set the env var and retry.",
-            },
-          ],
-          isError: true,
-        };
+        return errorResponse(
+          "ANTHROPIC_ADMIN_API_KEY is not set or the Admin API request failed. Set the env var and retry.",
+        );
       }
       return {
         content: [{ type: "text", text: JSON.stringify(buildUsagePayload(usage), null, 2) }],
