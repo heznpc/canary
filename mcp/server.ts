@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { scanAll, scanProject } from "@/lib/scanners";
+import { getDependencyHealth, generateUpdateActions } from "@/lib/scanners/github";
 import { projects } from "@/lib/projects";
 import { checkAnthropicUsage } from "@/lib/scanners/anthropic-usage";
 import {
@@ -22,6 +23,16 @@ import {
  * transport-layer file.
  */
 
+function unknownProjectError(projectId: string) {
+  return {
+    content: [{
+      type: "text" as const,
+      text: `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}`,
+    }],
+    isError: true,
+  };
+}
+
 async function main() {
   const server = new McpServer({ name: "canary", version: "0.1.0" });
 
@@ -35,12 +46,7 @@ async function main() {
     },
     async ({ projectId }) => {
       const project = projects.find((p) => p.id === projectId);
-      if (!project) {
-        return {
-          content: [{ type: "text", text: `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}` }],
-          isError: true,
-        };
-      }
+      if (!project) return unknownProjectError(projectId);
       const health = await scanProject(project);
       return {
         content: [{ type: "text", text: JSON.stringify(buildScanProjectPayload(health), null, 2) }],
@@ -69,20 +75,39 @@ async function main() {
     {
       title: "List pending dependency update actions for a project",
       description:
-        "Return the concrete update commands (e.g. `pnpm up foo@1.2.3`) and changelog links for every outdated dependency in one project, grouped by severity. Use this to answer 'what should I update?' without re-running a full scan analysis.",
+        "Return the concrete update commands (e.g. `pnpm up foo@1.2.3`) and changelog links for every outdated dependency in one project, grouped by severity. Skips CAM/ACR/scorecard/activity scans for speed.",
       inputSchema: { projectId: z.string().describe("Project ID as defined in canary.config.ts") },
     },
     async ({ projectId }) => {
       const project = projects.find((p) => p.id === projectId);
-      if (!project) {
+      if (!project) return unknownProjectError(projectId);
+      if (!project.repo) {
         return {
-          content: [{ type: "text", text: `Unknown projectId: ${projectId}. Known: ${projects.map((p) => p.id).join(", ")}` }],
+          content: [{ type: "text", text: `Project '${projectId}' has no GitHub repo configured; nothing to update-scan.` }],
           isError: true,
         };
       }
-      const health = await scanProject(project);
+      const depResult = await getDependencyHealth(project.repo);
+      if (!depResult) {
+        return {
+          content: [{ type: "text", text: `No dependency manifest detected for '${projectId}'.` }],
+          isError: true,
+        };
+      }
+      const actions = generateUpdateActions(depResult.health);
       return {
-        content: [{ type: "text", text: JSON.stringify(buildUpdateActionsPayload(health), null, 2) }],
+        content: [{
+          type: "text",
+          text: JSON.stringify(
+            buildUpdateActionsPayload({
+              project,
+              packageManager: depResult.health.packageManager,
+              actions,
+            }),
+            null,
+            2,
+          ),
+        }],
       };
     },
   );

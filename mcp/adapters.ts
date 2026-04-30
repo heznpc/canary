@@ -1,9 +1,11 @@
 import type {
   AnthropicUsage,
   DashboardData,
+  DependencyHealth,
   ProjectHealth,
   UpdateAction,
 } from "@/lib/types";
+import type { ProjectConfig } from "@/lib/projects";
 
 /**
  * MCP transport DTOs. These mirror the dashboard types but intentionally
@@ -127,16 +129,25 @@ export interface UpdateActionsPayload {
   }[];
 }
 
-export function buildUpdateActionsPayload(h: ProjectHealth): UpdateActionsPayload {
+/**
+ * Decoupled from `ProjectHealth` so the MCP `list_update_actions` tool can
+ * skip the rest of the scan pipeline (CAM, ACR, scorecard, …) and only run
+ * the dependency portion. About 10× cheaper on a cold call.
+ */
+export function buildUpdateActionsPayload(args: {
+  project: ProjectConfig;
+  packageManager: DependencyHealth["packageManager"] | null;
+  actions: UpdateAction[];
+}): UpdateActionsPayload {
   const counts = { major: 0, minor: 0, patch: 0 };
-  for (const a of h.updateActions) counts[a.severity]++;
+  for (const a of args.actions) counts[a.severity]++;
   return {
-    projectId: h.project.id,
-    projectName: h.project.name,
-    repo: h.project.repo,
-    packageManager: h.dependencies?.packageManager ?? null,
+    projectId: args.project.id,
+    projectName: args.project.name,
+    repo: args.project.repo,
+    packageManager: args.packageManager,
     counts,
-    actions: h.updateActions.map((a) => ({
+    actions: args.actions.map((a) => ({
       name: a.name,
       current: a.current,
       latest: a.latest,

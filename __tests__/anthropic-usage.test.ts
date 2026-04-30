@@ -56,6 +56,24 @@ describe("estimateUsd", () => {
     });
     expect(usd).toBeCloseTo(1, 2);
   });
+
+  // Anthropic's real model IDs follow `claude-<family>-<gen>-<YYYYMMDD>` for
+  // 4.x and `claude-3[-5]-<family>-<YYYYMMDD>` for legacy. Verify the substring
+  // match handles both — guards against silently mispricing real usage data.
+  it.each([
+    ["claude-opus-4-20250514", 90],
+    ["claude-sonnet-4-20250514", 18],
+    ["claude-haiku-4-5-20251001", 6],
+    ["claude-3-5-sonnet-20241022", 18],
+  ])("prices real-world model ID %s correctly", (model, expectedUsd) => {
+    const usd = estimateUsd(model, {
+      input: 1_000_000,
+      output: 1_000_000,
+      cacheRead: 0,
+      cacheWrite: 0,
+    });
+    expect(usd).toBeCloseTo(expectedUsd, 2);
+  });
 });
 
 describe("aggregateUsage", () => {
