@@ -126,6 +126,8 @@ describe("buildScanAllPayload", () => {
 });
 
 describe("buildUpdateActionsPayload", () => {
+  const baseProject = makeHealth().project;
+
   function makeAction(overrides: Partial<UpdateAction> = {}): UpdateAction {
     return {
       name: "foo",
@@ -138,40 +140,63 @@ describe("buildUpdateActionsPayload", () => {
   }
 
   it("bucket-counts actions by severity", () => {
-    const h = makeHealth({
-      updateActions: [
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [
         makeAction({ name: "a", severity: "major" }),
         makeAction({ name: "b", severity: "major" }),
         makeAction({ name: "c", severity: "minor" }),
         makeAction({ name: "d", severity: "patch" }),
       ],
     });
-    const payload = buildUpdateActionsPayload(h);
     expect(payload.counts).toEqual({ major: 2, minor: 1, patch: 1 });
     expect(payload.actions).toHaveLength(4);
   });
 
   it("surfaces repo + package manager for the LLM to craft PR descriptions", () => {
-    const h = makeHealth({
-      project: { ...makeHealth().project, repo: "owner/name" },
-      updateActions: [makeAction()],
+    const payload = buildUpdateActionsPayload({
+      project: { ...baseProject, repo: "owner/name" },
+      packageManager: "pnpm",
+      actions: [makeAction()],
     });
-    const payload = buildUpdateActionsPayload(h);
     expect(payload.repo).toBe("owner/name");
-    expect(payload.packageManager).toBe("npm");
+    expect(payload.packageManager).toBe("pnpm");
   });
 
   it("returns zero counts and empty actions when nothing is outdated", () => {
-    const payload = buildUpdateActionsPayload(makeHealth({ updateActions: [] }));
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [],
+    });
     expect(payload.counts).toEqual({ major: 0, minor: 0, patch: 0 });
     expect(payload.actions).toEqual([]);
   });
 
-  it("reports null package manager when dependency scan is missing", () => {
-    const payload = buildUpdateActionsPayload(
-      makeHealth({ dependencies: null, updateActions: [] }),
-    );
+  it("reports null package manager when caller cannot determine one", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: null,
+      actions: [],
+    });
     expect(payload.packageManager).toBeNull();
+  });
+
+  it("preserves changelog URL and command verbatim", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [
+        makeAction({
+          name: "next",
+          command: "npm install next@16.2.0",
+          changelogUrl: "https://github.com/vercel/next.js/releases",
+        }),
+      ],
+    });
+    expect(payload.actions[0].command).toBe("npm install next@16.2.0");
+    expect(payload.actions[0].changelogUrl).toBe("https://github.com/vercel/next.js/releases");
   });
 });
 

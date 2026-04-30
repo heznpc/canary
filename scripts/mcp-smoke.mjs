@@ -87,7 +87,26 @@ try {
       `tools mismatch — missing=[${missing.join(",")}] unexpected=[${unexpected.join(",")}] got=[${got.join(",")}]`,
     );
   }
-  console.log(`[mcp-smoke] OK — ${got.length} tools registered: ${got.join(", ")}`);
+
+  // Exercise a handler so `tools/list` registration alone can't mask a broken
+  // adapter. We use an unknown projectId so no network calls happen — the
+  // server should respond with isError + a "Unknown projectId" message.
+  send({
+    jsonrpc: "2.0",
+    id: 3,
+    method: "tools/call",
+    params: { name: "list_update_actions", arguments: { projectId: "__nonexistent_smoke_id__" } },
+  });
+  const callResp = await waitFor(3);
+  if (!callResp.result?.isError) {
+    fail("expected isError=true for unknown projectId, got: " + JSON.stringify(callResp.result));
+  }
+  const text = callResp.result?.content?.[0]?.text ?? "";
+  if (!text.includes("Unknown projectId")) {
+    fail(`expected error text to mention 'Unknown projectId', got: ${text.slice(0, 200)}`);
+  }
+
+  console.log(`[mcp-smoke] OK — ${got.length} tools registered, handler reachable: ${got.join(", ")}`);
 } finally {
   child.kill();
   await Promise.race([once(child, "exit"), new Promise((r) => setTimeout(r, 1000))]);
