@@ -1,0 +1,508 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-05-07T07:21:27.137Z",
+  "sources": {
+    "cam": "/Users/ren/IdeaProjects/Paper/canary/experiments/results/cam-results.json",
+    "acr": "/Users/ren/IdeaProjects/Paper/canary/experiments/results/acr-results.json",
+    "pushLeakageDetail": "/Users/ren/IdeaProjects/Paper/canary/experiments/results/raw/push-leakage-2026-05-07-detail.json"
+  },
+  "nJoined": 58,
+  "correlations": [
+    {
+      "pair": "CAM × ACR_90d",
+      "n": 8,
+      "pearson": -0.011341130322536001,
+      "spearman": 0.04676097647914122
+    },
+    {
+      "pair": "CAM × UCP",
+      "n": 2,
+      "pearson": null,
+      "spearman": null
+    },
+    {
+      "pair": "ACR_90d × UCP",
+      "n": 2,
+      "pearson": null,
+      "spearman": null
+    },
+    {
+      "pair": "CAM × MIP",
+      "n": 0,
+      "pearson": null,
+      "spearman": null
+    },
+    {
+      "pair": "ACR_90d × MIP",
+      "n": 0,
+      "pearson": null,
+      "spearman": null
+    }
+  ],
+  "rows": [
+    {
+      "repo": "ai-bubble",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "ai-slop-paper",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "aichemist",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "AirMCP",
+      "cam": 0.042801556420233464,
+      "acr_90d": 0.027131782945736434,
+      "ucp_seconds": 1772622,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "analogic-appropriation",
+      "cam": 0,
+      "acr_90d": 0.4444444444444444,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "anvil",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "babel",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "browser-extension-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "caching",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "canary",
+      "cam": 0.125,
+      "acr_90d": 0.2631578947368421,
+      "ucp_seconds": 154,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "cloudflare-pages-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "coup",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "create-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "cuk-sw-community",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "discord-bot-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "docker-deploy-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "dol-pin",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "dot-github",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "eddy",
+      "cam": 0,
+      "acr_90d": 0.1,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "electron-app-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "elixir",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "emergence-paradox",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "habitus",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "hello-project",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "heznpc",
+      "cam": 0,
+      "acr_90d": 0,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "landing-page",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "lifespan",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "macaronic",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "mcp-server-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "meta",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "mothball",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 1150206,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "narcissus",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "newtria",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "npm-package-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "ochre",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "oncology",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "pc-health-check",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 1150177,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "ploidy",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 1251297,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "PLOIDY",
+      "cam": 0,
+      "acr_90d": 0.019230769230769232,
+      "ucp_seconds": null,
+      "ahead": null,
+      "mip_seconds": null
+    },
+    {
+      "repo": "ProfileKit",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 548021,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "profilekit-mcp",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "pythia",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "python-mcp-server-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 2769,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "react-native-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "sediment",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "silo",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "skillBridge",
+      "cam": 0,
+      "acr_90d": 0.7596899224806202,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "starter-series",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "statute-of-limitations",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "telegram-bot-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "tidal",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "token_save",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "tr-archive",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "trashmonster",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": 5247964,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "villagent",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "vscode-extension-starter",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "whetstone",
+      "cam": null,
+      "acr_90d": null,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    },
+    {
+      "repo": "z-gap",
+      "cam": 0,
+      "acr_90d": 0.05555555555555555,
+      "ucp_seconds": null,
+      "ahead": 0,
+      "mip_seconds": null
+    }
+  ]
+}

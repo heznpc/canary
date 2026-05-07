@@ -24,6 +24,7 @@ thesis grounding (§3 / §5.4 / §6.2 of `paper/main.tex`).
 | `repo-scan.ts` | Walk one or more roots, find git repos, capture ahead/behind/dirty + oldest unpushed commit timestamp. |
 | `metrics.ts` | Join sessions × repos, compute APL/PLR/MIP at portfolio level. Distinguishes cwd-attribution from cross-repo attribution. |
 | `cli.ts` | Entrypoint. Writes a sanitized public snapshot + a gitignored raw detail snapshot. |
+| `correlate.ts` | Joins CAM / ACR / push-leakage results by repository basename, computes Pearson + Spearman correlations for each pair. Useful for cross-axis analysis once enough data is collected. |
 
 ## Usage
 
