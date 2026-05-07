@@ -97,6 +97,25 @@ Three observations worth carrying into §5.4:
 
 Sanity caveats: cross-repo attribution captures the dominant `cd <path> && git ...` and `git -C <path>` patterns but misses script-mediated touches (e.g. `bash some-script.sh` where the script itself enters a subdir). Repos in the snapshot that have no remote configured (3 in this run) are excluded from leakage classification regardless of session activity.
 
+## Cross-Axis Correlation Analysis (2026-05-07)
+
+Implemented `experiments/src/push-leakage/correlate.ts` to join the three measurement axes (CAM, ACR_90d, UCP) plus the leakage metrics (ahead, MIP) by repository basename and compute Pearson + Spearman for each pair. First run (single-developer portfolio):
+
+| pair | n | Pearson | Spearman |
+|---|---:|---:|---:|
+| CAM × ACR_90d | 8 | -0.011 | 0.047 |
+| CAM × UCP | 2 | — | — |
+| ACR_90d × UCP | 2 | — | — |
+| CAM × MIP | 0 | — | — |
+| ACR_90d × MIP | 0 | — | — |
+
+Two honest takeaways:
+
+1. **CAM and ACR_90d are essentially uncorrelated in this portfolio** (r ≈ 0, ρ ≈ 0.05, n=8). This is informative: the two axes measure *different* phenomena (presence of agent-era context files vs share of agent-authored commits), and a small portfolio confirms they do not collapse into one signal.
+2. **All other pairs are too small (n ≤ 2) for stable estimates**. The intersection of CAM-eligible and dirty repos is two; MIP is currently undefined (post-intervention scan has 0 leaking repos). A wider sample — multiple authors' portfolios, or a longitudinal sequence of snapshots that captures pre-intervention leakage windows — is necessary before any correlation involving UCP or MIP can be reported with confidence. Recorded here so the limitation is in the audit trail rather than absent.
+
+The output schema (`experiments/results/correlation-<date>.json`) is stable; future runs can append snapshots and aggregate across them.
+
 ## Operator-Intervention Snapshot (2026-05-07, post)
 
 After the baseline scan was captured, the operator pushed the 23 leaking Paper/ repositories (one rebase, twenty-two simple fast-forwards) and re-ran the scanner. The post-intervention snapshot is committed at `experiments/results/push-leakage-2026-05-07-post-intervention.json`.
