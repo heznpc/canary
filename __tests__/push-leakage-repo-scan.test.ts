@@ -105,6 +105,31 @@ describe("inspectRepo", () => {
     expect(state.ahead).toBe(0);
     expect(state.behind).toBe(0);
     expect(state.dirtyFiles).toBe(0);
+    // No dirty files => no oldestDirtyMtime
+    expect(state.oldestDirtyMtime).toBeNull();
+    expect(state.dirtyFilePaths).toEqual([]);
+  });
+
+  it("captures oldestDirtyMtime + dirtyFilePaths from porcelain output", async () => {
+    const repo = join(root, "ucp");
+    makeRepo(repo);
+    // Two dirty untracked files; we deliberately stat-set the older one
+    // so oldest mtime is deterministic regardless of FS resolution.
+    const oldFile = join(repo, "old.txt");
+    const newFile = join(repo, "new.txt");
+    writeFileSync(oldFile, "old");
+    writeFileSync(newFile, "new");
+    const tenDaysAgo = Date.now() - 10 * 24 * 60 * 60 * 1000;
+    const { utimesSync } = await import("fs");
+    utimesSync(oldFile, tenDaysAgo / 1000, tenDaysAgo / 1000);
+
+    const state = inspectRepo(repo, join(repo, ".git"), false);
+    expect(state.dirtyFiles).toBe(2);
+    expect(state.dirtyFilePaths.sort()).toEqual(["new.txt", "old.txt"]);
+    expect(state.oldestDirtyMtime).not.toBeNull();
+    // Sanity: oldest mtime should be near the 10-day-ago marker (within 1 day window).
+    const oldestMs = new Date(state.oldestDirtyMtime!).getTime();
+    expect(Math.abs(oldestMs - tenDaysAgo)).toBeLessThan(24 * 60 * 60 * 1000);
   });
 });
 

@@ -23,6 +23,8 @@ function repo(path: string, overrides: Partial<RepoState> = {}): RepoState {
     lastCommitTs: "2026-05-01T00:00:00+00:00",
     oldestUnpushedTs: null,
     unpushedSubjects: [],
+    oldestDirtyMtime: null,
+    dirtyFilePaths: [],
     isWorktree: false,
     scanError: null,
     ...overrides,
@@ -90,6 +92,19 @@ describe("joinReposWithSessions", () => {
     expect(j.apl_seconds).toBeGreaterThan(0);
     expect(j.apl_seconds).toBeLessThan(j.mip_seconds!);
   });
+
+  it("computes UCP only when dirtyFiles > 0 and oldestDirtyMtime is set", () => {
+    const noDirty = repo("/clean");
+    const dirtyNoMtime = repo("/dirty-no-mtime", { dirtyFiles: 2, oldestDirtyMtime: null });
+    const dirtyWithMtime = repo("/dirty", {
+      dirtyFiles: 1,
+      oldestDirtyMtime: "2026-04-01T00:00:00Z",
+    });
+    const out = joinReposWithSessions([noDirty, dirtyNoMtime, dirtyWithMtime], [], NOW);
+    expect(out[0].ucp_seconds).toBeNull();
+    expect(out[1].ucp_seconds).toBeNull(); // dirty count > 0 but no mtime captured
+    expect(out[2].ucp_seconds).toBeGreaterThan(0);
+  });
 });
 
 describe("computePortfolio", () => {
@@ -145,6 +160,26 @@ describe("computePortfolio", () => {
     const p = computePortfolio(joinReposWithSessions(repos, aggs, NOW), 7);
     expect(p.reposAgentTouchedCwd).toBe(1);
     expect(p.reposAgentTouchedCrossRepoOnly).toBe(1);
+  });
+
+  it("aggregates UCP percentiles and counts dirty repos", () => {
+    const repos = [
+      repo("/clean"),
+      repo("/dirty-recent", {
+        dirtyFiles: 1,
+        oldestDirtyMtime: "2026-05-07T00:00:00Z", // 10h ago vs NOW
+      }),
+      repo("/dirty-old", {
+        dirtyFiles: 3,
+        oldestDirtyMtime: "2026-04-01T00:00:00Z", // ~36 days ago
+      }),
+    ];
+    const p = computePortfolio(joinReposWithSessions(repos, [], NOW), 7);
+    expect(p.reposDirty).toBe(2);
+    expect(p.ucp.n).toBe(2);
+    expect(p.ucp.max).toBeGreaterThan(p.ucp.p50!);
+    // Sanity: max >= 30 days (older sample)
+    expect(p.ucp.max).toBeGreaterThan(30 * 86400);
   });
 });
 

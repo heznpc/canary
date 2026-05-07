@@ -93,6 +93,7 @@ function buildPublicSnapshot(detail: PortfolioSnapshot): unknown {
       repoPath: sanitizePath(r.repoPath, hashes),
       remoteUrl: r.remoteUrl ? "<redacted>" : null,
       unpushedSubjects: r.unpushedSubjects.length > 0 ? [`<${r.unpushedSubjects.length} redacted>`] : [],
+      dirtyFilePaths: r.dirtyFilePaths.length > 0 ? [`<${r.dirtyFilePaths.length} redacted>`] : [],
     })),
   };
 }
@@ -154,6 +155,7 @@ function main(): void {
   console.error(`  PLR_portfolio  : ${(portfolio.plr_portfolio * 100).toFixed(1)}% (leaking / repos-with-remote)`);
   console.error(`  APL p50/p90/max: ${fmtDuration(portfolio.apl.p50)} / ${fmtDuration(portfolio.apl.p90)} / ${fmtDuration(portfolio.apl.max)} (n=${portfolio.apl.n})`);
   console.error(`  MIP p50/p90/max: ${fmtDuration(portfolio.mip.p50)} / ${fmtDuration(portfolio.mip.p90)} / ${fmtDuration(portfolio.mip.max)} (n=${portfolio.mip.n})`);
+  console.error(`  UCP p50/p90/max: ${fmtDuration(portfolio.ucp.p50)} / ${fmtDuration(portfolio.ucp.p90)} / ${fmtDuration(portfolio.ucp.max)} (n=${portfolio.ucp.n}, dirty repos=${portfolio.reposDirty})`);
 
   console.error("");
   console.error("=== Top leaking repos (MIP desc, top 10) ===");

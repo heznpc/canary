@@ -32,6 +32,8 @@ export interface JoinedRepo {
   dirtyFiles: number;
   unpushedSubjects: string[];
   oldestUnpushedTs: string | null;
+  oldestDirtyMtime: string | null;
+  dirtyFilePaths: string[];
   lastCommitTs: string | null;
   // Session join
   sessionCount: number;
@@ -43,6 +45,8 @@ export interface JoinedRepo {
   // Computed
   apl_seconds: number | null; // null if not ahead OR no session matched
   mip_seconds: number | null; // null if not ahead
+  /** Uncommitted-Period: now − oldestDirtyMtime. Null if dirtyFiles == 0. */
+  ucp_seconds: number | null;
   classification:
     | "no_remote"
     | "in_sync"
@@ -71,6 +75,8 @@ export interface PortfolioMetrics {
   plr_portfolio: number;
   apl: { p50: number | null; p90: number | null; max: number | null; n: number };
   mip: { p50: number | null; p90: number | null; max: number | null; n: number };
+  ucp: { p50: number | null; p90: number | null; max: number | null; n: number };
+  reposDirty: number;
 }
 
 function percentile(sorted: number[], p: number): number | null {
@@ -108,6 +114,10 @@ export function joinReposWithSessions(
       if (r.oldestUnpushedTs) mip = diffSeconds(nowIso, r.oldestUnpushedTs);
       if (agg?.lastEndTs) apl = diffSeconds(nowIso, agg.lastEndTs);
     }
+    let ucp: number | null = null;
+    if (r.dirtyFiles > 0 && r.oldestDirtyMtime) {
+      ucp = diffSeconds(nowIso, r.oldestDirtyMtime);
+    }
 
     out.push({
       repoPath: r.path,
@@ -120,6 +130,8 @@ export function joinReposWithSessions(
       dirtyFiles: r.dirtyFiles,
       unpushedSubjects: r.unpushedSubjects,
       oldestUnpushedTs: r.oldestUnpushedTs,
+      oldestDirtyMtime: r.oldestDirtyMtime,
+      dirtyFilePaths: r.dirtyFilePaths,
       lastCommitTs: r.lastCommitTs,
       sessionCount: agg?.sessionCount ?? 0,
       cwdSessionCount: agg?.cwdSessionCount ?? 0,
@@ -129,6 +141,7 @@ export function joinReposWithSessions(
       totalPushCommands: agg?.totalPush ?? 0,
       apl_seconds: apl,
       mip_seconds: mip,
+      ucp_seconds: ucp,
       classification: cls,
     });
   }
@@ -157,6 +170,11 @@ export function computePortfolio(joined: JoinedRepo[], thresholdDays = 7): Portf
     .map((j) => j.mip_seconds)
     .filter((x): x is number => typeof x === "number")
     .sort((a, b) => a - b);
+  const ucpVals = joined
+    .map((j) => j.ucp_seconds)
+    .filter((x): x is number => typeof x === "number")
+    .sort((a, b) => a - b);
+  const reposDirty = joined.filter((j) => j.dirtyFiles > 0).length;
 
   return {
     generatedAt: new Date().toISOString(),
@@ -184,6 +202,13 @@ export function computePortfolio(joined: JoinedRepo[], thresholdDays = 7): Portf
       max: mipVals[mipVals.length - 1] ?? null,
       n: mipVals.length,
     },
+    ucp: {
+      p50: percentile(ucpVals, 0.5),
+      p90: percentile(ucpVals, 0.9),
+      max: ucpVals[ucpVals.length - 1] ?? null,
+      n: ucpVals.length,
+    },
+    reposDirty,
   };
 }
 
