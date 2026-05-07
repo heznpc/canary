@@ -8,6 +8,10 @@ multi-repo git state to compute three metrics:
 - **MIP** (Metadata-Invisibility Period) — time the oldest unpushed commit has
   been sitting unpropagated.
 - **PLR** (Push Leakage Rate) — fraction of agent-touched repos in MIP > N days.
+- **UCP** (Uncommitted-Period) — time since the oldest dirty file's mtime, per
+  repo. Lower-bound signal for the working-tree → commit gap one layer deeper
+  than push-leakage. Higher noise floor than the others (untracked files that
+  are not gitignored will dominate the max).
 
 See `planning/drafts/agent-push-leakage.md` for the RFC and the metadatafication
 thesis grounding (§3 / §5.4 / §6.2 of `paper/main.tex`).

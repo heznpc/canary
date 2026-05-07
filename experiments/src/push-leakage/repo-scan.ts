@@ -29,6 +29,16 @@ export interface RepoState {
   oldestUnpushedTs: string | null;
   /** Subject lines of unpushed commits, newest first. */
   unpushedSubjects: string[];
+  /**
+   * Oldest mtime among dirty files (ISO). Null if no dirty files. Used to
+   * compute UCP (Uncommitted-Period) — the working-tree → commit gap one
+   * layer deeper than push-leakage. Noise floor is higher than push-leakage:
+   * untracked files that are not gitignored (build artifacts, editor swap
+   * files) can dominate the metric. Treat as a lower-bound signal.
+   */
+  oldestDirtyMtime: string | null;
+  /** Relative paths of dirty files (porcelain output). Goes into detail snapshot only. */
+  dirtyFilePaths: string[];
   /** True if the .git is a file (linked worktree). */
   isWorktree: boolean;
   scanError: string | null;
@@ -108,6 +118,8 @@ export function inspectRepo(repo: string, gitDir: string, isWorktree: boolean): 
     lastCommitTs: null,
     oldestUnpushedTs: null,
     unpushedSubjects: [],
+    oldestDirtyMtime: null,
+    dirtyFilePaths: [],
     isWorktree,
     scanError: null,
   };
@@ -130,7 +142,31 @@ export function inspectRepo(repo: string, gitDir: string, isWorktree: boolean): 
 
   try {
     const status = gitOut(repo, ["status", "--porcelain"]);
-    base.dirtyFiles = status ? status.split("\n").filter(Boolean).length : 0;
+    if (status) {
+      const lines = status.split("\n").filter(Boolean);
+      base.dirtyFiles = lines.length;
+      let oldestMs: number | null = null;
+      const paths: string[] = [];
+      for (const line of lines) {
+        // Porcelain v1 format: 'XY path'. Three-char prefix on each line.
+        // Renames look like 'R  oldname -> newname' — take the new name.
+        const tail = line.length >= 3 ? line.slice(3) : line;
+        const realPath = tail.includes(" -> ")
+          ? tail.split(" -> ")[1].trim()
+          : tail.trim();
+        if (!realPath) continue;
+        paths.push(realPath);
+        try {
+          const st = statSync(join(repo, realPath));
+          if (oldestMs === null || st.mtimeMs < oldestMs) oldestMs = st.mtimeMs;
+        } catch {
+          // file may have been deleted (porcelain shows ' D' / 'D ');
+          // skip silently — its absence is its own signal.
+        }
+      }
+      if (oldestMs !== null) base.oldestDirtyMtime = new Date(oldestMs).toISOString();
+      base.dirtyFilePaths = paths;
+    }
   } catch (e) {
     base.scanError = `status: ${(e as Error).message}`;
   }
