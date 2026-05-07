@@ -19,6 +19,8 @@ const EXPECTED_TOOLS = [
   "scan_all",
   "list_update_actions",
   "get_anthropic_usage",
+  "list_leaking_repos",
+  "audit_session_leakage",
 ];
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

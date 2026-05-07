@@ -69,20 +69,22 @@ mcp/tools/
 
 First-cut implementation lives at `experiments/src/push-leakage/` (transcript-scan / repo-scan / metrics / cli) and produced a sanitized portfolio snapshot in `experiments/results/push-leakage-2026-05-07.json`. The raw detail snapshot (with absolute paths, remote URLs, and commit subjects) lives under `experiments/results/raw/` and is gitignored.
 
+A second iteration extended attribution to **cross-repo touches**: Bash invocations matching `cd /path && git ...` or `git -C /path ...` are now extracted from session content and attributed to the target path (in addition to the session's `cwd`). The numbers below reflect that improved attribution.
+
 **Headline numbers** (single-developer, N=57 git repos under `~/IdeaProjects/`):
 
 - Repos ahead of upstream: **23/57 (40.4%)** — `PLR_portfolio`
-- Repos with direct CLI cwd sessions (`agent-touched`): **7**
-- Of those 7, in MIP > 7 days: **5/7 (71.4%)** — `PLR_agent`
-- MIP percentiles: **p50 = 17d 15h, p90 = 17d 17h, max = 17d 18h** (n=23)
-- APL percentiles: **p50 = 20d 10h, p90 = 22d 15h, max = 23d 14h** (n=5)
+- Repos agent-touched (any kind): **54** — broken down as cwd-only=7, cross-repo-only=47
+- Repos agent-touched ∩ in MIP > 7 days: **23/54 (42.6%)** — `PLR_agent`
+- MIP percentiles: **p50 = 17d 16h, p90 = 17d 18h, max = 17d 18h** (n=23)
+- APL percentiles: **p50 = 17d 0h, p90 = 17d 0h, max = 25d 20h** (n=23)
 
 Three observations worth carrying into §5.4:
 
-1. **Single-event signature.** The MIP distribution is nearly degenerate (`max - p50 ≈ 3 hours`). All 23 leaking repos are stuck within a ~3-hour window. This is consistent with one bulk DDD-restructure operation across the Paper/ portfolio, then no per-repo push. The thesis predicts exactly this: when git becomes background metadata, *bulk* mutations slip through unnoticed because the operator's attention budget cannot scale with repo count.
+1. **Single-event signature.** The MIP distribution is nearly degenerate (`max - p50 ≈ 2 hours`). All 23 leaking repos are stuck within a ~2-hour window. This is consistent with one bulk DDD-restructure operation across the Paper/ portfolio, then no per-repo push. The thesis predicts exactly this: when git becomes background metadata, *bulk* mutations slip through unnoticed because the operator's attention budget cannot scale with repo count.
 
-2. **Parent-cwd opacity.** Of 23 leaking repos, only 5 have a direct Claude Code CLI session whose `cwd` was the repo path. The remaining 18 were touched from a parent cwd (`~/IdeaProjects/Paper`, 6 sessions, last 2026-04-23) using cross-repo commands like `git -C <subrepo>`. The current scanner cannot attribute those touches to specific child repos — a limitation we surface explicitly. This is itself a §6.2 finding: a "session-completion-triggered CI/CD" tool that only watches the session's `cwd` would miss bulk operations.
+2. **Parent-cwd opacity is structural, not anecdotal.** Of 54 agent-touched repos, only 7 have a direct Claude Code CLI session whose `cwd` was the repo path. The remaining 47 (≈87%) were touched exclusively from a parent cwd (`~/IdeaProjects/Paper`, `~/IdeaProjects`) via `cd <subrepo> && git ...` chains. A "session-completion-triggered CI/CD" tool that only watches the session's `cwd` (a likely first-cut design implied by §6.2) would miss the dominant pattern of agent-driven git activity in this portfolio.
 
-3. **Inverse evidence for active repos.** The two agent-touched repos that are *not* in MIP > 7 days (canary, ploidy) are precisely the ones with PR-routed workflows where push is part of routine session loops. Where the operator's attention budget is structured around git events (PR open, CI green, merge), metadatafication does not progress. This bounds the thesis: metadatafication does not happen everywhere — it happens where attention has migrated away from git as a deliberate workflow surface.
+3. **Inverse evidence for active repos.** The agent-touched repos that are *not* in MIP > 7 days (canary, ploidy, oncology) are precisely the ones with PR-routed workflows where push is part of routine session loops, or recently scaffolded with their own first-push event. Where the operator's attention budget is structured around git events (PR open, CI green, merge), metadatafication does not progress. This bounds the thesis: metadatafication does not happen everywhere — it happens where attention has migrated away from git as a deliberate workflow surface.
 
-Sanity caveats: APL count (n=5) is small for distributional claims; MIP is more meaningful here. Joining via `cwd` exact-match misses the parent-cwd case, so attributed-leakage figures are a *lower bound*. A future iteration should parse `git -C <path>` tool calls inside session content to attribute parent-cwd touches.
+Sanity caveats: cross-repo attribution captures the dominant `cd <path> && git ...` and `git -C <path>` patterns but misses script-mediated touches (e.g. `bash some-script.sh` where the script itself enters a subdir). Repos in the snapshot that have no remote configured (3 in this run) are excluded from leakage classification regardless of session activity.
