@@ -1,0 +1,61 @@
+name: Paper
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'paper/**'
+      - '.github/workflows/paper.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'paper/**'
+      - '.github/workflows/paper.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build LaTeX + validate citations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile LaTeX (multi-pass with bibtex)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: paper
+          # Default texliveGhostScript bundle includes natbib + hyperref; the
+          # action runs latexmk which handles bibtex + multi-pass automatically.
+          latexmk_use_xelatex: false
+          # Surface warnings as job log so we can grep them in the next step.
+          args: -pdf -file-line-error -interaction=nonstopmode
+
+      - name: Fail on undefined citations or references
+        # natbib/biblatex emit "Warning: Citation 'foo' on page N undefined"
+        # and bibtex emits "Warning--I didn't find a database entry for ...".
+        # Either signals a real bib/cite drift; we treat them as build failures
+        # for the paper module specifically.
+        run: |
+          set -eo pipefail
+          log=paper/main.log
+          if [ ! -f "$log" ]; then
+            echo "::error::paper/main.log not found — LaTeX build did not produce one"
+            exit 1
+          fi
+          if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
+            echo "::error::Undefined citations or references in paper/main.log"
+            exit 1
+          fi
+          echo "no undefined citations or references"
+
+      - name: Upload PDF artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canary-paper-${{ github.sha }}
+          path: paper/main.pdf
+          retention-days: 14
