@@ -51,7 +51,6 @@ paper/*.out
 paper/*.pdf
 paper/missfont.log
 
-CLAUDE.md
 .claude/
 mcp/dist/
 
