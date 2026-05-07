@@ -99,6 +99,8 @@ Critically, metadatafication is not obsolescence. The technology continues to fu
 
 \textbf{Boundary conditions.} Not all technologies metadatafy. Spreadsheets, text editors, and email remain directly operated after decades. We propose two necessary conditions: (1)~the technology's outputs can be generated without human intervention while preserving information fidelity (EXIF captures what photographers would have noted; Git commits record what developers would have committed), and (2)~a faster operator class emerges that makes human operation a throughput bottleneck (digital cameras for EXIF; AI agents for Git). Technologies where the \textit{process} of operation is itself the valued output---interactive data exploration in spreadsheets, compositional authorship in email---resist metadatafication because automating the process eliminates the value. Our CAM data (Section~5.4) suggest a third moderating factor: governance structure. Foundation-governed projects with formal contribution processes show significantly lower agent-era file adoption than developer-led projects ($p=0.017$, Mann-Whitney $U$; Section~5.4), suggesting that institutional governance mediates the pace of metadatafication even when the technical conditions are met.
 
+The ``visible only upon breakdown'' clause in Star and Ruhleder's framing has a direct empirical instrument in this paper: Section~5.4 introduces three concurrent metrics (APL, MIP, PLR) that measure how long agent-driven git activity sits in invisible-state before an external scan surfaces it. The instrument and its first findings serve as a worked example of the definition we are giving here.
+
 \subsection{Historical Precedents}
 
 Metadatafication is a recurring pattern in computing infrastructure:
@@ -429,6 +431,8 @@ If Git becomes infrastructure metadata, teaching Git mechanics to beginning deve
 \subsection{For Tooling}
 
 Current development tools assume that humans read and write code. The metadatafication thesis implies a need for tools designed around the assumption that agents read and write code, and humans read and write \textit{intent}: agent-native VCS \citep{atomic2026, cohen2026manyana}, intent-level CI/CD triggered by agent session completion rather than \texttt{git push}, and context-first IDEs organized around specifications and agent configuration rather than file trees.
+
+The agent-session-completion trigger is concretely demonstrated in Section~5.4. The push-leakage instrument enumerates repositories whose unpushed work would be invisible to a tool watching only the session's working directory; the parent-cwd opacity finding (87\% of agent-touched repositories in the reported portfolio were touched only via \texttt{cd \textless subrepo\textgreater\ \&\& git ...} chains) shows that any such trigger must reason over the bash command content rather than the session metadata alone. The same vignette identifies two adjacent failure modes---worktree-leakage (stale worktrees from already-merged pull requests) and command-cleanup-leakage (silent partial failure of \texttt{gh pr merge --delete-branch} when sibling worktrees hold the branch)---both of which the same recommendation addresses: tools that do not reason over the operator's full topology will produce invisible accumulating metadata, and the recovery affordance must be opt-out by default rather than opt-in.
 
 \subsection{For Ecosystem Governance}
 
