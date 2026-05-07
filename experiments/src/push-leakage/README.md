@@ -65,9 +65,20 @@ Both are read-only and never push.
 
 ## Known Limitations
 
-- **CLI-only.** Parses `~/.claude/projects/` jsonl format. Claude Desktop /
-  Cowork sessions under `~/Library/Application Support/Claude/` use a different
-  schema and are out of scope for the prototype.
+- **CLI-only by design.** Parses `~/.claude/projects/` jsonl format. Two
+  Desktop session sources were inspected and deliberately excluded:
+  - `~/Library/Application Support/Claude/claude-code-sessions/` is metadata
+    only; each entry's `cliSessionId` was expected to point back to a CLI
+    jsonl, but the IDs sampled here did not resolve to existing CLI files.
+    Treat as low-yield until the cross-reference is reverified.
+  - `~/Library/Application Support/Claude/local-agent-mode-sessions/`
+    (Cowork) runs inside a separate VM (`vm_bundles/claudevm.bundle/`).
+    Each session's `cwd` is a VM-internal path (e.g.
+    `/sessions/zen-zealous-feynman`), not a host path. Cowork's git activity
+    operates on a separate filesystem inside the VM and does not touch the
+    host's repos directly, so it cannot contribute to host-side
+    push-leakage measurement. This is an architectural exclusion, not a
+    schema-complexity exclusion.
 - **Cross-repo attribution covers `cd`/`git -C` patterns.** Misses script-
   mediated touches (e.g. `bash some-script.sh` where the script itself
   enters a subdir).

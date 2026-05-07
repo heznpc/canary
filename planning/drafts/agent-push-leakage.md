@@ -58,6 +58,15 @@ mcp/tools/
 2. How to handle repos with no remote configured (newtria, oncology pre-2026-05-06)? Treat as MIP=∞ until remote exists, or exclude?
 3. Cross-reference with [eddy](../../eddy/) (ADHD rapid re-engagement) — does metadatafication-induced leakage correlate with high switch propensity? Possible follow-up paper.
 
+## Decision: Cowork / Desktop sessions are out of scope (architectural)
+
+Initial draft assumed `~/Library/Application Support/Claude/` would yield additional transcript data to widen the dataset beyond CLI. Schema discovery on 2026-05-07 produced an architectural finding instead:
+
+- `claude-code-sessions/` entries are metadata-only and reference a `cliSessionId` that should point into `~/.claude/projects/`. Sampled IDs did not resolve to existing CLI jsonl files, so the cross-reference is unreliable without further investigation. Until the link is verified, treat as low-yield.
+- `local-agent-mode-sessions/` (Cowork) runs inside the `claudevm.bundle/` VM. Session `cwd` values are VM-internal (`/sessions/<vm-name>`), and any git activity inside Cowork operates on a separate filesystem inside the VM. Cowork sessions therefore cannot, by construction, contribute to host-side push leakage measurement. They are excluded on architectural grounds, not on parser-complexity grounds.
+
+Documenting this exclusion is preferable to a half-built parser that pretends to surface Cowork data into the host portfolio. A future iteration that wants to measure leakage *within* the Cowork VM (a different research question) would mount the VM image and operate inside it.
+
 ## Next Steps
 
 1. Implement `transcript-parser.ts` against author's `~/.claude/projects/` (read-only).
