@@ -54,3 +54,6 @@ paper/missfont.log
 CLAUDE.md
 .claude/
 mcp/dist/
+
+# push-leakage detail snapshots (contain absolute paths + commit subjects)
+experiments/results/raw/
