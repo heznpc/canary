@@ -57,6 +57,7 @@ mcp/tools/
 1. Should APL clock pause when the repo has open PRs awaiting CI/review? Counter: open PRs are not leakage; the work has propagated.
 2. How to handle repos with no remote configured (newtria, oncology pre-2026-05-06)? Treat as MIP=∞ until remote exists, or exclude?
 3. Cross-reference with [eddy](../../eddy/) (ADHD rapid re-engagement) — does metadatafication-induced leakage correlate with high switch propensity? Possible follow-up paper.
+4. **Uncommitted-Period (UCP) as a third metric?** The post-intervention snapshot showed 10 repos with `dirtyFiles > 0` but `ahead == 0` — uncommitted local edits that were not yet captured by any commit. This is a *commit-leakage* analogue to push-leakage one layer deeper in the propagation chain (working tree → index → commit → push). The same operator-attention-budget argument applies. A future iteration could measure UCP = (now − last-modified-mtime of dirty files) per repo, but the noise floor is higher (editor swap files, build artifacts, intentional in-progress work). Worth scoping when push-leakage saturates as evidence.
 
 ## Decision: Cowork / Desktop sessions are out of scope (architectural)
 
