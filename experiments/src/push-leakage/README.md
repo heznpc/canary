@@ -69,12 +69,15 @@ Both are read-only and never push.
 
 ## Known Limitations
 
-- **CLI-only by design.** Parses `~/.claude/projects/` jsonl format. Two
-  Desktop session sources were inspected and deliberately excluded:
+- **CLI-driven, with a feasible Desktop CC enrichment path.** Parses
+  `~/.claude/projects/` jsonl format. Two Desktop session sources were
+  inspected:
   - `~/Library/Application Support/Claude/claude-code-sessions/` is metadata
-    only; each entry's `cliSessionId` was expected to point back to a CLI
-    jsonl, but the IDs sampled here did not resolve to existing CLI files.
-    Treat as low-yield until the cross-reference is reverified.
+    only; each entry's `cliSessionId` resolves to an existing CLI jsonl
+    (45 / 45 verified on the author's machine). The cross-reference is
+    reliable. Desktop-specific fields (`originCwd`, `completedTurns`,
+    `permissionMode`, `effort`) can enrich the existing CLI dataset when
+    needed; not yet used by this module.
   - `~/Library/Application Support/Claude/local-agent-mode-sessions/`
     (Cowork) runs inside a separate VM (`vm_bundles/claudevm.bundle/`).
     Each session's `cwd` is a VM-internal path (e.g.
