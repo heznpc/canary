@@ -30,6 +30,13 @@ export interface SessionRecord {
   bashCount: number;
   gitCommandCount: number;
   pushCommandCount: number;
+  /**
+   * Absolute paths that the session touched via cross-repo Bash commands
+   * (e.g. `cd /path && git ...` or `git -C /path ...`), distinct from
+   * the session's own cwd. Used to attribute parent-cwd bulk operations
+   * to specific child repos.
+   */
+  touchedRepos: string[];
   source: "cli";
   jsonlPath: string;
 }
@@ -45,12 +52,52 @@ function parseLine(line: string): Record<string, unknown> | null {
   }
 }
 
-function extractToolCommand(msg: Record<string, unknown>): { isGit: boolean; isPush: boolean } {
+interface BashStats {
+  isGit: boolean;
+  isPush: boolean;
+  /** Absolute paths the command operates on, when distinguishable from the session cwd. */
+  touchedPaths: string[];
+}
+
+/**
+ * Extract repo paths a single Bash command operates on.
+ *
+ * Patterns handled:
+ *   - `git -C <path> ...`
+ *   - `cd <path> && git ...` (any chained git command)
+ *   - `cd <path>; git ...`
+ *
+ * Returns absolute paths. Relative paths are dropped because we can't
+ * resolve them without knowing the calling cwd at command time (which may
+ * differ from the session cwd if multiple `cd`s have run in the same chain).
+ */
+function extractTouchedPaths(cmd: string): string[] {
+  const out = new Set<string>();
+  // git -C <path>
+  const dashC = /\bgit\s+-C\s+("([^"]+)"|'([^']+)'|(\S+))/g;
+  for (const m of cmd.matchAll(dashC)) {
+    const p = m[2] ?? m[3] ?? m[4];
+    if (p && p.startsWith("/")) out.add(p);
+  }
+  // cd <path> followed in the same chain by a git invocation. We only
+  // attribute when the chain actually contains `git` (otherwise the cd
+  // could be for `ls`, `cat`, etc., which doesn't count as a repo touch).
+  if (/\bgit\b/.test(cmd)) {
+    const cdRe = /(?:^|[;&|]|&&|\|\|)\s*cd\s+("([^"]+)"|'([^']+)'|(\S+))/g;
+    for (const m of cmd.matchAll(cdRe)) {
+      const p = m[2] ?? m[3] ?? m[4];
+      if (p && p.startsWith("/")) out.add(p);
+    }
+  }
+  return Array.from(out);
+}
+
+function bashStats(msg: Record<string, unknown>): BashStats {
   const message = msg.message as Record<string, unknown> | undefined;
   const content = message?.content;
-  if (!Array.isArray(content)) return { isGit: false, isPush: false };
-  let isGit = false;
-  let isPush = false;
+  const stats: BashStats = { isGit: false, isPush: false, touchedPaths: [] };
+  if (!Array.isArray(content)) return stats;
+  const seenPaths = new Set<string>();
   for (const block of content) {
     if (
       block && typeof block === "object" && (block as Record<string, unknown>).type === "tool_use" &&
@@ -59,12 +106,14 @@ function extractToolCommand(msg: Record<string, unknown>): { isGit: boolean; isP
       const input = (block as Record<string, unknown>).input as Record<string, unknown> | undefined;
       const cmd = (input?.command as string | undefined) ?? "";
       if (/\bgit\b/.test(cmd)) {
-        isGit = true;
-        if (/\bgit\s+push\b/.test(cmd)) isPush = true;
+        stats.isGit = true;
+        if (/\bgit\s+push\b/.test(cmd)) stats.isPush = true;
+        for (const p of extractTouchedPaths(cmd)) seenPaths.add(p);
       }
     }
   }
-  return { isGit, isPush };
+  stats.touchedPaths = Array.from(seenPaths);
+  return stats;
 }
 
 export function scanSessionFile(jsonlPath: string): SessionRecord {
@@ -77,6 +126,7 @@ export function scanSessionFile(jsonlPath: string): SessionRecord {
   let bashCount = 0;
   let gitCount = 0;
   let pushCount = 0;
+  const touched = new Set<string>();
 
   for (const line of lines) {
     const msg = parseLine(line);
@@ -93,7 +143,7 @@ export function scanSessionFile(jsonlPath: string): SessionRecord {
     const branch = msg.gitBranch as string | undefined;
     if (branch) branches.add(branch);
     if (t === "assistant") {
-      const tools = extractToolCommand(msg);
+      const stats = bashStats(msg);
       const message = msg.message as Record<string, unknown> | undefined;
       const content = message?.content;
       if (Array.isArray(content)) {
@@ -105,10 +155,15 @@ export function scanSessionFile(jsonlPath: string): SessionRecord {
           ) bashCount++;
         }
       }
-      if (tools.isGit) gitCount++;
-      if (tools.isPush) pushCount++;
+      if (stats.isGit) gitCount++;
+      if (stats.isPush) pushCount++;
+      for (const p of stats.touchedPaths) touched.add(p);
     }
   }
+
+  // Drop touched paths that exactly equal the cwd — they're already
+  // captured by the primary cwd-match join, no need to double-count.
+  if (cwd) touched.delete(cwd);
 
   return {
     sessionId,
@@ -119,6 +174,7 @@ export function scanSessionFile(jsonlPath: string): SessionRecord {
     bashCount,
     gitCommandCount: gitCount,
     pushCommandCount: pushCount,
+    touchedRepos: Array.from(touched),
     source: "cli",
     jsonlPath,
   };
@@ -174,12 +230,25 @@ export function scanAllSessions(opts: ScanOptions = {}): SessionRecord[] {
 }
 
 /**
- * Aggregate sessions by cwd. The cwd may be a worktree of a real repo;
- * downstream code is responsible for normalizing worktrees to their main repo.
+ * Aggregate sessions by repo path. Each session contributes to its `cwd`'s
+ * aggregate (primary attribution) AND to every path in `touchedRepos`
+ * (cross-repo attribution via `git -C <path>` or `cd <path> && git ...`).
+ *
+ * Two counters are tracked separately to surface the parent-cwd opacity
+ * pattern:
+ *   - `cwdSessionCount` — sessions whose cwd was this path (primary).
+ *   - `crossRepoSessionCount` — sessions that touched this path while
+ *     operating from a different cwd (e.g. parent-dir bulk operations).
+ *
+ * For metric purposes both flavours count as "agent-touched", but a tool
+ * that only watches session cwd would miss the cross-repo flavour.
  */
-export interface CwdAggregate {
-  cwd: string;
+export interface RepoAggregate {
+  repoPath: string;
+  /** Total sessions (cwd + cross-repo, deduped). */
   sessionCount: number;
+  cwdSessionCount: number;
+  crossRepoSessionCount: number;
   firstStartTs: string | null;
   lastEndTs: string | null;
   totalBash: number;
@@ -188,33 +257,56 @@ export interface CwdAggregate {
   branches: string[];
 }
 
-export function aggregateByCwd(sessions: SessionRecord[]): CwdAggregate[] {
-  const byCwd = new Map<string, CwdAggregate>();
-  for (const s of sessions) {
-    if (!s.cwd) continue;
-    let agg = byCwd.get(s.cwd);
-    if (!agg) {
-      agg = {
-        cwd: s.cwd,
-        sessionCount: 0,
-        firstStartTs: null,
-        lastEndTs: null,
-        totalBash: 0,
-        totalGit: 0,
-        totalPush: 0,
-        branches: [],
+export function aggregateByRepo(sessions: SessionRecord[]): RepoAggregate[] {
+  const byPath = new Map<string, { agg: RepoAggregate; sessionIds: Set<string> }>();
+
+  function bump(
+    path: string,
+    s: SessionRecord,
+    kind: "cwd" | "cross",
+  ): void {
+    let entry = byPath.get(path);
+    if (!entry) {
+      entry = {
+        agg: {
+          repoPath: path,
+          sessionCount: 0,
+          cwdSessionCount: 0,
+          crossRepoSessionCount: 0,
+          firstStartTs: null,
+          lastEndTs: null,
+          totalBash: 0,
+          totalGit: 0,
+          totalPush: 0,
+          branches: [],
+        },
+        sessionIds: new Set<string>(),
       };
-      byCwd.set(s.cwd, agg);
+      byPath.set(path, entry);
     }
-    agg.sessionCount++;
+    const { agg, sessionIds } = entry;
+    if (kind === "cwd") agg.cwdSessionCount++;
+    else agg.crossRepoSessionCount++;
+
+    // Bash/git counts are per-session — only attribute once per (path, session).
+    if (!sessionIds.has(s.sessionId)) {
+      sessionIds.add(s.sessionId);
+      agg.sessionCount++;
+      agg.totalBash += s.bashCount;
+      agg.totalGit += s.gitCommandCount;
+      agg.totalPush += s.pushCommandCount;
+    }
     if (s.startTs && (!agg.firstStartTs || s.startTs < agg.firstStartTs)) agg.firstStartTs = s.startTs;
     if (s.endTs && (!agg.lastEndTs || s.endTs > agg.lastEndTs)) agg.lastEndTs = s.endTs;
-    agg.totalBash += s.bashCount;
-    agg.totalGit += s.gitCommandCount;
-    agg.totalPush += s.pushCommandCount;
     for (const b of s.gitBranches) if (!agg.branches.includes(b)) agg.branches.push(b);
   }
-  return Array.from(byCwd.values()).sort((a, b) =>
-    (b.lastEndTs ?? "").localeCompare(a.lastEndTs ?? ""),
-  );
+
+  for (const s of sessions) {
+    if (s.cwd) bump(s.cwd, s, "cwd");
+    for (const p of s.touchedRepos) bump(p, s, "cross");
+  }
+
+  return Array.from(byPath.values())
+    .map((e) => e.agg)
+    .sort((a, b) => (b.lastEndTs ?? "").localeCompare(a.lastEndTs ?? ""));
 }

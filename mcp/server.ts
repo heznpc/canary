@@ -2,10 +2,24 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { homedir } from "os";
+import { join } from "path";
 import { scanAll, scanProject } from "@/lib/scanners";
 import { getDependencyHealth, generateUpdateActions } from "@/lib/scanners/github";
 import { projects } from "@/lib/projects";
 import { checkAnthropicUsage } from "@/lib/scanners/anthropic-usage";
+import {
+  scanAllSessions,
+  aggregateByRepo,
+  scanSessionFile,
+} from "@/experiments/src/push-leakage/transcript-scan";
+import { scanRepos } from "@/experiments/src/push-leakage/repo-scan";
+import {
+  joinReposWithSessions,
+  computePortfolio,
+  fmtDuration,
+} from "@/experiments/src/push-leakage/metrics";
+import { readdirSync, statSync } from "fs";
 import {
   buildScanProjectPayload,
   buildScanAllPayload,
@@ -134,6 +148,205 @@ async function main() {
       }
       return {
         content: [{ type: "text", text: JSON.stringify(buildUsagePayload(usage), null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    "list_leaking_repos",
+    {
+      title: "List repos with unpushed agent-touched commits",
+      description:
+        "Scan one or more roots for git repos and join with Claude Code session transcripts under ~/.claude/projects to surface repos in MIP > thresholdDays (Metadata-Invisibility Period — time the oldest unpushed commit has been sitting unpropagated). Read-only; does not push, fetch, or mutate repos. See planning/drafts/agent-push-leakage.md for the underlying metrics.",
+      inputSchema: {
+        roots: z
+          .array(z.string())
+          .optional()
+          .describe("Absolute roots to scan. Defaults to ~/IdeaProjects."),
+        thresholdDays: z
+          .number()
+          .int()
+          .min(1)
+          .max(365)
+          .optional()
+          .describe("Days threshold for the leakage classifier (MIP). Defaults to 7."),
+        top: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe("Number of leaking repos to return, sorted by MIP desc. Defaults to 20."),
+        pathFilter: z
+          .string()
+          .optional()
+          .describe(
+            "Substring filter on the encoded ~/.claude/projects directory name (e.g. 'IdeaProjects'). Reduces scan time on large transcript caches.",
+          ),
+      },
+    },
+    async ({ roots, thresholdDays, top, pathFilter }) => {
+      const scanRoots = (roots && roots.length > 0 ? roots : [join(homedir(), "IdeaProjects")]).map(
+        (r) => r,
+      );
+      const sessions = scanAllSessions({ pathFilter });
+      const aggregates = aggregateByRepo(sessions);
+      const repos = scanRepos(scanRoots);
+      const joined = joinReposWithSessions(repos, aggregates);
+      const portfolio = computePortfolio(joined, thresholdDays ?? 7);
+      const leaking = joined
+        .filter((j) => j.ahead > 0)
+        .sort((a, b) => (b.mip_seconds ?? 0) - (a.mip_seconds ?? 0))
+        .slice(0, top ?? 20)
+        .map((j) => ({
+          repoPath: j.repoPath,
+          branch: j.branch,
+          ahead: j.ahead,
+          behind: j.behind,
+          dirtyFiles: j.dirtyFiles,
+          mip: fmtDuration(j.mip_seconds),
+          mip_seconds: j.mip_seconds,
+          apl: fmtDuration(j.apl_seconds),
+          apl_seconds: j.apl_seconds,
+          classification: j.classification,
+          cwdSessionCount: j.cwdSessionCount,
+          crossRepoSessionCount: j.crossRepoSessionCount,
+          lastSessionEndTs: j.lastSessionEndTs,
+          oldestUnpushedTs: j.oldestUnpushedTs,
+        }));
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                generatedAt: portfolio.generatedAt,
+                roots: scanRoots,
+                portfolio,
+                topLeaking: leaking,
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    "audit_session_leakage",
+    {
+      title: "Audit recent Claude sessions for unpushed work",
+      description:
+        "Inspect Claude Code CLI session transcripts modified within sinceHours (default 24) and report which repos those sessions touched, along with each repo's current ahead/dirty state. Useful for 'agent just finished, did anything leak?' checks. Read-only.",
+      inputSchema: {
+        sinceHours: z
+          .number()
+          .min(0.1)
+          .max(720)
+          .optional()
+          .describe("Time window in hours. Defaults to 24."),
+        root: z
+          .string()
+          .optional()
+          .describe("Root path to also git-state-scan for joined repo info. Defaults to ~/IdeaProjects."),
+        sessionId: z
+          .string()
+          .optional()
+          .describe("Restrict to a specific session UUID (overrides sinceHours)."),
+      },
+    },
+    async ({ sinceHours, root, sessionId }) => {
+      const projectsDir = join(homedir(), ".claude", "projects");
+      const cutoff = Date.now() - (sinceHours ?? 24) * 60 * 60 * 1000;
+      const matches: ReturnType<typeof scanSessionFile>[] = [];
+      let scanned = 0;
+      let projDirs: string[] = [];
+      try {
+        projDirs = readdirSync(projectsDir);
+      } catch (e) {
+        return errorResponse(`Cannot read ${projectsDir}: ${(e as Error).message}`);
+      }
+      for (const dir of projDirs) {
+        let entries: string[] = [];
+        try {
+          entries = readdirSync(join(projectsDir, dir));
+        } catch {
+          continue;
+        }
+        for (const entry of entries) {
+          if (!entry.endsWith(".jsonl")) continue;
+          if (sessionId && !entry.startsWith(sessionId)) continue;
+          const fp = join(projectsDir, dir, entry);
+          try {
+            const st = statSync(fp);
+            if (!sessionId && st.mtimeMs < cutoff) continue;
+            scanned++;
+            matches.push(scanSessionFile(fp));
+          } catch {
+            /* skip */
+          }
+        }
+      }
+
+      // Get current repo state for any path the matching sessions touched.
+      const touchedPaths = new Set<string>();
+      for (const s of matches) {
+        if (s.cwd) touchedPaths.add(s.cwd);
+        for (const p of s.touchedRepos) touchedPaths.add(p);
+      }
+
+      const scanRoots = root ? [root] : [join(homedir(), "IdeaProjects")];
+      const allRepos = scanRepos(scanRoots);
+      const repoByPath = new Map(allRepos.map((r) => [r.path, r]));
+      const touchedReposState = Array.from(touchedPaths).map((p) => {
+        const state = repoByPath.get(p);
+        return {
+          path: p,
+          isKnownRepo: !!state,
+          ahead: state?.ahead ?? null,
+          behind: state?.behind ?? null,
+          dirtyFiles: state?.dirtyFiles ?? null,
+          branch: state?.branch ?? null,
+          oldestUnpushedTs: state?.oldestUnpushedTs ?? null,
+          unpushedSubjects: state?.unpushedSubjects ?? [],
+        };
+      });
+
+      const leakingTouched = touchedReposState.filter((r) => (r.ahead ?? 0) > 0);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                generatedAt: new Date().toISOString(),
+                sessionId: sessionId ?? null,
+                sinceHours: sinceHours ?? 24,
+                sessionsScanned: scanned,
+                sessionsMatched: matches.length,
+                touchedRepoCount: touchedReposState.length,
+                leakingTouchedCount: leakingTouched.length,
+                leakingTouched,
+                allTouched: touchedReposState,
+                sessions: matches.map((s) => ({
+                  sessionId: s.sessionId,
+                  cwd: s.cwd,
+                  startTs: s.startTs,
+                  endTs: s.endTs,
+                  bashCount: s.bashCount,
+                  gitCommandCount: s.gitCommandCount,
+                  pushCommandCount: s.pushCommandCount,
+                  touchedRepos: s.touchedRepos,
+                })),
+              },
+              null,
+              2,
+            ),
+          },
+        ],
       };
     },
   );

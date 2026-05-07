@@ -19,7 +19,7 @@ import { writeFileSync, mkdirSync } from "fs";
 import { join, resolve } from "path";
 import { homedir } from "os";
 
-import { scanAllSessions, aggregateByCwd } from "./transcript-scan.js";
+import { scanAllSessions, aggregateByRepo } from "./transcript-scan.js";
 import { scanRepos } from "./repo-scan.js";
 import { joinReposWithSessions, computePortfolio, fmtDuration } from "./metrics.js";
 
@@ -106,8 +106,8 @@ function main(): void {
   console.error("[push-leakage] step 1/3: transcripts");
   const sessions = scanAllSessions({ pathFilter: args.filter ?? undefined });
   console.error(`[push-leakage]   parsed ${sessions.length} sessions`);
-  const aggregates = aggregateByCwd(sessions);
-  console.error(`[push-leakage]   ${aggregates.length} unique cwds`);
+  const aggregates = aggregateByRepo(sessions);
+  console.error(`[push-leakage]   ${aggregates.length} attributed repo paths (cwd + cross-repo)`);
 
   console.error("[push-leakage] step 2/3: repo scan");
   const repos = scanRepos(args.roots);
@@ -147,7 +147,7 @@ function main(): void {
   console.error(`  with remote    : ${portfolio.reposWithRemote}`);
   console.error(`  ahead          : ${portfolio.reposAhead}`);
   console.error(`  ahead or dirty : ${portfolio.reposAheadOrDirty}`);
-  console.error(`  agent-touched  : ${portfolio.reposAgentTouched}`);
+  console.error(`  agent-touched  : ${portfolio.reposAgentTouched} (cwd=${portfolio.reposAgentTouchedCwd}, cross-only=${portfolio.reposAgentTouchedCrossRepoOnly})`);
   console.error(`  leaking (MIP > ${portfolio.thresholdDays}d): ${portfolio.reposLeaking}`);
   console.error(`    of which agent-touched: ${portfolio.reposAgentTouchedAndLeaking}`);
   console.error(`  PLR_agent      : ${(portfolio.plr_agent * 100).toFixed(1)}% (agent-touched ∩ leaking / agent-touched)`);

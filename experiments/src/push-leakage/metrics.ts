@@ -18,7 +18,7 @@
  *   Fraction of agent-touched repos in MIP > threshold (default 7 days).
  */
 
-import type { CwdAggregate } from "./transcript-scan.js";
+import type { RepoAggregate } from "./transcript-scan.js";
 import type { RepoState } from "./repo-scan.js";
 
 export interface JoinedRepo {
@@ -35,13 +35,21 @@ export interface JoinedRepo {
   lastCommitTs: string | null;
   // Session join
   sessionCount: number;
+  cwdSessionCount: number;
+  crossRepoSessionCount: number;
   lastSessionEndTs: string | null;
   totalGitCommands: number;
   totalPushCommands: number;
   // Computed
   apl_seconds: number | null; // null if not ahead OR no session matched
   mip_seconds: number | null; // null if not ahead
-  classification: "no_remote" | "in_sync" | "behind_only" | "ahead_with_session" | "ahead_no_session";
+  classification:
+    | "no_remote"
+    | "in_sync"
+    | "behind_only"
+    | "ahead_cwd_session"
+    | "ahead_cross_repo_only"
+    | "ahead_no_session";
 }
 
 export interface PortfolioMetrics {
@@ -50,7 +58,9 @@ export interface PortfolioMetrics {
   reposWithRemote: number;
   reposAhead: number;
   reposAheadOrDirty: number;
-  reposAgentTouched: number;
+  reposAgentTouched: number; // any kind of touch (cwd OR cross-repo)
+  reposAgentTouchedCwd: number; // session cwd was this repo
+  reposAgentTouchedCrossRepoOnly: number; // touched only via parent-cwd `cd`/`git -C`
   reposLeaking: number; // ahead AND in MIP > threshold (across whole portfolio)
   reposAgentTouchedAndLeaking: number; // intersection: agent-touched AND leaking
   thresholdDays: number;
@@ -75,20 +85,21 @@ function diffSeconds(later: string, earlier: string): number {
 
 export function joinReposWithSessions(
   repos: RepoState[],
-  aggregates: CwdAggregate[],
+  aggregates: RepoAggregate[],
   now: Date = new Date(),
 ): JoinedRepo[] {
-  const byCwd = new Map(aggregates.map((a) => [a.cwd, a]));
+  const byPath = new Map(aggregates.map((a) => [a.repoPath, a]));
   const nowIso = now.toISOString();
   const out: JoinedRepo[] = [];
 
   for (const r of repos) {
-    const agg = byCwd.get(r.path);
+    const agg = byPath.get(r.path);
     let cls: JoinedRepo["classification"];
     if (!r.hasRemote) cls = "no_remote";
     else if (r.ahead === 0 && r.behind === 0 && r.dirtyFiles === 0) cls = "in_sync";
     else if (r.ahead === 0) cls = "behind_only";
-    else if (agg) cls = "ahead_with_session";
+    else if (agg && agg.cwdSessionCount > 0) cls = "ahead_cwd_session";
+    else if (agg && agg.crossRepoSessionCount > 0) cls = "ahead_cross_repo_only";
     else cls = "ahead_no_session";
 
     let apl: number | null = null;
@@ -111,6 +122,8 @@ export function joinReposWithSessions(
       oldestUnpushedTs: r.oldestUnpushedTs,
       lastCommitTs: r.lastCommitTs,
       sessionCount: agg?.sessionCount ?? 0,
+      cwdSessionCount: agg?.cwdSessionCount ?? 0,
+      crossRepoSessionCount: agg?.crossRepoSessionCount ?? 0,
       lastSessionEndTs: agg?.lastEndTs ?? null,
       totalGitCommands: agg?.totalGit ?? 0,
       totalPushCommands: agg?.totalPush ?? 0,
@@ -128,6 +141,10 @@ export function computePortfolio(joined: JoinedRepo[], thresholdDays = 7): Portf
   const reposAhead = joined.filter((j) => j.ahead > 0).length;
   const reposAheadOrDirty = joined.filter((j) => j.ahead > 0 || j.dirtyFiles > 0).length;
   const agentTouched = joined.filter((j) => j.sessionCount > 0).length;
+  const agentTouchedCwd = joined.filter((j) => j.cwdSessionCount > 0).length;
+  const agentTouchedCrossRepoOnly = joined.filter(
+    (j) => j.cwdSessionCount === 0 && j.crossRepoSessionCount > 0,
+  ).length;
   const isLeaking = (j: JoinedRepo) => (j.mip_seconds ?? 0) > thresholdSec;
   const leaking = joined.filter(isLeaking).length;
   const agentLeaking = joined.filter((j) => j.sessionCount > 0 && isLeaking(j)).length;
@@ -148,6 +165,8 @@ export function computePortfolio(joined: JoinedRepo[], thresholdDays = 7): Portf
     reposAhead,
     reposAheadOrDirty,
     reposAgentTouched: agentTouched,
+    reposAgentTouchedCwd: agentTouchedCwd,
+    reposAgentTouchedCrossRepoOnly: agentTouchedCrossRepoOnly,
     reposLeaking: leaking,
     reposAgentTouchedAndLeaking: agentLeaking,
     thresholdDays,
