@@ -88,3 +88,20 @@ Three observations worth carrying into §5.4:
 3. **Inverse evidence for active repos.** The agent-touched repos that are *not* in MIP > 7 days (canary, ploidy, oncology) are precisely the ones with PR-routed workflows where push is part of routine session loops, or recently scaffolded with their own first-push event. Where the operator's attention budget is structured around git events (PR open, CI green, merge), metadatafication does not progress. This bounds the thesis: metadatafication does not happen everywhere — it happens where attention has migrated away from git as a deliberate workflow surface.
 
 Sanity caveats: cross-repo attribution captures the dominant `cd <path> && git ...` and `git -C <path>` patterns but misses script-mediated touches (e.g. `bash some-script.sh` where the script itself enters a subdir). Repos in the snapshot that have no remote configured (3 in this run) are excluded from leakage classification regardless of session activity.
+
+## Operator-Intervention Snapshot (2026-05-07, post)
+
+After the baseline scan was captured, the operator pushed the 23 leaking Paper/ repositories (one rebase, twenty-two simple fast-forwards) and re-ran the scanner. The post-intervention snapshot is committed at `experiments/results/push-leakage-2026-05-07-post-intervention.json`.
+
+| metric | baseline | post-intervention |
+|---|---|---|
+| repos ahead | 23 / 57 | **0** / 57 |
+| `reposLeaking` (MIP > 7d) | 23 | **0** |
+| `PLR_portfolio` | 40.4% | **0.0%** |
+| `PLR_agent` | 42.6% | **0.0%** |
+| MIP p50 / max | 17d 16h / 17d 18h | undefined (n=0) |
+
+The pair demonstrates two things relevant to §5.4 prose:
+
+1. The breakdown is recoverable — once the invisible state is rendered visible by an external scan, a single operator pass closes it. This is the optimistic side of Star (1996): visibility *enables* repair.
+2. The intervention is itself a measurement event. The transition from a degenerate MIP cluster to undefined (n=0) is a clean before/after pair that can be cited as a vignette without needing a longitudinal cohort. Future iterations could log every push event the scanner observes and reconstruct the full recovery curve.
