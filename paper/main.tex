@@ -11,6 +11,7 @@
 \usepackage{natbib}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{tikz}
 
 \hypersetup{
   colorlinks=true,
@@ -250,7 +251,36 @@ Operating Canary across a 25-project portfolio managed by a single developer wit
 \paragraph{Vignette: agent-push leakage as breakdown visibility.}
 A second instrument added to Canary measures the gap between agent activity and remote propagation. We define three quantities: \textit{Agent-Push Latency} (APL, time from the last agent session that touched a repo to the present, while the repo remains ahead of upstream), \textit{Metadata-Invisibility Period} (MIP, how long the oldest unpushed commit has been sitting unpropagated), and a \textit{Push Leakage Rate} (PLR, the fraction of repos in MIP exceeding a threshold). MIP is the operational analogue of \citet{star1996steps}'s prediction that infrastructure becomes visible only upon breakdown: while the unpushed commits remain unsurfaced, git is functioning as transparent background data; when an external scan enumerates them, the breakdown becomes legible. We illustrate the instrument with one author's $N=57$ repository portfolio under a single root.
 
-A baseline scan on 7 May 2026 found 23 of 57 repositories (40.4\%) ahead of upstream. Their MIP distribution was nearly degenerate: $p_{50}=17.7$ days, $p_{90}=17.7$ days, $\max=17.7$ days, with the entire spread under three hours. Cross-referencing the unpushed-commit timestamps against \texttt{\textasciitilde/.claude/projects/} session transcripts confirmed a single bulk operation as the origin: a portfolio-wide directory restructure committed on 19 April but never propagated. The bulk-event signature (degenerate MIP) is consistent with the thesis prediction that mass mutations slip through unnoticed when an operator's per-repository attention budget cannot scale to portfolio breadth.
+A baseline scan on 7 May 2026 found 23 of 57 repositories (40.4\%) ahead of upstream. Their MIP distribution was nearly degenerate: $p_{50}=17.7$ days, $p_{90}=17.7$ days, $\max=17.7$ days, with the cluster spread under three hours and two earlier outliers near $13.3$--$13.5$ days (Figure~\ref{fig:mip-stripplot}). Cross-referencing the unpushed-commit timestamps against \texttt{\textasciitilde/.claude/projects/} session transcripts confirmed a single bulk operation as the origin: a portfolio-wide directory restructure committed on 19 April but never propagated. The bulk-event signature (degenerate MIP) is consistent with the thesis prediction that mass mutations slip through unnoticed when an operator's per-repository attention budget cannot scale to portfolio breadth.
+
+\begin{figure}[ht]
+\centering
+% Strip plot — pure TikZ so the figure builds in basic TeX Live as well as
+% the CI texlive-full Docker image. xscale: 1 cm = 1 day.
+\begin{tikzpicture}[xscale=1.0]
+  % Axis line from 12.5d to 18.5d
+  \draw[->, thick] (12.5, 0) -- (18.7, 0) node[below right=2pt] {\small days};
+  % Major tick marks at 13..18 with labels
+  \foreach \x in {13, 14, 15, 16, 17, 18} {
+    \draw[thick] (\x, -0.08) -- (\x, 0.08) node[below=4pt] {\small \x};
+  }
+  % Minor tick marks every 0.25d
+  \foreach \x in {12.75, 13.25, 13.5, 13.75, 14.25, 14.5, 14.75, 15.25, 15.5, 15.75, 16.25, 16.5, 16.75, 17.25, 17.5, 17.75, 18.25} {
+    \draw (\x, -0.04) -- (\x, 0.04);
+  }
+  % MIP values (days), 23 points
+  \foreach \x in {13.2928, 13.5289, 17.6130, 17.6514, 17.6540, 17.6563, 17.6572, 17.6600, 17.6634, 17.6643, 17.6650, 17.6717, 17.6906, 17.7041, 17.7067, 17.7086, 17.7109, 17.7196, 17.7257, 17.7516, 17.7544, 17.7608, 17.7681} {
+    \fill[black, opacity=0.65] (\x, 0.5) circle (1.6pt);
+  }
+  % Annotation arrows / labels
+  \draw[<-, gray!70, thin] (13.41, 0.65) -- (13.41, 1.2) node[above, align=center] {\scriptsize 2 outliers\\\scriptsize $\sim$13.3--13.5\,d};
+  \draw[<-, gray!70, thin] (17.69, 0.65) -- (17.69, 1.2) node[above, align=center] {\scriptsize cluster of 21\\\scriptsize within $\sim$3\,h};
+  % x-axis label
+  \node[below=10pt] at (15.5, -0.2) {\small MIP (days since oldest unpushed commit)};
+\end{tikzpicture}
+\caption{Strip plot of MIP values for the 23 repositories ahead of upstream at the baseline scan ($N=23$). Twenty-one repositories cluster within a $\sim$3-hour window near $17.7$ days---the bulk-event signature consistent with a single portfolio-wide directory restructure on 19 April 2026 that was never propagated. The two outliers near $13.3$--$13.5$ days correspond to commits made before the bulk operation that were also still unpushed. A post-intervention scan (after the operator pushed all 23) recorded zero repositories above the leakage threshold.}
+\label{fig:mip-stripplot}
+\end{figure}
 
 A second finding tightens the implication for tooling (Section~6.2). Of 54 repositories that received agent touches in the scanned window, only 7 had a direct session whose working directory was the repository itself; the remaining 47 ($\approx$87\%) were touched exclusively from a parent directory via \texttt{cd <subrepo> \&\& git ...} and \texttt{git -C <subrepo>} chains. A na\"ive design that triggers ``intent-level CI/CD'' on session completion at the session's working directory would therefore miss the dominant pattern of agent-driven git activity in this portfolio. We treat this as evidence that agent-readability infrastructure must reason over command content, not just session metadata.
 
