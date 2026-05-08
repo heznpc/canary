@@ -44,6 +44,7 @@ function makeHealth(overrides: Partial<GraderInput> = {}): GraderInput {
     contextAttention: null,
     agentAuthorship: null,
     metadatafication: null,
+    recentIssues: null,
     scannedAt: new Date().toISOString(),
     ...overrides,
   };

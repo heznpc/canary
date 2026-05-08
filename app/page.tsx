@@ -6,6 +6,7 @@ import { ProjectCard } from "@/components/dashboard/project-card";
 import { FilterTabs } from "@/components/dashboard/filter-tabs";
 import { AnthropicUsagePanel } from "@/components/dashboard/anthropic-usage-panel";
 import { PushLeakagePanel } from "@/components/dashboard/push-leakage-panel";
+import { RecentIssuesPanel } from "@/components/dashboard/recent-issues-panel";
 import type { DashboardData } from "@/lib/types";
 import { RefreshCw } from "lucide-react";
 
@@ -93,6 +94,9 @@ export default function Home() {
 
             {/* Push leakage (renders conditionally based on snapshot availability) */}
             <PushLeakagePanel />
+
+            {/* External-contributor issues across the portfolio */}
+            <RecentIssuesPanel />
 
             {/* Filter */}
             <FilterTabs value={filter} onChange={setFilter} />
