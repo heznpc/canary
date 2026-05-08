@@ -21,6 +21,7 @@ const EXPECTED_TOOLS = [
   "get_anthropic_usage",
   "list_leaking_repos",
   "audit_session_leakage",
+  "list_recent_issues",
 ];
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

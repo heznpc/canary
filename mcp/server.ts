@@ -8,6 +8,7 @@ import { scanAll, scanProject } from "@/lib/scanners";
 import { getDependencyHealth, generateUpdateActions } from "@/lib/scanners/github";
 import { projects } from "@/lib/projects";
 import { checkAnthropicUsage } from "@/lib/scanners/anthropic-usage";
+import { checkRecentIssues } from "@/lib/scanners/recent-issues";
 import {
   scanAllSessions,
   aggregateByRepo,
@@ -341,6 +342,92 @@ async function main() {
                   pushCommandCount: s.pushCommandCount,
                   touchedRepos: s.touchedRepos,
                 })),
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    "list_recent_issues",
+    {
+      title: "List recent external-contributor issues across the portfolio",
+      description:
+        "Aggregate open issues authored by external contributors across every project configured in canary.config.ts. Filters out PRs, bot accounts, and issues authored by the repo owner / configured CANARY_SELF_LOGIN. Useful when an agent needs to answer 'did anyone open an issue I should look at?' without a manual GitHub visit.",
+      inputSchema: {
+        windowDays: z
+          .number()
+          .int()
+          .min(1)
+          .max(90)
+          .optional()
+          .describe("Days back to include. Defaults to 30."),
+        top: z
+          .number()
+          .int()
+          .min(1)
+          .max(100)
+          .optional()
+          .describe("Number of most-recent issues to return across the portfolio. Defaults to 20."),
+        projectId: z
+          .string()
+          .optional()
+          .describe("Restrict to one project ID from canary.config.ts. If omitted, scans all configured projects."),
+      },
+    },
+    async ({ windowDays, top, projectId }) => {
+      const days = windowDays ?? 30;
+      const limit = top ?? 20;
+      const filtered = projectId
+        ? projects.filter((p) => p.id === projectId)
+        : projects;
+      if (projectId && filtered.length === 0) return unknownProjectError(projectId);
+      const repoProjects = filtered.filter((p) => p.repo);
+      const digests = await Promise.all(
+        repoProjects.map((p) => checkRecentIssues(p.repo!, { windowDays: days })),
+      );
+      const allIssues: Array<{ repo: string; number: number; title: string; url: string; author: string; createdAt: string; comments: number; labels: string[] }> = [];
+      let totalExternal = 0;
+      let totalSelfAuthored = 0;
+      const perRepo: Array<{ repo: string; external: number; selfAuthored: number }> = [];
+      for (const d of digests) {
+        if (!d) continue;
+        totalExternal += d.external.length;
+        totalSelfAuthored += d.selfAuthored;
+        perRepo.push({ repo: d.repo, external: d.external.length, selfAuthored: d.selfAuthored });
+        for (const issue of d.external) {
+          allIssues.push({
+            repo: d.repo,
+            number: issue.number,
+            title: issue.title,
+            url: issue.url,
+            author: issue.author,
+            createdAt: issue.createdAt,
+            comments: issue.comments,
+            labels: issue.labels,
+          });
+        }
+      }
+      allIssues.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                generatedAt: new Date().toISOString(),
+                windowDays: days,
+                totals: {
+                  reposScanned: digests.filter(Boolean).length,
+                  externalIssues: totalExternal,
+                  selfAuthored: totalSelfAuthored,
+                },
+                perRepo: perRepo.sort((a, b) => b.external - a.external),
+                top: allIssues.slice(0, limit),
               },
               null,
               2,

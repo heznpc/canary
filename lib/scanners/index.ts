@@ -13,6 +13,7 @@ import { checkScorecard } from "./scorecard";
 import { checkActivity } from "./activity";
 import { checkContextAttention } from "./cam";
 import { checkAgentAuthorship } from "./acr";
+import { checkRecentIssues } from "./recent-issues";
 import { classifyMetadatafication } from "./metadatafication";
 import { gradeProject } from "./grader";
 import { logger } from "../logger";
@@ -77,6 +78,7 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     activity,
     contextAttention,
     agentAuthorship,
+    recentIssues,
   ] = await Promise.all([
     withTimeout(
       analyzeVibeCoding(project.repo, project.stack, stackVersions),
@@ -107,6 +109,9 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     project.repo
       ? withTimeout(checkAgentAuthorship(project.repo), 15000, null)
       : Promise.resolve(null),
+    project.repo
+      ? withTimeout(checkRecentIssues(project.repo), 10000, null)
+      : Promise.resolve(null),
   ]);
 
   const metadatafication = classifyMetadatafication(contextAttention, agentAuthorship);
@@ -128,6 +133,7 @@ export async function scanProject(project: ProjectConfig, requestId?: string): P
     contextAttention,
     agentAuthorship,
     metadatafication,
+    recentIssues,
     scannedAt: new Date().toISOString(),
   };
   const { grade, recommendation, reasons } = gradeProject(partial);

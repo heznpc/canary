@@ -43,6 +43,7 @@ function makeHealth(overrides: Partial<ProjectHealth> = {}): ProjectHealth {
     contextAttention: null,
     agentAuthorship: null,
     metadatafication: null,
+    recentIssues: null,
     scannedAt: "2026-04-22T00:00:00Z",
     grade: "A",
     recommendation: "keep",
