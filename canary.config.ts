@@ -22,6 +22,28 @@ const projects: ProjectConfig[] = [
     deployUrl: "https://heznpc.github.io/canary",
     category: "app",
   },
+  {
+    id: "airmcp",
+    name: "AirMCP",
+    description: "MCP server bringing macOS-native tools (Calendar, Reminders, Notes, Shortcuts, Health) to Claude Desktop and CLI",
+    repo: "heznpc/AirMCP",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "none",
+    category: "mcp",
+  },
+  {
+    id: "ploidy",
+    name: "Ploidy",
+    description: "Asymmetric-renewal session-composition protocol — accumulation–renewal dilemma operationalized at the LLM context-window level",
+    repo: "heznpc/ploidy-research",
+    tag: "research",
+    stack: ["python", "latex"],
+    deployTarget: "none",
+    category: "paper",
+    keywords: ["session-composition", "asymmetric-renewal", "context-window"],
+    researchArea: "AI / LLM systems",
+  },
 ];
 
 export default projects;

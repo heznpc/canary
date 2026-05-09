@@ -22,6 +22,7 @@ import {
   BookOpen,
   ShieldCheck,
   Layers,
+  MessageSquare,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -47,6 +48,7 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
     contextAttention,
     agentAuthorship,
     metadatafication,
+    recentIssues,
     grade,
     recommendation,
     reasons,
@@ -139,6 +141,18 @@ export function ProjectCard({ health }: { health: ProjectHealth }) {
                 </span>
               )}
             </div>
+          )}
+          {recentIssues && recentIssues.external.length > 0 && (
+            <a
+              href={`https://github.com/${project.repo}/issues?q=is%3Aissue+is%3Aopen`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-amber-600 dark:text-amber-400 hover:underline"
+              title={`${recentIssues.external.length} external-contributor issue(s) in last ${recentIssues.windowDays}d`}
+            >
+              <MessageSquare className="h-3 w-3" />
+              {recentIssues.external.length}
+            </a>
           )}
         </div>
 
