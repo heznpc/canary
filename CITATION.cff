@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+title: >-
+  The Metadatafication of Version Control: How AI Agents
+  Transform Git from Tool to Infrastructure
+message: >-
+  If you cite this work or use the Canary instrument and snapshot
+  data, please use the metadata below.
+type: software
+authors:
+  - given-names: heznpc
+    alias: heznpc
+repository-code: 'https://github.com/heznpc/canary'
+url: 'https://github.com/heznpc/canary'
+abstract: >-
+  Canary is the design artifact accompanying the paper "The
+  Metadatafication of Version Control." The repository hosts
+  the manuscript source (paper/main.tex), the experiment code
+  (experiments/src/), the canary Next.js dashboard, MCP server,
+  and the sanitized snapshot data files that the §5.4 push-leakage
+  vignette cites.
+keywords:
+  - metadatafication
+  - version control
+  - software engineering 3.0
+  - agentic software engineering
+  - context engineering
+  - operator attention budget
+  - git
+license: MIT
+# TODO(zenodo): replace with the actual Zenodo deposit DOI once the
+# deposit landing page is created. The form expected by Zenodo /
+# external citation resolvers is `10.5281/zenodo.<deposit-id>`.
+identifiers:
+  - type: doi
+    value: '10.5281/zenodo.XXXXXXX'
+    description: Zenodo archival deposit (placeholder — fill in)
