@@ -214,7 +214,17 @@ Canary is an open-source project health dashboard whose design decisions are der
 
 \subsection{System Overview}
 
-Canary is a Next.js application that scans GitHub repositories and grades them A--F (on a 100-point scale) based on automatically collected health metrics. It monitors 25+ projects across a solo developer's portfolio spanning four categories: applications, research papers, MCP servers, and infrastructure.
+Canary surfaces solo-developer portfolio observability through three layered interfaces, ordered by intended primary use:
+
+\begin{enumerate}
+  \item \textbf{An MCP server} (\texttt{mcp/server.ts})---the primary surface, reflecting the framework's recommendation that agent-readable infrastructure (\S6.2) be agent-callable rather than human-clickable. AI coding agents register the server once and call seven tools that expose every metric the system computes: \texttt{scan\_project}, \texttt{scan\_all}, \texttt{list\_update\_actions}, \texttt{get\_anthropic\_usage}, \texttt{list\_leaking\_repos}, \texttt{audit\_session\_leakage}, and \texttt{list\_recent\_issues}. This surface is what the operator actually exercises in day-to-day session work.
+  \item \textbf{A Next.js dashboard} (\texttt{app/}, \texttt{components/})---a secondary, human-readable view of the same data. Useful when a snapshot inspection is faster than a session prompt, but not the load-bearing interface. New features ship to the MCP layer first; the dashboard renders them when the cost of a panel is small.
+  \item \textbf{A command-line scanner} (\texttt{experiments/src/push-leakage/cli.ts})---a tertiary, batch-mode entrypoint for offline runs that produce snapshot files (\texttt{experiments/results/}). The dashboard and the MCP server both read these snapshots.
+\end{enumerate}
+
+This ordering is a deliberate alignment between the artifact and the framework: a tool that argues humans should read intent while agents read code (\S4.1) ought to make its own primary surface agent-callable. Earlier iterations of the design positioned the dashboard first; the present ordering replaces that with an MCP-primary identity, with the dashboard demoted to optional companion.
+
+Beneath the three interfaces, Canary is a Next.js application that scans GitHub repositories and grades them A--F (on a 100-point scale) based on automatically collected health metrics. It monitors 25+ projects across a solo developer's portfolio spanning four categories: applications, research papers, MCP servers, and infrastructure.
 
 The system comprises seven parallel scanners that collect data via the GitHub REST API, npm/PyPI/Maven registries, and external services (Semantic Scholar, Vercel, pub.dev):
 
