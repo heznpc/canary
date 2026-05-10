@@ -7,8 +7,18 @@ import type { SyncConfig } from "./lib/sync/types";
  *
  * See lib/projects.ts for the full ProjectConfig type definition.
  *
- * The default entry below is Canary scanning itself — eat your own dogfood.
- * Replace or extend with your own projects as needed.
+ * The default entries below are the author's own portfolio (canary, AirMCP,
+ * ploidy-research). For your own use, replace these with the repos you want
+ * monitored. Minimum field set is `id`, `name`, `description`, `repo`,
+ * `tag`, `stack`, `deployTarget`, `category`. Paper-category projects also
+ * need `keywords` and `researchArea` (validated by __tests__/projects.test.ts).
+ *
+ * Tips:
+ *   - GITHUB_TOKEN env var is effectively required for portfolios with
+ *     more than ~3 projects (60 req/h unauthenticated GitHub API limit).
+ *   - For push-leakage measurements, set CANARY_SELF_LOGIN if your local
+ *     git author email differs from the repo owner; otherwise the scanner
+ *     auto-derives the self-login from each repo's owner.
  */
 const projects: ProjectConfig[] = [
   {

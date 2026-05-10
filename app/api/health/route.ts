@@ -31,6 +31,15 @@ function pushLeakageFreshness(): SnapshotFreshness {
   }
 }
 
+interface EnvCheck {
+  configured: boolean;
+}
+
+function envCheck(name: string): EnvCheck {
+  const v = process.env[name];
+  return { configured: typeof v === "string" && v.trim().length > 0 };
+}
+
 export async function GET() {
   return NextResponse.json({
     status: "ok",
@@ -42,6 +51,13 @@ export async function GET() {
       // older than the stale-after threshold (24 h by default) and the user
       // should re-run the experiments CLI.
       pushLeakage: pushLeakageFreshness(),
+    },
+    env: {
+      // Boolean-only — never echo the secret value. Used by the dashboard to
+      // surface a "set GITHUB_TOKEN for higher rate limits" banner when
+      // unauthenticated, and an analogous hint for the Anthropic admin key.
+      githubToken: envCheck("GITHUB_TOKEN"),
+      anthropicAdminKey: envCheck("ANTHROPIC_ADMIN_API_KEY"),
     },
     staleAfterSeconds: STALE_AFTER_MS / 1000,
   });
