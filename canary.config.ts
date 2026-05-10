@@ -54,6 +54,51 @@ const projects: ProjectConfig[] = [
     keywords: ["session-composition", "asymmetric-renewal", "context-window"],
     researchArea: "AI / LLM systems",
   },
+  // ── starter-series ──────────────────────────────────────────────────────
+  // Companion scaffolding line in the indie+agent toolkit. Adding a curated
+  // subset (4 of 13) so the dashboard reflects the toolkit identity without
+  // exhausting GitHub API rate limits.
+  {
+    id: "create-starter",
+    name: "create-starter",
+    description: "Meta-scaffolder: spawns new projects from any starter-series template with sane indie+agent defaults",
+    repo: "starter-series/create-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    npmPackage: "create-starter",
+    category: "infra",
+  },
+  {
+    id: "mcp-server-starter",
+    name: "mcp-server-starter",
+    description: "Node/TypeScript scaffolding for new MCP servers — ships with canary integration template, smoke test, and bundle pipeline",
+    repo: "starter-series/mcp-server-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    category: "mcp",
+  },
+  {
+    id: "python-mcp-server-starter",
+    name: "python-mcp-server-starter",
+    description: "Python (FastMCP) scaffolding for new MCP servers — sibling of mcp-server-starter for the Python ecosystem",
+    repo: "starter-series/python-mcp-server-starter",
+    tag: "active",
+    stack: ["python"],
+    deployTarget: "none",
+    category: "mcp",
+  },
+  {
+    id: "npm-package-starter",
+    name: "npm-package-starter",
+    description: "Node/TypeScript scaffolding for publishable npm packages — opinionated for indie-scale shipping",
+    repo: "starter-series/npm-package-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    category: "infra",
+  },
 ];
 
 export default projects;

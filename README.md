@@ -1,8 +1,18 @@
 # Canary
 
-**Project health dashboard + research platform** — monitor stack freshness, deploy status, code quality, and activity across all your repositories, grounded in a thesis on the *metadatafication* of version control.
+**MCP server for solo-developer portfolio observability + a companion dashboard.** Surfaces stack freshness, deploy status, code quality, activity, and push-leakage signal across all your repositories — agent-first, dashboard optional.
 
-Canary scans your GitHub projects and grades them A–F based on dependency health, CI/CD presence, test infrastructure, stack EOL status, deploy uptime, documentation freshness, and more. It also serves as the implementation companion to our research paper on how AI agents are transforming Git from a developer-facing tool into invisible background infrastructure.
+Canary's primary surface is its MCP server: AI coding agents (Claude Code, Cursor, Codex CLI, etc.) register it once and call seven tools that expose every metric the system computes. The Next.js dashboard is a secondary, human-readable companion for snapshot inspection. The paper that grounds the design (`paper/main.tex`) argues §6.2 that agent-readable infrastructure should be agent-callable rather than human-clickable; canary embodies that recommendation directly.
+
+> **Part of the heznpc indie+agent toolkit** — a coherent product line for solo and small-team developers running multiple AI coding agents:
+>
+> - **canary** *(this repo)* — observe: portfolio health, push-leakage, contributor signal
+> - [**AirMCP**](https://github.com/heznpc/AirMCP) — extend: macOS-native tools (Calendar, Reminders, Notes, Shortcuts, Health) accessible via MCP
+> - [**ploidy**](https://github.com/heznpc/ploidy-research) — scale: asymmetric-renewal session-composition protocol for LLM context windows
+> - [**starter-series**](https://github.com/starter-series) — bootstrap: 13+ starters for new MCP servers, npm packages, browser/electron/native apps
+> - [**papers**](https://github.com/heznpc?tab=repositories&q=&type=&language=tex) — explain: research grounding the toolkit's design choices
+>
+> Each piece serves a different lifecycle phase of the same target user. Cross-pollination is intentional: canary scans starter-series projects, mcp-server-starter ships with canary integration, ploidy's session protocol motivates push-leakage measurement.
 
 ## Research
 
@@ -19,16 +29,27 @@ Git is not dying — it is becoming invisible. Like EXIF metadata on photos or D
 
 ## Features
 
-- **Multi-ecosystem dependency scanning** — Node.js, Python, Flutter, JVM (Gradle/Maven)
-- **Stack version tracking** — Next.js, React, Flutter, Spring Boot, Python, TypeScript, Node.js
-- **Code quality checks** — CI/CD pipelines, test frameworks, linting, type safety, license
-- **Activity monitoring** — Commit frequency, open PRs/issues, contributor count
-- **Deploy status** — Vercel, GitHub Pages, npm, Chrome Web Store, Zenodo
-- **Documentation freshness** — README version drift, CHANGELOG staleness, TODO count
-- **Data freshness** — Monitor scheduled data update cycles with grace periods
-- **Research tracking** — Semantic Scholar integration for paper projects
-- **AI coding intel** — Framework-version-specific gotchas for Claude/Copilot workflows
-- **Smart grading** — 100-point scoring with context-aware weights (active vs. maintenance vs. prototype)
+**MCP tools (the primary surface):**
+
+- `scan_project` / `scan_all` — full health pipeline on one project or the whole portfolio
+- `list_update_actions` — concrete `pnpm up foo@x.y.z` + changelog-link list per project
+- `list_leaking_repos` / `audit_session_leakage` — push-leakage scan + per-session "did anything leak" check (see `planning/drafts/agent-push-leakage.md`)
+- `list_recent_issues` — external-contributor issue digest across the portfolio (filters out PRs / self-tracking / bots)
+- `get_anthropic_usage` — token + cost summary from the Admin API
+
+**Underlying scanners (used by every surface):**
+
+- Multi-ecosystem dependency scanning — Node.js, Python, Flutter, JVM
+- Stack version tracking — Next.js, React, Flutter, Spring Boot, Python, TypeScript, Node.js
+- Code quality — CI/CD, tests, lint, type-check, license, security policy
+- Activity — commit frequency, open PRs/issues, contributor count
+- Deploy status — Vercel, GitHub Pages, npm, Chrome Web Store, Zenodo
+- Documentation freshness — README/CHANGELOG/TODO drift
+- Data freshness — scheduled-update cycle monitoring with grace periods
+- Research tracking — Semantic Scholar integration for paper projects
+- AI coding intel — framework-version-specific gotchas for Claude / Copilot / Cursor workflows
+- Push-leakage — APL / MIP / PLR / UCP metrics joining Claude Code session transcripts with multi-repo git state
+- Smart grading — 100-point scoring with context-aware weights
 
 ## Tech Stack
 
