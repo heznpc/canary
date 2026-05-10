@@ -7,6 +7,7 @@ import { FilterTabs } from "@/components/dashboard/filter-tabs";
 import { AnthropicUsagePanel } from "@/components/dashboard/anthropic-usage-panel";
 import { PushLeakagePanel } from "@/components/dashboard/push-leakage-panel";
 import { RecentIssuesPanel } from "@/components/dashboard/recent-issues-panel";
+import { ReadinessBanners } from "@/components/dashboard/readiness-banners";
 import type { DashboardData } from "@/lib/types";
 import { RefreshCw } from "lucide-react";
 
@@ -86,6 +87,9 @@ export default function Home() {
 
         {data && (
           <>
+            {/* First-run readiness — surfaces missing token / stale snapshot */}
+            <ReadinessBanners />
+
             {/* Summary */}
             <SummaryCards summary={data.summary} />
 

@@ -38,23 +38,57 @@ Git is not dying — it is becoming invisible. Like EXIF metadata on photos or D
 - **APIs**: GitHub REST API (Octokit), Semantic Scholar, npm/PyPI/pub.dev/Maven Central
 - **Infrastructure**: In-memory cache, sliding-window rate limiter, circuit breaker, structured logging
 
-## Getting Started
+## Quick Start
+
+Five steps from a fresh clone to a working dashboard. The dashboard surfaces
+missing prerequisites as inline banners, so you can also just run `npm run
+dev` and let it tell you what to do next.
 
 ```bash
-# Install dependencies
+# 1. Install dependencies
 npm install
 
-# Set GitHub token for higher API rate limits
+# 2. Set GitHub token (effectively required — 60 req/h unauthenticated limit)
+#    Create at https://github.com/settings/tokens; no scopes needed for public repos.
 export GITHUB_TOKEN=ghp_...
 
-# Run dev server
-npm run dev
+# 3. Edit canary.config.ts to register your own repos
+#    Default config monitors heznpc/canary + heznpc/AirMCP + heznpc/ploidy-research.
+#    Replace those entries with your portfolio (see comments in the file).
 
-# Run tests
-npm test
+# 4. Run the first push-leakage scan
+#    Walks your local repos under ~/IdeaProjects (or CANARY_SCAN_ROOT) and
+#    writes a snapshot the dashboard reads. Re-run any time data feels stale.
+npm run pl:scan
+
+# 5. Start the dashboard
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
+
+### Optional / advanced
+
+```bash
+# Different scan root (default: $HOME/IdeaProjects)
+CANARY_SCAN_ROOT=/path/to/repos npm run pl:scan
+
+# Different transcript-dir filter (default: 'IdeaProjects')
+CANARY_SCAN_FILTER=Projects npm run pl:scan
+
+# Override the "self login" used for issue-author filtering
+# (default: each repo's owner). Useful when you contribute to repos
+# you don't own and want your own issues filtered out as self-tracking.
+export CANARY_SELF_LOGIN=your-github-login
+
+# Anthropic Admin key for the Claude API usage panel
+export ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-...
+
+# Run tests / type-check / build
+npm test
+npx tsc --noEmit
+npm run build
+```
 
 ## Claude Integration
 
@@ -82,11 +116,15 @@ Register it with Claude Code (bundle path is absolute so Claude can spawn it fro
 claude mcp add canary -- node /absolute/path/to/canary/mcp/dist/server.mjs
 ```
 
-Tools exposed:
+Tools exposed (run `npm run mcp:smoke` to confirm registration):
 
 - `scan_project(projectId)` — run the full pipeline on one project in `canary.config.ts`
 - `scan_all()` — dashboard summary + per-project grades
-- `get_anthropic_usage(days?)` — token/cost totals from the Admin API (requires the env var above)
+- `list_update_actions(projectId)` — concrete `pnpm up foo@x.y.z` / changelog-link list for outdated deps in one project
+- `get_anthropic_usage(days?)` — token/cost totals from the Anthropic Admin API (requires `ANTHROPIC_ADMIN_API_KEY`)
+- `list_leaking_repos({ roots?, thresholdDays?, top?, pathFilter? })` — push-leakage scan: repos in MIP > thresholdDays, sorted desc
+- `audit_session_leakage({ sinceHours?, sessionId?, root? })` — "did anything just leak?" — inspect Claude Code sessions in a window and join with current git state
+- `list_recent_issues({ windowDays?, top?, projectId? })` — external-contributor issue digest across the portfolio (or one project), filtering out self-tracking and bots
 
 The MCP layer is a thin adapter (`mcp/adapters.ts`) over the existing scanners, so scanner refactors don't force protocol changes.
 
