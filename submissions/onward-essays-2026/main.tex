@@ -38,9 +38,14 @@
 
 \begin{document}
 
+% acmart renders the title block (title, authors, affiliations, abstract)
+% only when \maketitle is invoked. The abstract environment must be
+% declared BEFORE \maketitle so it appears in the title block.
 \begin{abstract}
 We document five concurrent failure modes of agent-era Git workflow---unpushed commits, stale worktrees from merged pull requests, silent partial failure of \texttt{gh pr merge --delete-branch}, external-contributor issues that never reach the agent, and IDE-resident session lifecycle drift---and argue they instantiate one mechanism: \textit{metadatafication}, the transition of an operator-driven tool into automatically-generated infrastructure metadata. Drawing on Star and Ruhleder's claim that mature infrastructure becomes visible only upon breakdown, we propose three measurable quantities---Agent-Push Latency (APL), Metadata-Invisibility Period (MIP), Push-Leakage Rate (PLR)---and a fourth (Uncommitted-Period, UCP) for the analogous working-tree layer, and we deploy them as a portable instrument on one operator's 57-repository portfolio. The single-operator case study illustrates the instrument's discrimination power; the instrument itself is what the artifact contributes, with the case study as worked example rather than population claim. We position the resulting Canary MCP server as a layer of \textit{agent-readable observability} distinct from the cloud-side workflow tooling (GitHub Agentic Workflows) entering preview during the same window, and we identify the operator-machine surface as the gh-aw-uncopable zone where the metadatafication thesis is most empirically tractable. The community that adapts will treat agent-readability---not human-readability---as the primary design target for the records its tools generate.
 \end{abstract}
+
+\maketitle
 
 \section{Introduction}
 
