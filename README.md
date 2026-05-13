@@ -127,6 +127,33 @@ npx tsc --noEmit
 npm run build
 ```
 
+### Pre-push hook (optional, recommended)
+
+Install canary's pre-push hook into any repo to surface portfolio leakage state
+the moment you next push from that repo. Informational only — never blocks the
+push. This is canary's flagship gh-aw-uncopable surface: the moment of the push
+decision is only observable on the operator's machine.
+
+```bash
+# From inside any git repo you want monitored
+node /path/to/canary/scripts/canary-install-hooks.mjs
+
+# Or from the canary repo itself (uses canonical canary path)
+npm run pl:install-hooks
+```
+
+Output during your next `git push`:
+
+```
+[canary pre-push] 3 other repos leaking (snapshot 4h ago):
+  • ploidy-research            ahead=2, MIP=2d 7h
+  • AirMCP                     ahead=1, MIP=14h
+  • starter-series             ahead=1, MIP=8h
+[canary pre-push] (informational; this push is not blocked)
+```
+
+Uninstall: `rm .git/hooks/pre-push`.
+
 ## Claude Integration
 
 Canary coexists with Claude's own dashboards via three complementary layers:
