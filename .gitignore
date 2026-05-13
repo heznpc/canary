@@ -49,7 +49,18 @@ paper/*.blg
 paper/*.log
 paper/*.out
 paper/*.pdf
+paper/*.toc
 paper/missfont.log
+submissions/**/*.aux
+submissions/**/*.bbl
+submissions/**/*.blg
+submissions/**/*.log
+submissions/**/*.out
+submissions/**/*.toc
+submissions/**/*.fls
+submissions/**/*.fdb_latexmk
+submissions/**/main.pdf
+submissions/**/missfont.log
 
 .claude/
 mcp/dist/

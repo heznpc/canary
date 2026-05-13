@@ -4,21 +4,28 @@ Tracks pre-submission action items and current status (2026-05-11).
 
 ## Hard blockers (must be done before submit)
 
-- [ ] **Venue deadline confirmed.** SPLASH 2026 Onward! Essays deadline
-  not yet retrieved at scaffold time. Check
-  <https://2026.splashcon.org/dates> closer to fall 2026 and update
-  here.
-- [ ] **Zenodo DOI filled in.** Replace
-  `10.5281/zenodo.XXXXXXX` placeholder in `paper/main.tex` §7.1 and
-  `CITATION.cff` with the actual deposit identifier. (Two-character
-  search-and-replace.)
-- [ ] **`acmart` template applied.** See `format-notes.md`. Build a
-  separate `main.tex` under this directory; do not edit
-  `../../paper/main.tex` directly.
-- [ ] **Page count under limit.** Trim to the venue's page limit (likely
-  14 pages for Onward! Essays — confirm).
-- [ ] **Bibliography style matches venue.** Switch to ACM-Reference-Format
-  if required.
+- [x] **Venue deadline confirmed.** SPLASH 2026 Onward! Essays
+  **submission deadline is Friday, 15 May 2026**. Initial decisions
+  22 June, conditional revisions due 27 July, final notification
+  14 August, camera-ready 25 August.
+  Source: <https://2026.splashcon.org/track/splash-2026-onward--essays>.
+- [x] **Zenodo cite removed for first-round submission.** Per
+  `anonymization-notes.md`, the deposit citation in §7.1 has been
+  rewritten as "replication package committed to the artifact
+  repository at the submission revision." Restore at camera-ready
+  time once the deposit is finalised.
+- [x] **`acmart` template applied** (`submissions/onward-essays-2026/main.tex`).
+  Class is `\documentclass[sigconf, nonacm, anonymous=false]{acmart}`
+  with single-blind author block (`heznpc`, `Independent`).
+- [x] **Page count under limit.** Onward! Essays caps main content at
+  14 pages (refs and appendices unrestricted). Verified `acmart` build
+  produces **13 pages** (CI artifact `canary-submissions-<sha>` on PR
+  #45). No trim required.
+- [x] **Bibliography style — `plainnat` is acceptable for first-round
+  review.** Onward! Essays prioritises content over typographic
+  compliance at submission time; ACM Digital Library's
+  `ACM-Reference-Format` requirement applies at camera-ready, not at
+  first submission. Switch deferred to post-acceptance revision.
 
 ## Recommended (high ROI before submit)
 
