@@ -90,17 +90,19 @@ export default function Home() {
             {/* First-run readiness — surfaces missing token / stale snapshot */}
             <ReadinessBanners />
 
-            {/* Summary */}
-            <SummaryCards summary={data.summary} />
-
-            {/* Claude API usage (renders conditionally based on admin key presence) */}
-            <AnthropicUsagePanel />
-
-            {/* Push leakage (renders conditionally based on snapshot availability) */}
+            {/* Push leakage — the operator-machine signal nothing else sees.
+                Leads the dashboard because it's the gh-aw-uncopable surface
+                that defines canary's niche. */}
             <PushLeakagePanel />
 
             {/* External-contributor issues across the portfolio */}
             <RecentIssuesPanel />
+
+            {/* Summary — generic project counts; companion to the lead panels above. */}
+            <SummaryCards summary={data.summary} />
+
+            {/* Claude API usage (renders conditionally based on admin key presence) */}
+            <AnthropicUsagePanel />
 
             {/* Filter */}
             <FilterTabs value={filter} onChange={setFilter} />

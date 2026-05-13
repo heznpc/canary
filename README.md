@@ -1,8 +1,24 @@
 # Canary
 
-**MCP server for solo-developer portfolio observability + a companion dashboard.** Surfaces stack freshness, deploy status, code quality, activity, and push-leakage signal across all your repositories — agent-first, dashboard optional.
+**The operator-machine observability layer for indie + agent developers.**
 
-Canary's primary surface is its MCP server: AI coding agents (Claude Code, Cursor, Codex CLI, etc.) register it once and call seven tools that expose every metric the system computes. The Next.js dashboard is a secondary, human-readable companion for snapshot inspection. The paper that grounds the design (`paper/main.tex`) argues §6.2 that agent-readable infrastructure should be agent-callable rather than human-clickable; canary embodies that recommendation directly.
+Canary exposes what GitHub doesn't see: unpushed commits, working-tree staleness, Claude Code session transcripts, and the cross-tool MCP surface that any agent session (Claude Code, Cursor, Codex CLI, Gemini CLI) can query inline. Where [GitHub Agentic Workflows](https://github.github.com/gh-aw/) runs agents server-side in GitHub Actions and reacts to GitHub events, canary serves operator-machine data to agents already in your session. The two are complementary layers, not competitors — canary owns the side that GitHub Actions structurally cannot reach.
+
+**Lead capabilities — what canary sees that nothing else does:**
+
+- **Push leakage** — agent-touched commits that never made it to remote. Joins local git ahead/behind/dirty state with Claude Code session transcripts under `~/.claude/projects/`. Measured as APL (Agent-Push Latency), MIP (Metadata-Invisibility Period), PLR (Push Leakage Rate), and UCP (Uncommitted-Period). See `planning/drafts/agent-push-leakage.md` for the framing and `paper/main.tex` §5.4 for the empirical vignette.
+- **Session leakage audit** — "did anything I just did leak?" — `audit_session_leakage` MCP tool inspects sessions modified in the last N hours and joins with current git state.
+- **Cross-tool MCP serving** — one observability layer that any agent in any tool can query. Register once with Claude Code, Cursor, or Codex; the same seven tools are available everywhere.
+
+**Companion capabilities — also exposed, but where GitHub Agentic Workflows can do more:**
+
+These features exist for completeness and human-readable surface (the dashboard), but on these axes a dedicated `gh-aw` workflow is usually a better fit because it can read, analyze, *and* respond/PR:
+
+- Dependency / stack / CI / deploy / docs scanning
+- External-contributor issue digest (canary surfaces; `gh-aw` triages and responds)
+- A-F project grading
+
+The dashboard is a secondary, human-readable companion. New features ship to the MCP layer first; the dashboard renders them when the cost of a panel is small.
 
 > **Part of the heznpc indie+agent toolkit** — a coherent product line for solo and small-team developers running multiple AI coding agents:
 >
