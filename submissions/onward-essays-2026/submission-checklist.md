@@ -17,13 +17,15 @@ Tracks pre-submission action items and current status (2026-05-11).
 - [x] **`acmart` template applied** (`submissions/onward-essays-2026/main.tex`).
   Class is `\documentclass[sigconf, nonacm, anonymous=false]{acmart}`
   with single-blind author block (`heznpc`, `Independent`).
-- [ ] **Page count under limit.** Onward! Essays caps main content at
-  14 pages (refs and appendices unrestricted). Current `acmart` build
-  page count: see CI artifact `canary-submissions-<sha>` after first
-  push of this branch.
-- [ ] **Bibliography style matches venue.** Current draft uses
-  `\bibliographystyle{plainnat}`. Confirm acceptable for Onward!
-  Essays or switch to `ACM-Reference-Format` once CI build succeeds.
+- [x] **Page count under limit.** Onward! Essays caps main content at
+  14 pages (refs and appendices unrestricted). Verified `acmart` build
+  produces **13 pages** (CI artifact `canary-submissions-<sha>` on PR
+  #45). No trim required.
+- [x] **Bibliography style — `plainnat` is acceptable for first-round
+  review.** Onward! Essays prioritises content over typographic
+  compliance at submission time; ACM Digital Library's
+  `ACM-Reference-Format` requirement applies at camera-ready, not at
+  first submission. Switch deferred to post-acceptance revision.
 
 ## Recommended (high ROI before submit)
 
