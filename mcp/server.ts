@@ -156,9 +156,9 @@ async function main() {
   server.registerTool(
     "list_leaking_repos",
     {
-      title: "List repos with unpushed agent-touched commits",
+      title: "List repos with unpushed agent-touched commits (local-only data)",
       description:
-        "Scan one or more roots for git repos and join with Claude Code session transcripts under ~/.claude/projects to surface repos in MIP > thresholdDays (Metadata-Invisibility Period — time the oldest unpushed commit has been sitting unpropagated). Read-only; does not push, fetch, or mutate repos. See planning/drafts/agent-push-leakage.md for the underlying metrics.",
+        "Scan one or more roots for git repos and join with Claude Code session transcripts under ~/.claude/projects to surface repos in MIP > thresholdDays (Metadata-Invisibility Period — time the oldest unpushed commit has been sitting unpropagated). This is the flagship operator-machine signal: it joins local git ahead/behind/dirty state with the operator's Claude session history, neither of which is accessible to GitHub Agentic Workflows or any server-side observability layer. Read-only; does not push, fetch, or mutate repos. See planning/drafts/agent-push-leakage.md for the underlying metrics and paper/main.tex §5.4 for the empirical vignette.",
       inputSchema: {
         roots: z
           .array(z.string())
@@ -238,9 +238,9 @@ async function main() {
   server.registerTool(
     "audit_session_leakage",
     {
-      title: "Audit recent Claude sessions for unpushed work",
+      title: "Audit recent Claude sessions for unpushed work (local-only data)",
       description:
-        "Inspect Claude Code CLI session transcripts modified within sinceHours (default 24) and report which repos those sessions touched, along with each repo's current ahead/dirty state. Useful for 'agent just finished, did anything leak?' checks. Read-only.",
+        "Inspect Claude Code CLI session transcripts modified within sinceHours (default 24) and report which repos those sessions touched, along with each repo's current ahead/dirty state. Useful for 'agent just finished, did anything leak?' checks at session boundaries. Reads ~/.claude/projects/<projectdir>/<sessionid>.jsonl directly — a data source no server-side workflow tool (including GitHub Agentic Workflows) can access. Read-only.",
       inputSchema: {
         sinceHours: z
           .number()
