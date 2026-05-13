@@ -5,11 +5,13 @@ on:
     branches: [main]
     paths:
       - 'paper/**'
+      - 'submissions/**'
       - '.github/workflows/paper.yml'
   pull_request:
     branches: [main]
     paths:
       - 'paper/**'
+      - 'submissions/**'
       - '.github/workflows/paper.yml'
   workflow_dispatch:
 
@@ -18,7 +20,7 @@ permissions:
 
 jobs:
   build:
-    name: Build LaTeX + validate citations
+    name: Build canonical paper + validate citations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,17 +30,10 @@ jobs:
         with:
           root_file: main.tex
           working_directory: paper
-          # Default texliveGhostScript bundle includes natbib + hyperref; the
-          # action runs latexmk which handles bibtex + multi-pass automatically.
           latexmk_use_xelatex: false
-          # Surface warnings as job log so we can grep them in the next step.
           args: -pdf -file-line-error -interaction=nonstopmode
 
       - name: Fail on undefined citations or references
-        # natbib/biblatex emit "Warning: Citation 'foo' on page N undefined"
-        # and bibtex emits "Warning--I didn't find a database entry for ...".
-        # Either signals a real bib/cite drift; we treat them as build failures
-        # for the paper module specifically.
         run: |
           set -eo pipefail
           log=paper/main.log
@@ -58,4 +53,64 @@ jobs:
         with:
           name: canary-paper-${{ github.sha }}
           path: paper/main.pdf
+          retention-days: 14
+
+  build-submissions:
+    name: Build venue submissions + validate citations
+    runs-on: ubuntu-latest
+    # Skip if there are no submission directories (e.g., before any has been
+    # scaffolded). The job uses a glob-based dynamic matrix-substitute by
+    # iterating over submissions/*/main.tex.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect submission directories
+        id: list
+        run: |
+          set -eo pipefail
+          shopt -s nullglob
+          subs=( submissions/*/main.tex )
+          if [ ${#subs[@]} -eq 0 ]; then
+            echo "no submissions/*/main.tex found — skipping"
+            echo "any=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "any=true" >> "$GITHUB_OUTPUT"
+          # Newline-separated paths to ./submissions/<venue>/main.tex
+          {
+            echo "list<<EOF"
+            for f in "${subs[@]}"; do echo "$f"; done
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Compile each submission (multi-pass with bibtex)
+        if: steps.list.outputs.any == 'true'
+        uses: xu-cheng/latex-action@v3
+        # latex-action's action.sh accepts a single root file, so we iterate
+        # via pre_compile to handle all submissions if more than one exists.
+        with:
+          root_file: ${{ github.workspace }}/submissions/onward-essays-2026/main.tex
+          working_directory: submissions/onward-essays-2026
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -interaction=nonstopmode
+
+      - name: Fail on undefined citations or references (submissions)
+        if: steps.list.outputs.any == 'true'
+        run: |
+          set -eo pipefail
+          for log in submissions/*/main.log; do
+            [ -f "$log" ] || continue
+            if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
+              echo "::error::Undefined citations or references in $log"
+              exit 1
+            fi
+          done
+          echo "no undefined citations or references in any submission"
+
+      - name: Upload submission PDFs
+        if: success() && steps.list.outputs.any == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: canary-submissions-${{ github.sha }}
+          path: submissions/*/main.pdf
           retention-days: 14
