@@ -1,5 +1,24 @@
 {
-  "timestamp": "2026-04-05T09:43:30.322Z",
+  "timestamp": "2026-05-20T17:52:39.218Z",
+  "seed": 20260521,
+  "bootstrap": {
+    "nIterations": 10000,
+    "alpha": 0.05,
+    "rng": "mulberry32"
+  },
+  "multipleComparisons": {
+    "family": "governance-moderation (CAM + ACR)",
+    "m": 2,
+    "method": "holm-bonferroni",
+    "cam": {
+      "pRaw": 0.01665628920186557,
+      "pAdj": 0.03331257840373114
+    },
+    "acr": {
+      "pRaw": 0.01665628920186557,
+      "pAdj": 0.03331257840373114
+    }
+  },
   "cam": {
     "bootstrapCI": {
       "User portfolio": {
@@ -9,7 +28,7 @@
           0,
           0.052225194552529185
         ],
-        "se": 0.014782834939329201
+        "se": 0.014767063902528937
       },
       "AI-adjacent": {
         "n": 3,
@@ -18,25 +37,25 @@
           0.01729106628242075,
           0.03773584905660377
         ],
-        "se": 0.005341722730106501
+        "se": 0.005318386309429903
       },
       "Traditional (all)": {
         "n": 21,
         "mean": 0.007943405308374204,
         "ci95": [
-          0.0020434886802081146,
-          0.01593997768798986
+          0.0021419272963857823,
+          0.0158303132942469
         ],
-        "se": 0.0036018466552638767
+        "se": 0.003605599181304419
       },
       "Developer-led": {
         "n": 10,
         "mean": 0.01551574339303699,
         "ci95": [
-          0.004131864810893364,
-          0.03042490122281747
+          0.003993777047870198,
+          0.030224473707011763
         ],
-        "se": 0.006737508778888483
+        "se": 0.006796764218387796
       },
       "Foundation-governed": {
         "n": 11,
@@ -45,7 +64,7 @@
           0,
           0.0027506532801540367
         ],
-        "se": 0.000705397943335448
+        "se": 0.000710495892898274
       }
     },
     "mannWhitneyU": {
@@ -117,10 +136,10 @@
         "n": 8,
         "mean": 0.208651296174246,
         "ci95": [
-          0.057225138352739326,
-          0.3988321747272175
+          0.05149448419797256,
+          0.3983340133278934
         ],
-        "se": 0.08875144170389491
+        "se": 0.08914340142288009
       },
       "AI-adjacent": {
         "n": 3,
@@ -129,34 +148,34 @@
           0.01,
           0.09433962264150945
         ],
-        "se": 0.02101830072527303
+        "se": 0.020595582231081305
       },
       "Traditional (all)": {
         "n": 21,
         "mean": 0.049616620076082946,
         "ci95": [
-          0.012157034028455185,
-          0.11002511045256949
+          0.012019061218896373,
+          0.10882137336912209
         ],
-        "se": 0.026413317800331643
+        "se": 0.026281025660492282
       },
       "Developer-led": {
         "n": 10,
         "mean": 0.10042359414289655,
         "ci95": [
-          0.02797287066246057,
-          0.2131627760252366
+          0.027362133206356765,
+          0.21362359414289656
         ],
-        "se": 0.050588688161490765
+        "se": 0.05142493917032282
       },
       "Foundation-governed": {
         "n": 11,
         "mean": 0.003428461833525124,
         "ci95": [
           0.0014545454545454547,
-          0.005627924817798235
+          0.005604142692750288
         ],
-        "se": 0.0010695767260352714
+        "se": 0.0010673168802548538
       }
     },
     "mannWhitneyU": {
@@ -247,6 +266,224 @@
       "rust-lang/rust",
       "prometheus/prometheus",
       "django/django"
+    ]
+  },
+  "sensitivity": {
+    "method": "leave-one-out reclassification",
+    "family": "governance-moderation (CAM + ACR), Holm-corrected",
+    "pivotalCount": 12,
+    "total": 21,
+    "rows": [
+      {
+        "repo": "facebook/react",
+        "flippedTo": "foundation",
+        "camPRaw": 0.07562202154889697,
+        "camPHolm": 0.07562202154889697,
+        "acrPRaw": 0.0031853249633415626,
+        "acrPHolm": 0.006370649926683125,
+        "camFlips005": true,
+        "acrFlips005": false
+      },
+      {
+        "repo": "vercel/next.js",
+        "flippedTo": "foundation",
+        "camPRaw": 0.06463991061125052,
+        "camPHolm": 0.12927982122250103,
+        "acrPRaw": 0.06463991061125052,
+        "acrPHolm": 0.12927982122250103,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "microsoft/typescript",
+        "flippedTo": "foundation",
+        "camPRaw": 0.055008699044250875,
+        "camPHolm": 0.11001739808850175,
+        "acrPRaw": 0.07562202154889697,
+        "acrPHolm": 0.11001739808850175,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "tailwindlabs/tailwindcss",
+        "flippedTo": "foundation",
+        "camPRaw": 0.004998430493094119,
+        "camPHolm": 0.009996860986188238,
+        "acrPRaw": 0.055008699044250875,
+        "acrPHolm": 0.055008699044250875,
+        "camFlips005": false,
+        "acrFlips005": true
+      },
+      {
+        "repo": "shadcn-ui/ui",
+        "flippedTo": "foundation",
+        "camPRaw": 0.019016436081129573,
+        "camPHolm": 0.038032872162259146,
+        "acrPRaw": 0.03300614049248174,
+        "acrPHolm": 0.038032872162259146,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "sveltejs/svelte",
+        "flippedTo": "foundation",
+        "camPRaw": 0.022957443952467127,
+        "camPHolm": 0.045914887904934254,
+        "acrPRaw": 0.039308607756667335,
+        "acrPHolm": 0.045914887904934254,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "remix-run/remix",
+        "flippedTo": "foundation",
+        "camPRaw": 0.08808144984186583,
+        "camPHolm": 0.08808144984186583,
+        "acrPRaw": 0.015680216772766098,
+        "acrPHolm": 0.031360433545532196,
+        "camFlips005": true,
+        "acrFlips005": false
+      },
+      {
+        "repo": "vitejs/vite",
+        "flippedTo": "foundation",
+        "camPRaw": 0.027589433472415603,
+        "camPHolm": 0.055178866944831206,
+        "acrPRaw": 0.0466047500359994,
+        "acrPHolm": 0.055178866944831206,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "denoland/deno",
+        "flippedTo": "foundation",
+        "camPRaw": 0.039308607756667335,
+        "camPHolm": 0.07861721551333467,
+        "acrPRaw": 0.08808144984186583,
+        "acrPHolm": 0.08808144984186583,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "pallets/flask",
+        "flippedTo": "foundation",
+        "camPRaw": 0.004998430493094119,
+        "camPHolm": 0.006370649926683125,
+        "acrPRaw": 0.0031853249633415626,
+        "acrPHolm": 0.006370649926683125,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "nodejs/node",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.044759156771006836,
+        "acrPRaw": 0.011243375399243805,
+        "acrPHolm": 0.02248675079848761,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "torvalds/linux",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.08951831354201367,
+        "acrPRaw": 0.062030916925625235,
+        "acrPHolm": 0.08951831354201367,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "kubernetes/kubernetes",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.08951831354201367,
+        "acrPRaw": 0.062030916925625235,
+        "acrPHolm": 0.08951831354201367,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "golang/go",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.06346776188387526,
+        "acrPRaw": 0.03173388094193763,
+        "acrPHolm": 0.06346776188387526,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "rust-lang/rust",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.01665628920186557,
+        "camPHolm": 0.03331257840373114,
+        "acrPRaw": 0.03173388094193763,
+        "acrPHolm": 0.03331257840373114,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "docker/cli",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.04847123830711997,
+        "acrPRaw": 0.024235619153559984,
+        "acrPHolm": 0.04847123830711997,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "prometheus/prometheus",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.0048518769510261794,
+        "camPHolm": 0.009703753902052359,
+        "acrPRaw": 0.01665628920186557,
+        "acrPHolm": 0.01665628920186557,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "python/cpython",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.044759156771006836,
+        "acrPRaw": 0.01665628920186557,
+        "acrPHolm": 0.03331257840373114,
+        "camFlips005": false,
+        "acrFlips005": false
+      },
+      {
+        "repo": "django/django",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.007453438026467918,
+        "camPHolm": 0.014906876052935836,
+        "acrPRaw": 0.062030916925625235,
+        "acrPHolm": 0.062030916925625235,
+        "camFlips005": false,
+        "acrFlips005": true
+      },
+      {
+        "repo": "spring-projects/spring-boot",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.08951831354201367,
+        "acrPRaw": 0.062030916925625235,
+        "acrPHolm": 0.08951831354201367,
+        "camFlips005": true,
+        "acrFlips005": true
+      },
+      {
+        "repo": "apache/kafka",
+        "flippedTo": "dev-led",
+        "camPRaw": 0.044759156771006836,
+        "camPHolm": 0.044759156771006836,
+        "acrPRaw": 0.00917512759450001,
+        "acrPHolm": 0.01835025518900002,
+        "camFlips005": false,
+        "acrFlips005": false
+      }
     ]
   }
 }

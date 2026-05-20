@@ -1,0 +1,33 @@
+{
+  "title": "Canary: Project-Health and Operator-Attention Observability for Indie+Agent Developers",
+  "description": "Companion artifact for the paper *The Metadatafication of Version Control: How AI Agents Transform Git from Tool to Infrastructure*. Contains the manuscript source (paper/main.tex), the experiment scripts that produced the §5.4 push-leakage and §5.5 CAM/ACR/adoption-timeline tables (experiments/src/), sanitized JSON snapshot data (experiments/results/), and a Next.js + Model Context Protocol service (app/, components/, lib/, mcp/) that operationalizes the framework as a running instrument.",
+  "creators": [
+    {
+      "name": "heznpc",
+      "affiliation": "Independent"
+    }
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "metadatafication",
+    "version control",
+    "software engineering 3.0",
+    "agentic software engineering",
+    "context engineering",
+    "operator attention budget",
+    "git",
+    "claude code",
+    "mcp",
+    "model context protocol"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/heznpc/canary",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ],
+  "communities": []
+}
