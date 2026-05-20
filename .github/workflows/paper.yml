@@ -23,10 +23,10 @@ jobs:
     name: Build canonical paper + validate citations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
 
       - name: Compile LaTeX (multi-pass with bibtex)
-        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
         with:
           root_file: main.tex
           working_directory: paper
@@ -49,23 +49,25 @@ jobs:
 
       - name: Upload PDF artifact
         if: success()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
         with:
           name: canary-paper-${{ github.sha }}
           path: paper/main.pdf
           retention-days: 14
 
-  build-submissions:
-    name: Build venue submissions + validate citations
+  # Detect which submission directories exist, emit a JSON array consumed by
+  # the matrix-driven build-submissions job below. Replaces the prior
+  # hardcoded `root_file: submissions/onward-essays-2026/main.tex` which
+  # would silently skip a second submission once one is added.
+  detect-submissions:
+    name: Detect submission directories
     runs-on: ubuntu-latest
-    # Skip if there are no submission directories (e.g., before any has been
-    # scaffolded). The job uses a glob-based dynamic matrix-substitute by
-    # iterating over submissions/*/main.tex.
+    outputs:
+      submissions: ${{ steps.list.outputs.submissions }}
+      any: ${{ steps.list.outputs.any }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
-
-      - name: Detect submission directories
-        id: list
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+      - id: list
         run: |
           set -eo pipefail
           shopt -s nullglob
@@ -73,44 +75,69 @@ jobs:
           if [ ${#subs[@]} -eq 0 ]; then
             echo "no submissions/*/main.tex found — skipping"
             echo "any=false" >> "$GITHUB_OUTPUT"
+            echo "submissions=[]" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "any=true" >> "$GITHUB_OUTPUT"
-          # Newline-separated paths to ./submissions/<venue>/main.tex
-          {
-            echo "list<<EOF"
-            for f in "${subs[@]}"; do echo "$f"; done
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          # Emit a compact JSON array of directory paths, e.g.
+          # ["submissions/onward-essays-2026","submissions/chi-2027"]
+          arr="["
+          first=1
+          for f in "${subs[@]}"; do
+            dir="${f%/main.tex}"
+            if [ $first -eq 1 ]; then first=0; else arr+=","; fi
+            arr+="\"$dir\""
+          done
+          arr+="]"
+          echo "submissions=$arr" >> "$GITHUB_OUTPUT"
+          echo "Detected submissions: $arr"
 
-      - name: Compile each submission (multi-pass with bibtex)
-        if: steps.list.outputs.any == 'true'
-        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
-        # latex-action's action.sh accepts a single root file, so we iterate
-        # via pre_compile to handle all submissions if more than one exists.
+  build-submissions:
+    name: Build venue submission + validate citations
+    needs: detect-submissions
+    if: needs.detect-submissions.outputs.any == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        submission: ${{ fromJson(needs.detect-submissions.outputs.submissions) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+
+      - name: Compile ${{ matrix.submission }} (multi-pass with bibtex)
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
         with:
-          root_file: ${{ github.workspace }}/submissions/onward-essays-2026/main.tex
-          working_directory: submissions/onward-essays-2026
+          root_file: main.tex
+          working_directory: ${{ matrix.submission }}
           latexmk_use_xelatex: false
           args: -pdf -file-line-error -interaction=nonstopmode
 
-      - name: Fail on undefined citations or references (submissions)
-        if: steps.list.outputs.any == 'true'
+      - name: Fail on undefined citations or references
         run: |
           set -eo pipefail
-          for log in submissions/*/main.log; do
-            [ -f "$log" ] || continue
-            if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
-              echo "::error::Undefined citations or references in $log"
-              exit 1
-            fi
-          done
-          echo "no undefined citations or references in any submission"
+          log="${{ matrix.submission }}/main.log"
+          if [ ! -f "$log" ]; then
+            echo "::error::$log not found — LaTeX build did not produce one"
+            exit 1
+          fi
+          if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
+            echo "::error::Undefined citations or references in $log"
+            exit 1
+          fi
+          echo "no undefined citations or references in $log"
 
-      - name: Upload submission PDFs
-        if: success() && steps.list.outputs.any == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
+      - name: Compute slash-free artifact name
+        id: artifact_name
+        run: |
+          safe="${{ matrix.submission }}"
+          # actions/upload-artifact rejects '/' in artifact names.
+          safe="${safe//\//-}"
+          echo "name=canary-${safe}-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PDF
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
         with:
-          name: canary-submissions-${{ github.sha }}
-          path: submissions/*/main.pdf
+          name: ${{ steps.artifact_name.outputs.name }}
+          path: ${{ matrix.submission }}/main.pdf
           retention-days: 14
