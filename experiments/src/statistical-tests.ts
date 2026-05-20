@@ -70,6 +70,24 @@ const DEVELOPER_LED = new Set([
 
 // --- Statistical utilities ---
 
+// Seeded PRNG (mulberry32). Used by bootstrap so that resampling is
+// deterministic given the same seed — paper §5.5 bootstrap CIs are otherwise
+// non-reproducible at the third decimal. Override via STAT_SEED env var
+// (default 20260521, the pre-experiment-fix date) to vary the seed
+// intentionally; the result file records the seed it ran under.
+const STAT_SEED = Number(process.env.STAT_SEED ?? 20260521);
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rng = mulberry32(STAT_SEED);
+
 function bootstrap(
   data: number[],
   statFn: (arr: number[]) => number,
@@ -82,7 +100,7 @@ function bootstrap(
   for (let i = 0; i < nBoot; i++) {
     const sample: number[] = [];
     for (let j = 0; j < data.length; j++) {
-      sample.push(data[Math.floor(Math.random() * data.length)]);
+      sample.push(data[Math.floor(rng() * data.length)]);
     }
     bootStats.push(statFn(sample));
   }
@@ -95,6 +113,26 @@ function bootstrap(
   );
 
   return { estimate, ci: [lo, hi], se };
+}
+
+// Holm-Bonferroni step-down correction (more powerful than plain Bonferroni
+// while still controlling FWER). Returns corrected p-values aligned with the
+// input order. Used to flag whether the governance moderation conclusion
+// survives multiple-comparison correction across the m=2 family
+// (CAM Mann-Whitney + ACR Mann-Whitney) — paper §5.5.
+function holmBonferroni(pValues: number[]): number[] {
+  const m = pValues.length;
+  const indexed = pValues.map((p, i) => ({ p, i }));
+  indexed.sort((a, b) => a.p - b.p);
+  const adjusted = new Array<number>(m);
+  let prev = 0;
+  for (let k = 0; k < m; k++) {
+    const raw = (m - k) * indexed[k].p;
+    const clamped = Math.max(prev, Math.min(1, raw));
+    adjusted[indexed[k].i] = clamped;
+    prev = clamped;
+  }
+  return adjusted;
 }
 
 function mean(arr: number[]): number {
@@ -320,6 +358,69 @@ async function main() {
   console.log(`  Effect size (rank-biserial r)=${acrMW.rankBiserial.toFixed(3)}`);
   console.log(`  Interpretation: ${interpretEffect(acrMW.rankBiserial)}`);
 
+  // Holm-Bonferroni correction across the m=2 governance-moderation tests.
+  // Paper §5.5 reports raw p-values; this surfaces the corrected ones so
+  // reviewers don't have to recompute.
+  const [camPadj, acrPadj] = holmBonferroni([camMW.p, acrMW.p]);
+  console.log("\nHolm-Bonferroni correction (m=2, family = governance moderation):");
+  console.log(`  CAM p_raw=${camMW.p.toFixed(4)}  →  p_holm=${camPadj.toFixed(4)}`);
+  console.log(`  ACR p_raw=${acrMW.p.toFixed(4)}  →  p_holm=${acrPadj.toFixed(4)}`);
+
+  // Leave-one-out reclassification sensitivity. Paper §6.5 notes that the
+  // governance result was sensitive to reclassifying two repositories; this
+  // automates that sensitivity check across all 21 traditional repos. For each
+  // repo we flip its classification (dev-led ↔ foundation) and recompute both
+  // raw p-values + Holm-corrected p-values. The output table makes it
+  // immediately visible which repos are pivotal.
+  console.log("\n========================================");
+  console.log("  LEAVE-ONE-OUT RECLASSIFICATION SENSITIVITY");
+  console.log("  (flip each repo's governance label and re-test)");
+  console.log("========================================\n");
+  const allTraditional = [...camDevLed, ...camFoundation];
+  const looRows: Array<{
+    repo: string; flippedTo: "dev-led" | "foundation";
+    camPRaw: number; camPHolm: number;
+    acrPRaw: number; acrPHolm: number;
+    camFlips005: boolean; acrFlips005: boolean;
+  }> = [];
+  for (const subject of allTraditional) {
+    const wasDevLed = DEVELOPER_LED.has(subject.repo);
+    const flippedTo = wasDevLed ? "foundation" : "dev-led";
+
+    const camDevLedV2 = camDevLed.filter((r) => r.repo !== subject.repo).map((r) => r.cam);
+    const camFoundationV2 = camFoundation.filter((r) => r.repo !== subject.repo).map((r) => r.cam);
+    if (wasDevLed) camFoundationV2.push(subject.cam); else camDevLedV2.push(subject.cam);
+
+    const acrSubject = acrDevLed.find((r) => r.repo === subject.repo) ?? acrFoundation.find((r) => r.repo === subject.repo);
+    const acrDevLedV2 = acrDevLed.filter((r) => r.repo !== subject.repo).map((r) => r.acr);
+    const acrFoundationV2 = acrFoundation.filter((r) => r.repo !== subject.repo).map((r) => r.acr);
+    if (acrSubject) {
+      if (wasDevLed) acrFoundationV2.push(acrSubject.acr); else acrDevLedV2.push(acrSubject.acr);
+    }
+
+    const camMWv2 = mannWhitneyU(camDevLedV2, camFoundationV2);
+    const acrMWv2 = mannWhitneyU(acrDevLedV2, acrFoundationV2);
+    const [camHv2, acrHv2] = holmBonferroni([camMWv2.p, acrMWv2.p]);
+    looRows.push({
+      repo: subject.repo,
+      flippedTo,
+      camPRaw: camMWv2.p, camPHolm: camHv2,
+      acrPRaw: acrMWv2.p, acrPHolm: acrHv2,
+      camFlips005: (camMW.p < 0.05) !== (camHv2 < 0.05),
+      acrFlips005: (acrMW.p < 0.05) !== (acrHv2 < 0.05),
+    });
+  }
+  console.log(`${"Repo".padEnd(28)} ${"Flip→".padEnd(11)} ${"CAM p_holm".padStart(11)} ${"ACR p_holm".padStart(11)} ${"Pivotal?".padStart(10)}`);
+  console.log("-".repeat(75));
+  for (const r of looRows) {
+    const pivotal = r.camFlips005 || r.acrFlips005 ? "yes" : "no";
+    console.log(
+      `${r.repo.padEnd(28)} ${r.flippedTo.padEnd(11)} ${r.camPHolm.toFixed(4).padStart(11)} ${r.acrPHolm.toFixed(4).padStart(11)} ${pivotal.padStart(10)}`,
+    );
+  }
+  const pivotalCount = looRows.filter((r) => r.camFlips005 || r.acrFlips005).length;
+  console.log(`\nPivotal repos (flip changes a 0.05 decision in CAM or ACR): ${pivotalCount} / ${looRows.length}`);
+
   // 5. Data listing for transparency
   console.log("\n--- Raw data: Developer-led repos ---");
   for (const r of camDevLed) {
@@ -335,6 +436,15 @@ async function main() {
   // 6. Save results
   const output = {
     timestamp: new Date().toISOString(),
+    seed: STAT_SEED,
+    bootstrap: { nIterations: 10000, alpha: 0.05, rng: "mulberry32" },
+    multipleComparisons: {
+      family: "governance-moderation (CAM + ACR)",
+      m: 2,
+      method: "holm-bonferroni",
+      cam: { pRaw: camMW.p, pAdj: camPadj },
+      acr: { pRaw: acrMW.p, pAdj: acrPadj },
+    },
     cam: {
       bootstrapCI: Object.fromEntries(
         camGroups.filter((g) => g.data.length >= 2).map((g) => {
@@ -364,6 +474,13 @@ async function main() {
     governanceClassification: {
       developerLed: [...DEVELOPER_LED],
       foundationGoverned: [...FOUNDATION_GOVERNED],
+    },
+    sensitivity: {
+      method: "leave-one-out reclassification",
+      family: "governance-moderation (CAM + ACR), Holm-corrected",
+      pivotalCount,
+      total: looRows.length,
+      rows: looRows,
     },
   };
 
