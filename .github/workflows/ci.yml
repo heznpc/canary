@@ -6,9 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+# Workflow-level least privilege; jobs can narrow further if they ever need
+# write access. Pinned action SHAs below are kept current by Dependabot
+# (.github/dependabot.yml → github-actions ecosystem, monthly).
+permissions:
+  contents: read
+
 jobs:
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     strategy:
       matrix:
@@ -16,10 +24,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4 latest
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
