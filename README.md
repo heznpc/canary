@@ -2,6 +2,13 @@
 
 **The operator-machine observability layer for indie + agent developers.**
 
+> Part of **Research Program 1 — Human-Controlled AI Systems**. Canary is the trust/observability flagship: the running instrument for the paper *The Metadatafication of Version Control*. Read the essay to see *why* the surface matters; run the scanner to see *what* is currently leaking on your own machine.
+
+**Two entry points:**
+
+- **Read the essay.** [`paper/main.tex`](paper/main.tex) is the single source of truth for the thesis. Canary operationalizes its §5.4 vignette — agent-touched commits that never made it to remote — as a tool you can run today.
+- **Run the scanner.** `npm install && npm run pl:scan && npm run dev` walks the repos under `~/IdeaProjects` (or `CANARY_SCAN_ROOT`), surfaces push leakage, and registers an MCP server so any agent session in Claude Code / Cursor / Codex / Gemini can query the same data inline. See [Quick Start](#quick-start) below.
+
 Canary exposes what GitHub doesn't see: unpushed commits, working-tree staleness, Claude Code session transcripts, and the cross-tool MCP surface that any agent session (Claude Code, Cursor, Codex CLI, Gemini CLI) can query inline. Where [GitHub Agentic Workflows](https://github.github.com/gh-aw/) runs agents server-side in GitHub Actions and reacts to GitHub events, canary serves operator-machine data to agents already in your session. The two are complementary layers, not competitors — canary owns the side that GitHub Actions structurally cannot reach.
 
 **Lead capabilities — what canary sees that nothing else does:**

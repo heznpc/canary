@@ -20,6 +20,39 @@ When making changes, ask whether the change is service-side
 the same repo by design (see `planning/decisions.md` 2026-04-19 entry); do
 not split them.
 
+## Design rationale
+
+Why this repository exists the way it does. Surfaced here so agent sessions
+do not silently break the load-bearing assumptions.
+
+- **Thesis comes first; the tool validates it.** The paper's central claim
+  is that version control is undergoing *metadatafication* — Git records
+  continue to exist but stop being directly inspected, analogous to EXIF on
+  photos or DNS in networking. Canary is the running instrument that makes
+  the breakdown moment visible: APL, MIP, PLR, UCP for push-leakage; a
+  dashboard for the human surface. If a change to `lib/scanners/` or `mcp/`
+  would invalidate the paper's empirical vignette in §5.4, that is a paper
+  edit *and* a code edit — never just one.
+- **Why a monorepo, not two repos.** The 2026-04-19 restructure decision
+  established DDD-style bounded contexts (`paper/`, `experiments/`,
+  `literature/`, `planning/`) inside the same checkout as the Next.js
+  service. Splitting them would lose the property that paper-citable data
+  is regenerable from the same `npm` commands developers use day-to-day.
+  Sibling repo ploidy follows the same pattern; the convergence is
+  intentional, not accidental.
+- **Why push-leakage is the headline axis.** The 2026-05-06 decision
+  records that an audit found 23 of ~30 Paper/ repos with locally-committed
+  but unpushed work from a single April bulk session — Star (1996)'s
+  predicted breakdown event, observed in the author's own portfolio. Canary
+  measures *transparency itself* (APL/MIP/PLR/UCP), not just agent input or
+  output volume. This is the operator-machine surface that GitHub Agentic
+  Workflows structurally cannot reach: the moment between commit and push
+  is only observable on the machine where the commit happened.
+- **Out of scope, on purpose.** Push *automation* is not part of canary.
+  The tool measures and reports; the push decision remains the operator's.
+  Cf. `anthropics/claude-code#39565`. Treat any PR that adds auto-push as
+  scope creep that breaks the paper's framing.
+
 ## Required reading before non-trivial changes
 
 | If you are changing… | Read first |
