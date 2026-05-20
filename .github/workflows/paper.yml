@@ -23,10 +23,10 @@ jobs:
     name: Build canonical paper + validate citations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
 
       - name: Compile LaTeX (multi-pass with bibtex)
-        uses: xu-cheng/latex-action@v3
+        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
         with:
           root_file: main.tex
           working_directory: paper
@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload PDF artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
         with:
           name: canary-paper-${{ github.sha }}
           path: paper/main.pdf
@@ -62,7 +62,7 @@ jobs:
     # scaffolded). The job uses a glob-based dynamic matrix-substitute by
     # iterating over submissions/*/main.tex.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
 
       - name: Detect submission directories
         id: list
@@ -85,7 +85,7 @@ jobs:
 
       - name: Compile each submission (multi-pass with bibtex)
         if: steps.list.outputs.any == 'true'
-        uses: xu-cheng/latex-action@v3
+        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
         # latex-action's action.sh accepts a single root file, so we iterate
         # via pre_compile to handle all submissions if more than one exists.
         with:
@@ -109,7 +109,7 @@ jobs:
 
       - name: Upload submission PDFs
         if: success() && steps.list.outputs.any == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
         with:
           name: canary-submissions-${{ github.sha }}
           path: submissions/*/main.pdf
