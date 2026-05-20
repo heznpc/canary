@@ -37,3 +37,33 @@ Concrete moves:
 3. Cost is low: existing scanner conventions, MCP server, and panel infrastructure can be reused. Tool emits paper-citable data on first run.
 
 Out of scope: push automation. The tool measures and reports; auto-push remains an operator decision (cf. anthropics/claude-code#39565).
+
+---
+
+## 2026-05-21 -- Pre-experiment integrity sweep (Critical fixes)
+
+**Context**: Before re-running the experimentation pipeline, a 9-dimension research-and-design audit identified three Critical issues that would invalidate any new results if left in place.
+
+**Decision**: Fix all three in the same session, before any experiment runs.
+
+1. **Seed the bootstrap resampler.** `experiments/src/statistical-tests.ts` previously used unseeded `Math.random()` inside the 10,000-iteration bootstrap, so the §5.5 confidence intervals (`[0.4%, 3.0%]` etc.) drifted at the third decimal across runs. Replaced with `mulberry32(STAT_SEED)`; default seed `20260521` (today's date as YYYYMMDD), overridable via the `STAT_SEED` env var. Result JSON now records the seed and PRNG name.
+2. **Add Holm-Bonferroni correction.** The governance-moderation conclusion uses two Mann-Whitney U tests (CAM and ACR) on the same hypothesis (developer-led vs foundation-governed). Reporting only `p_raw` was a multiple-comparisons hole. Added Holm step-down correction across the m=2 family; both tests survive (`p_holm = 0.034`, still < 0.05). Both `p_raw` and `p_holm` now appear in §5.5 of the paper *and* in the result JSON's `multipleComparisons` field.
+3. **Mark the Zenodo DOI as a pre-camera-ready TODO.** The paper currently carries `10.5281/zenodo.XXXXXXX` as a placeholder. Rather than leaving a literal `XXXXXXX` URL in a submitted manuscript, §6.5 now states explicitly that the placeholder will be replaced prior to camera-ready, with a LaTeX `% TODO(pre-camera-ready)` marker pinning the action.
+
+**Why**: The seed and the multiple-comparisons gap are the kind of issue any first-round reviewer would flag before reading the substantive argument. The Zenodo placeholder is a footgun against the paper's own reproducibility claim — leaving it unannotated meant readers couldn't tell whether the DOI was pending or genuinely missing. Together, the three fixes don't change a single conclusion; they make the existing conclusions auditable.
+
+Out of scope for this sweep (handled as Major / Minor in the audit, not yet decided): formal falsifying-condition statement (§3.1), cross-tool external-validity expansion (Cursor/Codex transcript schema), independent governance-classification rater.
+
+---
+
+## 2026-05-21 -- First post-fix experiment run, new findings folded into paper
+
+**Context**: After the Critical+Major sweep landed (PR #52), we ran two experiments: statistical-tests (verifying seed + Holm + leave-one-out sensitivity all wired up) and push-leakage (an 11-day follow-up on the §5.4 vignette).
+
+**Decision**: Surface two new findings in the paper:
+1. **Pivotal count.** The leave-one-out sensitivity check reports 12 of 21 reclassifications would flip the 0.05 decision in at least one of the CAM / ACR tests. §6.5 now quotes that count directly so reviewers see the dependency without having to open the JSON.
+2. **Eleven-day follow-up trajectory.** PLR_agent ran 40.4% (baseline) → 0% (post-intervention) → 1.7% (11 days later). §5.4 gains a new paragraph "Eleven-day follow-up" that records the trajectory, the UCP max=74d signal, and the cross-only-attribution shift from 87% to 8.5%.
+
+**Why**: Both are direct outputs of code we just shipped. Leaving them out of the paper would mean publishing instruments that the author doesn't trust enough to cite. Folding them in is also the cleanest way to demonstrate that the recovery claim in §5.4 is not a one-shot artefact.
+
+Out of scope for this run: re-running CAM / ACR / cam-temporal / cam-loc / adoption-timeline. The April 2026 snapshots remain canonical for the Zenodo deposit; a quarterly refresh belongs to the next revision round.

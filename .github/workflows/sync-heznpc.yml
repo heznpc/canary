@@ -1,5 +1,28 @@
 name: Sync heznpc Landing Page
 
+# ------------------------------------------------------------------------------
+# Secret: HEZNPC_PAT
+# ------------------------------------------------------------------------------
+# This workflow writes to heznpc/heznpc (cross-repository), which GITHUB_TOKEN
+# cannot reach. HEZNPC_PAT must be a *fine-grained* PAT (not classic), scoped
+# strictly as follows:
+#
+#   - Resource owner:    heznpc
+#   - Repository access: heznpc/heznpc ONLY (single-repo)
+#   - Permissions:       Contents: read & write   (no other scopes)
+#   - Expiration:        90 days maximum; rotate on or before expiry.
+#
+# Rotation log (date — actor — note):
+#   - 2026-05-21 — heznpc — Policy documented. Verify current PAT meets the
+#                            above shape; if it is a classic PAT or has wider
+#                            scope, regenerate as fine-grained immediately.
+#
+# Why fine-grained: classic PATs grant the holder write access to every repo
+# the user owns; a leaked classic PAT here would compromise the entire
+# heznpc/* surface, not just the landing-page sync target. See SECURITY.md for
+# the disclosure path if this secret is suspected of being exposed.
+# ------------------------------------------------------------------------------
+
 on:
   repository_dispatch:
     types: [project-updated]
@@ -15,10 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Canary
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6 latest
         with:
           node-version: '22'
           cache: 'npm'
@@ -44,7 +67,7 @@ jobs:
           "
 
       - name: Checkout heznpc
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
         with:
           repository: heznpc/heznpc
           path: heznpc-repo

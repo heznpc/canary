@@ -16,6 +16,13 @@
  *
  * PLR — Push Leakage Rate (portfolio-level):
  *   Fraction of agent-touched repos in MIP > threshold (default 7 days).
+ *
+ * TODO(review-2026-05-21): operators who have installed canary's own pre-push
+ * hook (scripts/canary-install-hooks.mjs) get an inline reminder of other
+ * leaking repos every time they push. This is expected to depress measured
+ * PLR for hook-using operators — canary's observability changes the thing it
+ * observes. When a multi-operator study runs, record per-operator
+ * hook-installation state and report PLR with that covariate.
  */
 
 import type { RepoAggregate } from "./transcript-scan.js";

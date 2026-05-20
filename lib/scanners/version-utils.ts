@@ -12,10 +12,100 @@ export function githubHeaders(): HeadersInit {
   return h;
 }
 
-export function fetchWithTimeout(url: string, opts: RequestInit = {}, ms = 5000) {
+/**
+ * Allow-list of upstream hosts that canary's scanners are permitted to
+ * contact. Defense-in-depth against SSRF: even though every call site
+ * constructs URLs from validated inputs (regex-checked package names,
+ * regex-checked owner/repo slugs) and uses hardcoded host strings, an
+ * explicit gate makes the safety property obvious to static analyzers
+ * (CodeQL flagged the previous unguarded fetch in 2026-05-21 audit) and
+ * fails closed if a future scanner adds a host without adding it here.
+ *
+ * To add a host, append it below and add a matching unit test in
+ * `__tests__/version-utils.test.ts`. Keep the list short — every entry is
+ * a piece of attack surface this codebase accepts.
+ */
+export const ALLOWED_HOSTS: ReadonlySet<string> = new Set([
+  // GitHub
+  "api.github.com",
+  "raw.githubusercontent.com",
+  // Package registries
+  "registry.npmjs.org",
+  "pypi.org",
+  "pub.dev",
+  "central.sonatype.com",
+  "search.maven.org",
+  // Vulnerability + scorecard
+  "api.osv.dev",
+  "api.securityscorecards.dev",
+  // Stack metadata
+  "endoflife.date",
+  // Research
+  "api.semanticscholar.org",
+  // Deploy verification
+  "doi.org",
+  "chromewebstore.google.com",
+  // Anthropic admin
+  "api.anthropic.com",
+]);
+
+/**
+ * Hosts that must be rejected regardless of `allowAnyHost`: cloud-metadata
+ * service IPs and loopback addresses. Every call that lets a user-controlled
+ * URL through (e.g. deploy-URL liveness probes) still has these blocked.
+ */
+const FORBIDDEN_HOSTS: ReadonlySet<string> = new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "169.254.169.254", // AWS/GCP/Azure instance metadata endpoint
+  "metadata.google.internal",
+]);
+
+export class DisallowedFetchError extends Error {
+  constructor(public readonly reason: string, public readonly url: string) {
+    super(`fetchWithTimeout: ${reason} (url=${url})`);
+    this.name = "DisallowedFetchError";
+  }
+}
+
+export interface FetchOptions extends RequestInit {
+  /**
+   * Opt-in escape hatch for callers that legitimately fetch user-supplied
+   * arbitrary URLs (deploy-URL liveness probes, etc.). Still enforces
+   * https-only and the FORBIDDEN_HOSTS deny-list — only the ALLOWED_HOSTS
+   * check is bypassed. Default false.
+   */
+  allowAnyHost?: boolean;
+}
+
+export function fetchWithTimeout(url: string, opts: FetchOptions = {}, ms = 5000) {
+  const { allowAnyHost, ...fetchOpts } = opts;
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return Promise.reject(new DisallowedFetchError("invalid URL", url));
+  }
+  if (parsed.protocol !== "https:") {
+    return Promise.reject(
+      new DisallowedFetchError(`non-https protocol ${parsed.protocol}`, url),
+    );
+  }
+  if (FORBIDDEN_HOSTS.has(parsed.hostname)) {
+    return Promise.reject(
+      new DisallowedFetchError(`forbidden host (${parsed.hostname})`, url),
+    );
+  }
+  if (!allowAnyHost && !ALLOWED_HOSTS.has(parsed.hostname)) {
+    return Promise.reject(
+      new DisallowedFetchError(`host not in allow-list (${parsed.hostname})`, url),
+    );
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
-  return fetch(url, { ...opts, signal: controller.signal }).finally(() => clearTimeout(timer));
+  return fetch(url, { ...fetchOpts, signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
 /**
