@@ -252,6 +252,49 @@ export interface AnthropicUsage {
   lastChecked: string;
 }
 
+/* ── Recent External-Contributor Issues ── */
+
+export interface RecentIssue {
+  /** Issue number (per repo). */
+  number: number;
+  title: string;
+  /** GitHub HTML URL of the issue. */
+  url: string;
+  /** Login name of the issue author (excluded from "external" set if it equals
+   *  the repo owner or the configured self-login). */
+  author: string;
+  /** Whether GitHub flagged this user as a bot (login ending in `[bot]`). */
+  authorIsBot: boolean;
+  /** ISO 8601 of issue creation. */
+  createdAt: string;
+  /** Comment count, useful for "needs reply" surfacing. */
+  comments: number;
+  /** Label names attached to the issue. */
+  labels: string[];
+  /** Issue state — we keep only "open" issues in the digest, but the field is
+   *  preserved for future filtering. */
+  state: "open" | "closed";
+}
+
+export interface RecentIssueDigest {
+  /** Repo slug ("owner/name"). */
+  repo: string;
+  /**
+   * Open issues authored by external contributors (i.e., not the repo owner
+   * and not the configured self-login), created within the last `windowDays`.
+   * Sorted newest first, capped at 20.
+   */
+  external: RecentIssue[];
+  /** Open issues authored by the repo owner / self-login (informational). */
+  selfAuthored: number;
+  /** Total open issues in the window across both buckets, before capping. */
+  totalInWindow: number;
+  /** Window length in days the digest covers. */
+  windowDays: number;
+  /** ISO timestamp of the scan. */
+  lastChecked: string;
+}
+
 /* ── Metadatafication Phase ── */
 
 export type MetadataficationPhase = "active-tool" | "assisted-tool" | "infrastructure-metadata";
@@ -282,6 +325,7 @@ export interface ProjectHealth {
   contextAttention: ContextAttention | null;
   agentAuthorship: AgentAuthorship | null;
   metadatafication: MetadataficationStatus | null;
+  recentIssues: RecentIssueDigest | null;
   grade: HealthGrade;
   recommendation: Recommendation;
   reasons: string[];

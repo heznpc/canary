@@ -3,8 +3,9 @@ import {
   buildScanProjectPayload,
   buildScanAllPayload,
   buildUsagePayload,
+  buildUpdateActionsPayload,
 } from "../mcp/adapters";
-import type { ProjectHealth, DashboardData, AnthropicUsage } from "../lib/types";
+import type { ProjectHealth, DashboardData, AnthropicUsage, UpdateAction } from "../lib/types";
 
 function makeHealth(overrides: Partial<ProjectHealth> = {}): ProjectHealth {
   return {
@@ -42,6 +43,7 @@ function makeHealth(overrides: Partial<ProjectHealth> = {}): ProjectHealth {
     contextAttention: null,
     agentAuthorship: null,
     metadatafication: null,
+    recentIssues: null,
     scannedAt: "2026-04-22T00:00:00Z",
     grade: "A",
     recommendation: "keep",
@@ -121,6 +123,81 @@ describe("buildScanAllPayload", () => {
     expect(payload.projects).toHaveLength(2);
     expect(payload.projects[0].id).toBe("a");
     expect(payload.summary.total).toBe(2);
+  });
+});
+
+describe("buildUpdateActionsPayload", () => {
+  const baseProject = makeHealth().project;
+
+  function makeAction(overrides: Partial<UpdateAction> = {}): UpdateAction {
+    return {
+      name: "foo",
+      current: "1.0.0",
+      latest: "2.0.0",
+      severity: "major",
+      command: "npm install foo@2.0.0",
+      ...overrides,
+    };
+  }
+
+  it("bucket-counts actions by severity", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [
+        makeAction({ name: "a", severity: "major" }),
+        makeAction({ name: "b", severity: "major" }),
+        makeAction({ name: "c", severity: "minor" }),
+        makeAction({ name: "d", severity: "patch" }),
+      ],
+    });
+    expect(payload.counts).toEqual({ major: 2, minor: 1, patch: 1 });
+    expect(payload.actions).toHaveLength(4);
+  });
+
+  it("surfaces repo + package manager for the LLM to craft PR descriptions", () => {
+    const payload = buildUpdateActionsPayload({
+      project: { ...baseProject, repo: "owner/name" },
+      packageManager: "pnpm",
+      actions: [makeAction()],
+    });
+    expect(payload.repo).toBe("owner/name");
+    expect(payload.packageManager).toBe("pnpm");
+  });
+
+  it("returns zero counts and empty actions when nothing is outdated", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [],
+    });
+    expect(payload.counts).toEqual({ major: 0, minor: 0, patch: 0 });
+    expect(payload.actions).toEqual([]);
+  });
+
+  it("reports null package manager when caller cannot determine one", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: null,
+      actions: [],
+    });
+    expect(payload.packageManager).toBeNull();
+  });
+
+  it("preserves changelog URL and command verbatim", () => {
+    const payload = buildUpdateActionsPayload({
+      project: baseProject,
+      packageManager: "npm",
+      actions: [
+        makeAction({
+          name: "next",
+          command: "npm install next@16.2.0",
+          changelogUrl: "https://github.com/vercel/next.js/releases",
+        }),
+      ],
+    });
+    expect(payload.actions[0].command).toBe("npm install next@16.2.0");
+    expect(payload.actions[0].changelogUrl).toBe("https://github.com/vercel/next.js/releases");
   });
 });
 

@@ -38,6 +38,29 @@ Before opening a PR:
 - Logger lives at `lib/logger.ts` — emit structured JSON, not free-form strings.
 - Don't hardcode user-specific data in `lib/`. It belongs in `canary.config.ts`.
 
+## Merging
+
+Once the PR is approved and CI is green, merge with:
+
+```bash
+gh pr merge <N> --squash --auto
+```
+
+Note: **`--delete-branch` is intentionally omitted.** The combined `gh pr merge --squash --auto --delete-branch` runs branch cleanup as a client-side step (`git push origin --delete` + `git branch -D`) that fails silently when the branch is held by a sibling git worktree. The server-side merge still succeeds, but the orphan remote branch accumulates — a real failure mode the paper documents in §5.4 ("command-cleanup-leakage"). This repo's own §5.4 vignette uses zero stale branches as the inverse-case datapoint, so the workflow is intentionally protective.
+
+After the PR is merged, do branch cleanup in two explicit steps:
+
+```bash
+git fetch origin --prune                     # surfaces any orphan refs
+git push origin --delete <feature-branch>    # only if --prune flagged it as stuck on remote
+git branch -D <feature-branch>               # local; fails noisily if a worktree holds it
+git worktree list                            # confirm no orphan worktree was left behind
+```
+
+If `git branch -D` fails, run `git worktree list` and `git worktree remove <path>` on the holding worktree before retrying. Do not work around the failure; the failure is the signal.
+
+For agents operating across multiple repos in one session, prefer the main checkout for PR work and reserve `.claude/worktrees/` for genuine parallel-isolation needs. Each worktree is one more place a future merge may try to clean up — keep the topology shallow.
+
 ## Reporting issues
 
 Open a GitHub issue with steps to reproduce. For security issues, see `SECURITY.md`.

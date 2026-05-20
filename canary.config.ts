@@ -7,8 +7,18 @@ import type { SyncConfig } from "./lib/sync/types";
  *
  * See lib/projects.ts for the full ProjectConfig type definition.
  *
- * The default entry below is Canary scanning itself — eat your own dogfood.
- * Replace or extend with your own projects as needed.
+ * The default entries below are the author's own portfolio (canary, AirMCP,
+ * ploidy-research). For your own use, replace these with the repos you want
+ * monitored. Minimum field set is `id`, `name`, `description`, `repo`,
+ * `tag`, `stack`, `deployTarget`, `category`. Paper-category projects also
+ * need `keywords` and `researchArea` (validated by __tests__/projects.test.ts).
+ *
+ * Tips:
+ *   - GITHUB_TOKEN env var is effectively required for portfolios with
+ *     more than ~3 projects (60 req/h unauthenticated GitHub API limit).
+ *   - For push-leakage measurements, set CANARY_SELF_LOGIN if your local
+ *     git author email differs from the repo owner; otherwise the scanner
+ *     auto-derives the self-login from each repo's owner.
  */
 const projects: ProjectConfig[] = [
   {
@@ -21,6 +31,73 @@ const projects: ProjectConfig[] = [
     deployTarget: "github-pages",
     deployUrl: "https://heznpc.github.io/canary",
     category: "app",
+  },
+  {
+    id: "airmcp",
+    name: "AirMCP",
+    description: "MCP server bringing macOS-native tools (Calendar, Reminders, Notes, Shortcuts, Health) to Claude Desktop and CLI",
+    repo: "heznpc/AirMCP",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "none",
+    category: "mcp",
+  },
+  {
+    id: "ploidy",
+    name: "Ploidy",
+    description: "Asymmetric-renewal session-composition protocol — accumulation–renewal dilemma operationalized at the LLM context-window level",
+    repo: "heznpc/ploidy-research",
+    tag: "research",
+    stack: ["python", "latex"],
+    deployTarget: "none",
+    category: "paper",
+    keywords: ["session-composition", "asymmetric-renewal", "context-window"],
+    researchArea: "AI / LLM systems",
+  },
+  // ── starter-series ──────────────────────────────────────────────────────
+  // Companion scaffolding line in the indie+agent toolkit. Adding a curated
+  // subset (4 of 13) so the dashboard reflects the toolkit identity without
+  // exhausting GitHub API rate limits.
+  {
+    id: "create-starter",
+    name: "create-starter",
+    description: "Meta-scaffolder: spawns new projects from any starter-series template with sane indie+agent defaults",
+    repo: "starter-series/create-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    npmPackage: "create-starter",
+    category: "infra",
+  },
+  {
+    id: "mcp-server-starter",
+    name: "mcp-server-starter",
+    description: "Node/TypeScript scaffolding for new MCP servers — ships with canary integration template, smoke test, and bundle pipeline",
+    repo: "starter-series/mcp-server-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    category: "mcp",
+  },
+  {
+    id: "python-mcp-server-starter",
+    name: "python-mcp-server-starter",
+    description: "Python (FastMCP) scaffolding for new MCP servers — sibling of mcp-server-starter for the Python ecosystem",
+    repo: "starter-series/python-mcp-server-starter",
+    tag: "active",
+    stack: ["python"],
+    deployTarget: "none",
+    category: "mcp",
+  },
+  {
+    id: "npm-package-starter",
+    name: "npm-package-starter",
+    description: "Node/TypeScript scaffolding for publishable npm packages — opinionated for indie-scale shipping",
+    repo: "starter-series/npm-package-starter",
+    tag: "active",
+    stack: ["typescript", "node"],
+    deployTarget: "npm",
+    category: "infra",
   },
 ];
 

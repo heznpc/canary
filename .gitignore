@@ -49,8 +49,21 @@ paper/*.blg
 paper/*.log
 paper/*.out
 paper/*.pdf
+paper/*.toc
 paper/missfont.log
+submissions/**/*.aux
+submissions/**/*.bbl
+submissions/**/*.blg
+submissions/**/*.log
+submissions/**/*.out
+submissions/**/*.toc
+submissions/**/*.fls
+submissions/**/*.fdb_latexmk
+submissions/**/main.pdf
+submissions/**/missfont.log
 
-CLAUDE.md
 .claude/
 mcp/dist/
+
+# push-leakage detail snapshots (contain absolute paths + commit subjects)
+experiments/results/raw/

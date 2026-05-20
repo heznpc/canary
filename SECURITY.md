@@ -40,4 +40,5 @@ Out of scope:
 - Circuit breaker on all GitHub API calls
 - Input validation on dynamic API routes (`app/api/projects/[id]`, `app/api/releases`)
 - All outbound requests are wrapped with timeouts
+- All outbound requests go through `fetchWithTimeout` (`lib/scanners/version-utils.ts`), which enforces an explicit host allow-list plus an `https:`-only protocol gate. Defense-in-depth against SSRF; cloud-metadata IPs (`169.254.169.254`), `localhost`, and `127.0.0.1` are unconditionally rejected. The list lives in code so new scanners that add a host fail closed at runtime until the list is updated and a corresponding unit test added (`__tests__/version-utils.test.ts`).
 - No secrets are persisted to disk; tokens are read from env at request time

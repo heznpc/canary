@@ -1,0 +1,143 @@
+name: Paper
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'paper/**'
+      - 'submissions/**'
+      - '.github/workflows/paper.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'paper/**'
+      - 'submissions/**'
+      - '.github/workflows/paper.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build canonical paper + validate citations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+
+      - name: Compile LaTeX (multi-pass with bibtex)
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
+        with:
+          root_file: main.tex
+          working_directory: paper
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -interaction=nonstopmode
+
+      - name: Fail on undefined citations or references
+        run: |
+          set -eo pipefail
+          log=paper/main.log
+          if [ ! -f "$log" ]; then
+            echo "::error::paper/main.log not found — LaTeX build did not produce one"
+            exit 1
+          fi
+          if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
+            echo "::error::Undefined citations or references in paper/main.log"
+            exit 1
+          fi
+          echo "no undefined citations or references"
+
+      - name: Upload PDF artifact
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
+        with:
+          name: canary-paper-${{ github.sha }}
+          path: paper/main.pdf
+          retention-days: 14
+
+  # Detect which submission directories exist, emit a JSON array consumed by
+  # the matrix-driven build-submissions job below. Replaces the prior
+  # hardcoded `root_file: submissions/onward-essays-2026/main.tex` which
+  # would silently skip a second submission once one is added.
+  detect-submissions:
+    name: Detect submission directories
+    runs-on: ubuntu-latest
+    outputs:
+      submissions: ${{ steps.list.outputs.submissions }}
+      any: ${{ steps.list.outputs.any }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+      - id: list
+        run: |
+          set -eo pipefail
+          shopt -s nullglob
+          subs=( submissions/*/main.tex )
+          if [ ${#subs[@]} -eq 0 ]; then
+            echo "no submissions/*/main.tex found — skipping"
+            echo "any=false" >> "$GITHUB_OUTPUT"
+            echo "submissions=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "any=true" >> "$GITHUB_OUTPUT"
+          # Emit a compact JSON array of directory paths, e.g.
+          # ["submissions/onward-essays-2026","submissions/chi-2027"]
+          arr="["
+          first=1
+          for f in "${subs[@]}"; do
+            dir="${f%/main.tex}"
+            if [ $first -eq 1 ]; then first=0; else arr+=","; fi
+            arr+="\"$dir\""
+          done
+          arr+="]"
+          echo "submissions=$arr" >> "$GITHUB_OUTPUT"
+          echo "Detected submissions: $arr"
+
+  build-submissions:
+    name: Build venue submission + validate citations
+    needs: detect-submissions
+    if: needs.detect-submissions.outputs.any == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        submission: ${{ fromJson(needs.detect-submissions.outputs.submissions) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+
+      - name: Compile ${{ matrix.submission }} (multi-pass with bibtex)
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
+        with:
+          root_file: main.tex
+          working_directory: ${{ matrix.submission }}
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -interaction=nonstopmode
+
+      - name: Fail on undefined citations or references
+        run: |
+          set -eo pipefail
+          log="${{ matrix.submission }}/main.log"
+          if [ ! -f "$log" ]; then
+            echo "::error::$log not found — LaTeX build did not produce one"
+            exit 1
+          fi
+          if grep -E "Citation .* undefined|didn't find a database entry|Reference .* undefined" "$log"; then
+            echo "::error::Undefined citations or references in $log"
+            exit 1
+          fi
+          echo "no undefined citations or references in $log"
+
+      - name: Compute slash-free artifact name
+        id: artifact_name
+        run: |
+          safe="${{ matrix.submission }}"
+          # actions/upload-artifact rejects '/' in artifact names.
+          safe="${safe//\//-}"
+          echo "name=canary-${safe}-${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PDF
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
+        with:
+          name: ${{ steps.artifact_name.outputs.name }}
+          path: ${{ matrix.submission }}/main.pdf
+          retention-days: 14
