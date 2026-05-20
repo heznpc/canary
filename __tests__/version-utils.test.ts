@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { compareVersions, parseRepoSlug, batchCheckDeps } from "../lib/scanners/version-utils";
+import { compareVersions, parseRepoSlug, batchCheckDeps, fetchWithTimeout, DisallowedFetchError, ALLOWED_HOSTS } from "../lib/scanners/version-utils";
 import type { DependencyInfo } from "../lib/types";
 
 describe("parseRepoSlug", () => {
@@ -118,5 +118,51 @@ describe("batchCheckDeps", () => {
     expect(result.total).toBe(3);
     expect(result.deps).toHaveLength(0);
     expect(result.outdatedMajor).toBe(0);
+  });
+});
+
+describe("fetchWithTimeout host allow-list (SSRF defense-in-depth)", () => {
+  it("rejects invalid URL strings without making a request", async () => {
+    await expect(fetchWithTimeout("not a url")).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects http:// (downgrade) and any non-https protocol", async () => {
+    await expect(fetchWithTimeout("http://api.github.com/repos/x/y")).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("file:///etc/passwd")).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("ftp://api.github.com/x")).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects unknown hosts even over https", async () => {
+    await expect(fetchWithTimeout("https://attacker.example.com/x")).rejects.toBeInstanceOf(DisallowedFetchError);
+    // Cloud metadata endpoint — the canonical SSRF target. Must be blocked.
+    await expect(fetchWithTimeout("https://169.254.169.254/latest/meta-data/")).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects localhost and link-local addresses", async () => {
+    await expect(fetchWithTimeout("https://localhost/x")).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://127.0.0.1/x")).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("includes every host that any scanner module actually calls", () => {
+    // Smoke test against host drift: if a scanner adds a new host without
+    // listing it here, this test stays green but the fetch fails at runtime.
+    // Conversely, removing a host from ALLOWED_HOSTS without removing the
+    // scanner that uses it surfaces in the scanner's own tests.
+    const required = [
+      "api.github.com",
+      "raw.githubusercontent.com",
+      "registry.npmjs.org",
+      "pypi.org",
+      "pub.dev",
+      "api.osv.dev",
+      "endoflife.date",
+      "api.semanticscholar.org",
+      "doi.org",
+      "chromewebstore.google.com",
+      "api.anthropic.com",
+    ];
+    for (const host of required) {
+      expect(ALLOWED_HOSTS.has(host)).toBe(true);
+    }
   });
 });

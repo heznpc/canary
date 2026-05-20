@@ -68,7 +68,11 @@ async function checkChromeStore(project: ProjectConfig, base: DeployStatus): Pro
 
 async function probeUrl(url: string, base: DeployStatus): Promise<DeployStatus> {
   try {
-    const res = await fetchWithTimeout(url, { method: "HEAD", redirect: "follow" });
+    // deploy URLs are user-configured (Vercel apps, GitHub Pages sites,
+    // arbitrary self-hosted endpoints) so the host allow-list does not
+    // apply — opt in to allowAnyHost. The FORBIDDEN_HOSTS deny-list
+    // (cloud metadata + localhost) still applies as a safety floor.
+    const res = await fetchWithTimeout(url, { method: "HEAD", redirect: "follow", allowAnyHost: true });
     return { ...base, status: res.ok ? "up" : "down", url };
   } catch (err) {
     logger.warn("deploy: probe failed", {
