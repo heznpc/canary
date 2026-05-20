@@ -53,3 +53,17 @@ Out of scope: push automation. The tool measures and reports; auto-push remains 
 **Why**: The seed and the multiple-comparisons gap are the kind of issue any first-round reviewer would flag before reading the substantive argument. The Zenodo placeholder is a footgun against the paper's own reproducibility claim — leaving it unannotated meant readers couldn't tell whether the DOI was pending or genuinely missing. Together, the three fixes don't change a single conclusion; they make the existing conclusions auditable.
 
 Out of scope for this sweep (handled as Major / Minor in the audit, not yet decided): formal falsifying-condition statement (§3.1), cross-tool external-validity expansion (Cursor/Codex transcript schema), independent governance-classification rater.
+
+---
+
+## 2026-05-21 -- First post-fix experiment run, new findings folded into paper
+
+**Context**: After the Critical+Major sweep landed (PR #52), we ran two experiments: statistical-tests (verifying seed + Holm + leave-one-out sensitivity all wired up) and push-leakage (an 11-day follow-up on the §5.4 vignette).
+
+**Decision**: Surface two new findings in the paper:
+1. **Pivotal count.** The leave-one-out sensitivity check reports 12 of 21 reclassifications would flip the 0.05 decision in at least one of the CAM / ACR tests. §6.5 now quotes that count directly so reviewers see the dependency without having to open the JSON.
+2. **Eleven-day follow-up trajectory.** PLR_agent ran 40.4% (baseline) → 0% (post-intervention) → 1.7% (11 days later). §5.4 gains a new paragraph "Eleven-day follow-up" that records the trajectory, the UCP max=74d signal, and the cross-only-attribution shift from 87% to 8.5%.
+
+**Why**: Both are direct outputs of code we just shipped. Leaving them out of the paper would mean publishing instruments that the author doesn't trust enough to cite. Folding them in is also the cleanest way to demonstrate that the recovery claim in §5.4 is not a one-shot artefact.
+
+Out of scope for this run: re-running CAM / ACR / cam-temporal / cam-loc / adoption-timeline. The April 2026 snapshots remain canonical for the Zenodo deposit; a quarterly refresh belongs to the next revision round.
