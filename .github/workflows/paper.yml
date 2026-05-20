@@ -23,10 +23,10 @@ jobs:
     name: Build canonical paper + validate citations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
 
       - name: Compile LaTeX (multi-pass with bibtex)
-        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
         with:
           root_file: main.tex
           working_directory: paper
@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload PDF artifact
         if: success()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
         with:
           name: canary-paper-${{ github.sha }}
           path: paper/main.pdf
@@ -66,7 +66,7 @@ jobs:
       submissions: ${{ steps.list.outputs.submissions }}
       any: ${{ steps.list.outputs.any }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
       - id: list
         run: |
           set -eo pipefail
@@ -102,10 +102,10 @@ jobs:
       matrix:
         submission: ${{ fromJson(needs.detect-submissions.outputs.submissions) }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4 latest
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
 
       - name: Compile ${{ matrix.submission }} (multi-pass with bibtex)
-        uses: xu-cheng/latex-action@e2f99d4b3685b0da93f97e1b86ad8fab81105098 # v3 latest
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
         with:
           root_file: main.tex
           working_directory: ${{ matrix.submission }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: Upload PDF
         if: success()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 latest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7 latest
         with:
           name: ${{ steps.artifact_name.outputs.name }}
           path: ${{ matrix.submission }}/main.pdf
