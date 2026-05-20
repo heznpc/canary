@@ -1,0 +1,47 @@
+# Code ownership for canary
+#
+# This is a solo-developer repository, so every path resolves to a single
+# owner (@heznpc). CODEOWNERS still earns its keep here because it:
+#   1. Makes the paper-side / service-side / governance-side split that
+#      CLAUDE.md describes explicit and enforceable by branch-protection
+#      "Require review from Code Owners" — a future external contributor
+#      gets routed for review just like an internal change would.
+#   2. Pairs with the §5.4 push-leakage thesis: when ownership is encoded
+#      in a file the operator does not have to remember, ownership-related
+#      mistakes (cross-bounded-context accidental merges) become invisible
+#      to the operator in the same way push-leakage does — surfacing them
+#      via tooling is the fix.
+#
+# Order matters: later patterns override earlier ones.
+
+# Default owner — fallback for any path not matched below.
+*                       @heznpc
+
+# Research / paper-side bounded contexts (CLAUDE.md "paper edit and a code
+# edit, never just one").
+/paper/                 @heznpc
+/experiments/           @heznpc
+/literature/            @heznpc
+/planning/              @heznpc
+/submissions/           @heznpc
+/CITATION.cff           @heznpc
+/.zenodo.json           @heznpc
+
+# Service-side bounded contexts.
+/app/                   @heznpc
+/components/            @heznpc
+/lib/                   @heznpc
+/mcp/                   @heznpc
+/public/                @heznpc
+/scripts/               @heznpc
+/landing/               @heznpc
+/canary.config.ts       @heznpc
+
+# Governance surface — workflows, secrets policy, security policy, this
+# file itself.
+/.github/               @heznpc
+/SECURITY.md            @heznpc
+/CONTRIBUTING.md        @heznpc
+/CHANGELOG.md           @heznpc
+/CLAUDE.md              @heznpc
+/AGENTS.md              @heznpc
