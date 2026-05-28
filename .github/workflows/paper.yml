@@ -71,25 +71,51 @@ jobs:
         run: |
           set -eo pipefail
           shopt -s nullglob
+
+          # Reject any submission directory name that contains characters
+          # actions/upload-artifact rejects (`" : * ? < > | \` or CR/LF) or
+          # that would corrupt the JSON we emit to GITHUB_OUTPUT. Done up
+          # front so a typo'd dirname fails loud with a clear message
+          # rather than producing malformed JSON / broken artifact names
+          # downstream. (2026-05-29 code review, findings 10 + 13.)
           subs=( submissions/*/main.tex )
           if [ ${#subs[@]} -eq 0 ]; then
             echo "no submissions/*/main.tex found — skipping"
-            echo "any=false" >> "$GITHUB_OUTPUT"
-            echo "submissions=[]" >> "$GITHUB_OUTPUT"
+            {
+              echo "any=false"
+              # Use heredoc delimiter even for the empty array so future
+              # edits don't accidentally drop the safe-form below.
+              echo "submissions<<JSON_EOF"
+              echo "[]"
+              echo "JSON_EOF"
+            } >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "any=true" >> "$GITHUB_OUTPUT"
-          # Emit a compact JSON array of directory paths, e.g.
-          # ["submissions/onward-essays-2026","submissions/chi-2027"]
-          arr="["
-          first=1
+
           for f in "${subs[@]}"; do
             dir="${f%/main.tex}"
-            if [ $first -eq 1 ]; then first=0; else arr+=","; fi
-            arr+="\"$dir\""
+            case "$dir" in
+              *[\"\\:*?\<\>\|$'\r'$'\n']*)
+                echo "::error::Submission directory name '$dir' contains a character forbidden by actions/upload-artifact or by the JSON output encoding."
+                exit 1
+                ;;
+            esac
           done
-          arr+="]"
-          echo "submissions=$arr" >> "$GITHUB_OUTPUT"
+
+          # Build the JSON array via `jq` so escaping is correct by
+          # construction (handles unusual but legal characters like `&`
+          # or `+`). The validation loop above is the load-bearing safety
+          # check; jq is the encoder.
+          arr=$(printf '%s\n' "${subs[@]%/main.tex}" | jq -R . | jq -sc .)
+
+          # Multi-line heredoc form for $GITHUB_OUTPUT — protects against
+          # any future newline in $arr breaking the KEY=VALUE parser.
+          {
+            echo "any=true"
+            echo "submissions<<JSON_EOF"
+            echo "$arr"
+            echo "JSON_EOF"
+          } >> "$GITHUB_OUTPUT"
           echo "Detected submissions: $arr"
 
   build-submissions:

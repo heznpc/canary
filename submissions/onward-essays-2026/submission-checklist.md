@@ -19,8 +19,12 @@ Tracks pre-submission action items and current status (2026-05-11).
   with single-blind author block (`heznpc`, `Independent`).
 - [x] **Page count under limit.** Onward! Essays caps main content at
   14 pages (refs and appendices unrestricted). Verified `acmart` build
-  produces **13 pages** (CI artifact `canary-submissions-<sha>` on PR
-  #45). No trim required.
+  produces **13 pages**. The CI artifact name was renamed by PR #58 (the
+  dynamic-matrix refactor): each submission now uploads under
+  `canary-<submissions-slug>-<sha>` where `<submissions-slug>` is the
+  matrix path with `/` rewritten to `-`. For this submission the artifact
+  is `canary-submissions-onward-essays-2026-<sha>` on the corresponding
+  PR's Actions run. No trim required.
 - [x] **Bibliography style — `plainnat` is acceptable for first-round
   review.** Onward! Essays prioritises content over typographic
   compliance at submission time; ACM Digital Library's
