@@ -94,7 +94,12 @@ export interface StackVersion {
 
 export interface DeployStatus {
   target: string;
-  status: "up" | "down" | "unknown" | "not-deployed";
+  // "misconfigured" — canary refused to probe the URL because it violates
+  // the fetch policy (non-https protocol, FORBIDDEN host, redirect leaking
+  // to an internal address, etc.). Distinct from "unknown" (network or
+  // timeout error) so the dashboard can tell the two apart and the
+  // operator can see a configuration error vs a deploy outage.
+  status: "up" | "down" | "unknown" | "not-deployed" | "misconfigured";
   url?: string;
   version?: string;
   lastChecked: string;
