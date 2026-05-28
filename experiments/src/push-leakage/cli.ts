@@ -13,6 +13,16 @@
  *
  * It is read-only: never pushes, commits, or mutates any repo. The whole
  * point is to *measure* the leakage, not paper over it (cf. RFC §"Out of scope").
+ *
+ * TODO(market-pulse-2026-05-29): consider adding a token-budget axis
+ * alongside MIP/APL/PLR/UCP. Codex CLI 0.125's reasoning-token usage
+ * reports and Gemini CLI's OpenTelemetry exports give the *agent-side*
+ * budget for each session; pairing them with our per-repo push-leakage
+ * data would expose whether the leakiest portfolios are also the
+ * highest-token-spend ones (testing the "attention budget over-allocates
+ * to *generation* and under-allocates to *propagation*" hypothesis in
+ * paper §5.4). The token data is locally available on the same machine
+ * canary already scans — no new external API needed.
  */
 
 import { writeFileSync, mkdirSync } from "fs";

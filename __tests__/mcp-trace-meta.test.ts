@@ -47,7 +47,7 @@ describe("withTraceMeta — MCP 2026-07-28 RC W3C Trace Context propagation", ()
         },
       },
     );
-    const meta = (reply as { _meta: Record<string, unknown> })._meta;
+    const meta = (reply as { _meta?: Record<string, unknown> })._meta!;
     expect(Object.keys(meta)).toEqual(["traceparent"]);
     expect(meta.progressToken).toBeUndefined();
     expect(meta.secret).toBeUndefined();
@@ -61,7 +61,7 @@ describe("withTraceMeta — MCP 2026-07-28 RC W3C Trace Context propagation", ()
       },
       { _meta: { traceparent: "00-aa-bb-01" } },
     );
-    expect((reply as { _meta: Record<string, unknown> })._meta).toEqual({
+    expect((reply as { _meta?: Record<string, unknown> })._meta).toEqual({
       canaryGeneratedAt: "2026-05-29T00:00:00Z",
       traceparent: "00-aa-bb-01",
     });
