@@ -27,6 +27,9 @@ These features exist for completeness and human-readable surface (the dashboard)
 
 The dashboard is a secondary, human-readable companion. New features ship to the MCP layer first; the dashboard renders them when the cost of a panel is small.
 
+**Position relative to Anthropic Channels / Codex / Gemini built-in tracing.**
+Claude Code's [Channels](https://code.claude.com/docs/en/changelog) observability layer (May 2026), Codex CLI 0.125's reasoning-token reporting, and Gemini CLI's OpenTelemetry trace export all measure the *agent side* of a session: API requests, tool calls, permission waits, hooks, token spend. Canary measures the *operator-machine side* of the same session: which repositories the operator's agent touched (joining `~/.claude/projects/*.jsonl` with local git working-tree state), whether the resulting commits ever reached upstream (push-leakage), and how long the working tree has been dirty (UCP). The two layers are partitioned by what data they see — Channels sees what Anthropic's infrastructure handled, canary sees what stayed on the operator's filesystem. The push-leakage instrument in §5.4 of the paper is by construction in the canary partition because it requires data that none of those tracing layers can reach. We therefore expect serious indie + agent workflows in 2026 H2 to compose both: vendor-side traces for "did my session work correctly?" and canary for "did the work my session produced ever leave my laptop?"
+
 > **Part of the heznpc indie+agent toolkit** — a coherent product line for solo and small-team developers running multiple AI coding agents:
 >
 > - **canary** *(this repo)* — observe: portfolio health, push-leakage, contributor signal
