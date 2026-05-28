@@ -27,6 +27,7 @@ import {
   buildUsagePayload,
   buildUpdateActionsPayload,
 } from "./adapters";
+import { withTraceMeta } from "./trace-meta";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -62,13 +63,14 @@ async function main() {
         "Run canary's full scanner pipeline on one project (deps, vulnerabilities, stack, deploy, CAM/ACR, grade) and return a structured health report.",
       inputSchema: { projectId: z.string().describe("Project ID as defined in canary.config.ts") },
     },
-    async ({ projectId }) => {
+    async ({ projectId }, extra) => {
       const project = projects.find((p) => p.id === projectId);
-      if (!project) return unknownProjectError(projectId);
+      if (!project) return withTraceMeta(unknownProjectError(projectId), extra);
       const health = await scanProject(project);
-      return {
-        content: [{ type: "text", text: JSON.stringify(buildScanProjectPayload(health), null, 2) }],
-      };
+      return withTraceMeta(
+        { content: [{ type: "text", text: JSON.stringify(buildScanProjectPayload(health), null, 2) }] },
+        extra,
+      );
     },
   );
 
@@ -80,11 +82,12 @@ async function main() {
         "Run canary scans across every project in canary.config.ts and return a dashboard summary plus per-project grades.",
       inputSchema: {},
     },
-    async () => {
+    async (extra) => {
       const data = await scanAll();
-      return {
-        content: [{ type: "text", text: JSON.stringify(buildScanAllPayload(data), null, 2) }],
-      };
+      return withTraceMeta(
+        { content: [{ type: "text", text: JSON.stringify(buildScanAllPayload(data), null, 2) }] },
+        extra,
+      );
     },
   );
 
@@ -96,31 +99,37 @@ async function main() {
         "Return the concrete update commands (e.g. `pnpm up foo@1.2.3`) and changelog links for every outdated dependency in one project, grouped by severity. Skips CAM/ACR/scorecard/activity scans for speed.",
       inputSchema: { projectId: z.string().describe("Project ID as defined in canary.config.ts") },
     },
-    async ({ projectId }) => {
+    async ({ projectId }, extra) => {
       const project = projects.find((p) => p.id === projectId);
-      if (!project) return unknownProjectError(projectId);
+      if (!project) return withTraceMeta(unknownProjectError(projectId), extra);
       if (!project.repo) {
-        return errorResponse(`Project '${projectId}' has no GitHub repo configured; nothing to update-scan.`);
+        return withTraceMeta(
+          errorResponse(`Project '${projectId}' has no GitHub repo configured; nothing to update-scan.`),
+          extra,
+        );
       }
       const depResult = await getDependencyHealth(project.repo);
       if (!depResult) {
-        return errorResponse(`No dependency manifest detected for '${projectId}'.`);
+        return withTraceMeta(errorResponse(`No dependency manifest detected for '${projectId}'.`), extra);
       }
       const actions = generateUpdateActions(depResult.health);
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify(
-            buildUpdateActionsPayload({
-              project,
-              packageManager: depResult.health.packageManager,
-              actions,
-            }),
-            null,
-            2,
-          ),
-        }],
-      };
+      return withTraceMeta(
+        {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify(
+              buildUpdateActionsPayload({
+                project,
+                packageManager: depResult.health.packageManager,
+                actions,
+              }),
+              null,
+              2,
+            ),
+          }],
+        },
+        extra,
+      );
     },
   );
 
@@ -140,16 +149,20 @@ async function main() {
           .describe("Window size in days, 1-31. Defaults to 7."),
       },
     },
-    async ({ days }) => {
+    async ({ days }, extra) => {
       const usage = await checkAnthropicUsage(days ?? 7);
       if (!usage) {
-        return errorResponse(
-          "ANTHROPIC_ADMIN_API_KEY is not set or the Admin API request failed. Set the env var and retry.",
+        return withTraceMeta(
+          errorResponse(
+            "ANTHROPIC_ADMIN_API_KEY is not set or the Admin API request failed. Set the env var and retry.",
+          ),
+          extra,
         );
       }
-      return {
-        content: [{ type: "text", text: JSON.stringify(buildUsagePayload(usage), null, 2) }],
-      };
+      return withTraceMeta(
+        { content: [{ type: "text", text: JSON.stringify(buildUsagePayload(usage), null, 2) }] },
+        extra,
+      );
     },
   );
 
@@ -186,7 +199,7 @@ async function main() {
           ),
       },
     },
-    async ({ roots, thresholdDays, top, pathFilter }) => {
+    async ({ roots, thresholdDays, top, pathFilter }, extra) => {
       const scanRoots = (roots && roots.length > 0 ? roots : [join(homedir(), "IdeaProjects")]).map(
         (r) => r,
       );
@@ -215,23 +228,26 @@ async function main() {
           lastSessionEndTs: j.lastSessionEndTs,
           oldestUnpushedTs: j.oldestUnpushedTs,
         }));
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(
-              {
-                generatedAt: portfolio.generatedAt,
-                roots: scanRoots,
-                portfolio,
-                topLeaking: leaking,
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-      };
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(
+                {
+                  generatedAt: portfolio.generatedAt,
+                  roots: scanRoots,
+                  portfolio,
+                  topLeaking: leaking,
+                },
+                null,
+                2,
+              ),
+            },
+          ],
+        },
+        extra,
+      );
     },
   );
 
@@ -258,7 +274,7 @@ async function main() {
           .describe("Restrict to a specific session UUID (overrides sinceHours)."),
       },
     },
-    async ({ sinceHours, root, sessionId }) => {
+    async ({ sinceHours, root, sessionId }, extra) => {
       const projectsDir = join(homedir(), ".claude", "projects");
       const cutoff = Date.now() - (sinceHours ?? 24) * 60 * 60 * 1000;
       const matches: ReturnType<typeof scanSessionFile>[] = [];
@@ -267,7 +283,7 @@ async function main() {
       try {
         projDirs = readdirSync(projectsDir);
       } catch (e) {
-        return errorResponse(`Cannot read ${projectsDir}: ${(e as Error).message}`);
+        return withTraceMeta(errorResponse(`Cannot read ${projectsDir}: ${(e as Error).message}`), extra);
       }
       for (const dir of projDirs) {
         let entries: string[] = [];
@@ -317,38 +333,41 @@ async function main() {
 
       const leakingTouched = touchedReposState.filter((r) => (r.ahead ?? 0) > 0);
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(
-              {
-                generatedAt: new Date().toISOString(),
-                sessionId: sessionId ?? null,
-                sinceHours: sinceHours ?? 24,
-                sessionsScanned: scanned,
-                sessionsMatched: matches.length,
-                touchedRepoCount: touchedReposState.length,
-                leakingTouchedCount: leakingTouched.length,
-                leakingTouched,
-                allTouched: touchedReposState,
-                sessions: matches.map((s) => ({
-                  sessionId: s.sessionId,
-                  cwd: s.cwd,
-                  startTs: s.startTs,
-                  endTs: s.endTs,
-                  bashCount: s.bashCount,
-                  gitCommandCount: s.gitCommandCount,
-                  pushCommandCount: s.pushCommandCount,
-                  touchedRepos: s.touchedRepos,
-                })),
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-      };
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(
+                {
+                  generatedAt: new Date().toISOString(),
+                  sessionId: sessionId ?? null,
+                  sinceHours: sinceHours ?? 24,
+                  sessionsScanned: scanned,
+                  sessionsMatched: matches.length,
+                  touchedRepoCount: touchedReposState.length,
+                  leakingTouchedCount: leakingTouched.length,
+                  leakingTouched,
+                  allTouched: touchedReposState,
+                  sessions: matches.map((s) => ({
+                    sessionId: s.sessionId,
+                    cwd: s.cwd,
+                    startTs: s.startTs,
+                    endTs: s.endTs,
+                    bashCount: s.bashCount,
+                    gitCommandCount: s.gitCommandCount,
+                    pushCommandCount: s.pushCommandCount,
+                    touchedRepos: s.touchedRepos,
+                  })),
+                },
+                null,
+                2,
+              ),
+            },
+          ],
+        },
+        extra,
+      );
     },
   );
 
@@ -379,13 +398,13 @@ async function main() {
           .describe("Restrict to one project ID from canary.config.ts. If omitted, scans all configured projects."),
       },
     },
-    async ({ windowDays, top, projectId }) => {
+    async ({ windowDays, top, projectId }, extra) => {
       const days = windowDays ?? 30;
       const limit = top ?? 20;
       const filtered = projectId
         ? projects.filter((p) => p.id === projectId)
         : projects;
-      if (projectId && filtered.length === 0) return unknownProjectError(projectId);
+      if (projectId && filtered.length === 0) return withTraceMeta(unknownProjectError(projectId), extra);
       const repoProjects = filtered.filter((p) => p.repo);
       const digests = await Promise.all(
         repoProjects.map((p) => checkRecentIssues(p.repo!, { windowDays: days })),
@@ -413,28 +432,31 @@ async function main() {
         }
       }
       allIssues.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(
-              {
-                generatedAt: new Date().toISOString(),
-                windowDays: days,
-                totals: {
-                  reposScanned: digests.filter(Boolean).length,
-                  externalIssues: totalExternal,
-                  selfAuthored: totalSelfAuthored,
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(
+                {
+                  generatedAt: new Date().toISOString(),
+                  windowDays: days,
+                  totals: {
+                    reposScanned: digests.filter(Boolean).length,
+                    externalIssues: totalExternal,
+                    selfAuthored: totalSelfAuthored,
+                  },
+                  perRepo: perRepo.sort((a, b) => b.external - a.external),
+                  top: allIssues.slice(0, limit),
                 },
-                perRepo: perRepo.sort((a, b) => b.external - a.external),
-                top: allIssues.slice(0, limit),
-              },
-              null,
-              2,
+                null,
+                2,
             ),
           },
         ],
-      };
+      },
+      extra,
+    );
     },
   );
 
