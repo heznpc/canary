@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { compareVersions, parseRepoSlug, batchCheckDeps, fetchWithTimeout, DisallowedFetchError, ALLOWED_HOSTS } from "../lib/scanners/version-utils";
+import { compareVersions, parseRepoSlug, batchCheckDeps, fetchWithTimeout, DisallowedFetchError, ALLOWED_HOSTS, isForbiddenHost } from "../lib/scanners/version-utils";
 import type { DependencyInfo } from "../lib/types";
 
 describe("parseRepoSlug", () => {
@@ -141,6 +141,78 @@ describe("fetchWithTimeout host allow-list (SSRF defense-in-depth)", () => {
   it("rejects localhost and link-local addresses", async () => {
     await expect(fetchWithTimeout("https://localhost/x")).rejects.toBeInstanceOf(DisallowedFetchError);
     await expect(fetchWithTimeout("https://127.0.0.1/x")).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  // ------------------------------------------------------------------
+  // Findings from the 2026-05-29 5-angle code review.
+  // ------------------------------------------------------------------
+
+  it("rejects IPv6 loopback with brackets (review finding 3)", async () => {
+    // URL.hostname returns `[::1]` (brackets) — pre-fix the set lookup
+    // against the literal `::1` missed this and IPv6 loopback bypassed
+    // the deny-list whenever allowAnyHost was set.
+    await expect(fetchWithTimeout("https://[::1]/x", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://[::]/x", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects IPv4-mapped IPv6 loopback (review finding 3)", async () => {
+    // Node parses `https://[::ffff:127.0.0.1]/` with hostname
+    // `[::ffff:7f00:1]` — neither matches the literal entries. The hex
+    // form must be unwrapped and the embedded IPv4 re-checked.
+    await expect(fetchWithTimeout("https://[::ffff:7f00:1]/x", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects RFC1918 private ranges (review finding 6)", async () => {
+    // FORBIDDEN_HOSTS used to be 6 literal strings; allowAnyHost callers
+    // could probe the corporate LAN through them.
+    await expect(fetchWithTimeout("https://10.0.0.1/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://192.168.1.1/admin", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://172.16.0.5/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://172.31.255.255/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    // 172.15 and 172.32 are PUBLIC ranges — verify the boundary check
+    // doesn't over-block.
+    expect(isForbiddenHost("172.15.0.1")).toBe(false);
+    expect(isForbiddenHost("172.32.0.1")).toBe(false);
+  });
+
+  it("rejects link-local 169.254/16 broadly, not just the metadata IP (review finding 6)", async () => {
+    // Pre-fix, only 169.254.169.254 was blocked. Any other link-local
+    // address (APIPA range, Kubernetes node-local DNS, etc.) was reachable.
+    await expect(fetchWithTimeout("https://169.254.1.2/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    await expect(fetchWithTimeout("https://169.254.169.253/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects additional cloud metadata endpoints (review finding 6)", async () => {
+    await expect(fetchWithTimeout("https://metadata.google.internal/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    // Alibaba ECS
+    await expect(fetchWithTimeout("https://100.100.100.200/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    // Oracle OCI
+    await expect(fetchWithTimeout("https://192.0.0.192/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+    // Azure metadata DNS name
+    await expect(fetchWithTimeout("https://metadata.azure.com/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects `0` hostname (Linux resolves to 0.0.0.0)", async () => {
+    await expect(fetchWithTimeout("https://0/", { allowAnyHost: true })).rejects.toBeInstanceOf(DisallowedFetchError);
+  });
+
+  it("rejects IPv6 ULA (fc00::/7) and link-local (fe80::/10) ranges", async () => {
+    expect(isForbiddenHost("fc00::1")).toBe(true);
+    expect(isForbiddenHost("fd12:3456:789a::1")).toBe(true);
+    expect(isForbiddenHost("fe80::1")).toBe(true);
+    expect(isForbiddenHost("febc::1")).toBe(true);
+    // fc/fd, fe8x-feBx — neighbours that should NOT match.
+    expect(isForbiddenHost("ff00::1")).toBe(false);
+    expect(isForbiddenHost("fec0::1")).toBe(false);
+  });
+
+  it("DisallowedFetchError serializes with name, message, reason, url (review finding 14)", () => {
+    const e = new DisallowedFetchError("non-https protocol http:", "http://x");
+    const json = JSON.parse(JSON.stringify(e));
+    expect(json.name).toBe("DisallowedFetchError");
+    expect(json.message).toContain("non-https protocol");
+    expect(json.reason).toBe("non-https protocol http:");
+    expect(json.url).toBe("http://x");
   });
 
   it("includes every host that any scanner module actually calls", () => {
