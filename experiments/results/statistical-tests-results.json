@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-20T17:52:39.218Z",
+  "timestamp": "2026-05-28T15:16:43.553Z",
   "seed": 20260521,
   "bootstrap": {
     "nIterations": 10000,
@@ -28,7 +28,7 @@
           0,
           0.052225194552529185
         ],
-        "se": 0.014767063902528937
+        "se": 0.014676981208599369
       },
       "AI-adjacent": {
         "n": 3,
@@ -37,34 +37,34 @@
           0.01729106628242075,
           0.03773584905660377
         ],
-        "se": 0.005318386309429903
+        "se": 0.005364092819142962
       },
       "Traditional (all)": {
         "n": 21,
         "mean": 0.007943405308374204,
         "ci95": [
-          0.0021419272963857823,
-          0.0158303132942469
+          0.0021246011774490045,
+          0.015785042674439358
         ],
-        "se": 0.003605599181304419
+        "se": 0.0035699446057961214
       },
       "Developer-led": {
         "n": 10,
         "mean": 0.01551574339303699,
         "ci95": [
-          0.003993777047870198,
-          0.030224473707011763
+          0.004198267455826695,
+          0.029735340438256253
         ],
-        "se": 0.006796764218387796
+        "se": 0.0066518672680483835
       },
       "Foundation-governed": {
         "n": 11,
         "mean": 0.001059461595044396,
         "ci95": [
           0,
-          0.0027506532801540367
+          0.002496759475030023
         ],
-        "se": 0.000710495892898274
+        "se": 0.0007112039467972096
       }
     },
     "mannWhitneyU": {
@@ -136,10 +136,10 @@
         "n": 8,
         "mean": 0.208651296174246,
         "ci95": [
-          0.05149448419797256,
-          0.3983340133278934
+          0.05474302744039586,
+          0.40054412641621945
         ],
-        "se": 0.08914340142288009
+        "se": 0.08957749042816708
       },
       "AI-adjacent": {
         "n": 3,
@@ -148,25 +148,25 @@
           0.01,
           0.09433962264150945
         ],
-        "se": 0.020595582231081305
+        "se": 0.020640352768734976
       },
       "Traditional (all)": {
         "n": 21,
         "mean": 0.049616620076082946,
         "ci95": [
-          0.012019061218896373,
-          0.10882137336912209
+          0.012740639778068552,
+          0.11026870800041688
         ],
-        "se": 0.026281025660492282
+        "se": 0.026565483759108728
       },
       "Developer-led": {
         "n": 10,
         "mean": 0.10042359414289655,
         "ci95": [
-          0.027362133206356765,
-          0.21362359414289656
+          0.027432807570977918,
+          0.21121060712990952
         ],
-        "se": 0.05142493917032282
+        "se": 0.05070343962441655
       },
       "Foundation-governed": {
         "n": 11,
@@ -175,7 +175,7 @@
           0.0014545454545454547,
           0.005604142692750288
         ],
-        "se": 0.0010673168802548538
+        "se": 0.0010684882054086068
       }
     },
     "mannWhitneyU": {
@@ -271,7 +271,11 @@
   "sensitivity": {
     "method": "leave-one-out reclassification",
     "family": "governance-moderation (CAM + ACR), Holm-corrected",
+    "comparisonSpace": "Holm-vs-Holm (baseline p_holm vs LOO p_holm)",
     "pivotalCount": 12,
+    "camPivotalCount": 10,
+    "acrPivotalCount": 10,
+    "acrRemovalCount": 0,
     "total": 21,
     "rows": [
       {
@@ -282,7 +286,8 @@
         "acrPRaw": 0.0031853249633415626,
         "acrPHolm": 0.006370649926683125,
         "camFlips005": true,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "vercel/next.js",
@@ -292,7 +297,8 @@
         "acrPRaw": 0.06463991061125052,
         "acrPHolm": 0.12927982122250103,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "microsoft/typescript",
@@ -302,7 +308,8 @@
         "acrPRaw": 0.07562202154889697,
         "acrPHolm": 0.11001739808850175,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "tailwindlabs/tailwindcss",
@@ -312,7 +319,8 @@
         "acrPRaw": 0.055008699044250875,
         "acrPHolm": 0.055008699044250875,
         "camFlips005": false,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "shadcn-ui/ui",
@@ -322,7 +330,8 @@
         "acrPRaw": 0.03300614049248174,
         "acrPHolm": 0.038032872162259146,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "sveltejs/svelte",
@@ -332,7 +341,8 @@
         "acrPRaw": 0.039308607756667335,
         "acrPHolm": 0.045914887904934254,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "remix-run/remix",
@@ -342,7 +352,8 @@
         "acrPRaw": 0.015680216772766098,
         "acrPHolm": 0.031360433545532196,
         "camFlips005": true,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "vitejs/vite",
@@ -352,7 +363,8 @@
         "acrPRaw": 0.0466047500359994,
         "acrPHolm": 0.055178866944831206,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "denoland/deno",
@@ -362,7 +374,8 @@
         "acrPRaw": 0.08808144984186583,
         "acrPHolm": 0.08808144984186583,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "pallets/flask",
@@ -372,7 +385,8 @@
         "acrPRaw": 0.0031853249633415626,
         "acrPHolm": 0.006370649926683125,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "nodejs/node",
@@ -382,7 +396,8 @@
         "acrPRaw": 0.011243375399243805,
         "acrPHolm": 0.02248675079848761,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "torvalds/linux",
@@ -392,7 +407,8 @@
         "acrPRaw": 0.062030916925625235,
         "acrPHolm": 0.08951831354201367,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "kubernetes/kubernetes",
@@ -402,7 +418,8 @@
         "acrPRaw": 0.062030916925625235,
         "acrPHolm": 0.08951831354201367,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "golang/go",
@@ -412,7 +429,8 @@
         "acrPRaw": 0.03173388094193763,
         "acrPHolm": 0.06346776188387526,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "rust-lang/rust",
@@ -422,7 +440,8 @@
         "acrPRaw": 0.03173388094193763,
         "acrPHolm": 0.03331257840373114,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "docker/cli",
@@ -432,7 +451,8 @@
         "acrPRaw": 0.024235619153559984,
         "acrPHolm": 0.04847123830711997,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "prometheus/prometheus",
@@ -442,7 +462,8 @@
         "acrPRaw": 0.01665628920186557,
         "acrPHolm": 0.01665628920186557,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "python/cpython",
@@ -452,7 +473,8 @@
         "acrPRaw": 0.01665628920186557,
         "acrPHolm": 0.03331257840373114,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "django/django",
@@ -462,7 +484,8 @@
         "acrPRaw": 0.062030916925625235,
         "acrPHolm": 0.062030916925625235,
         "camFlips005": false,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "spring-projects/spring-boot",
@@ -472,7 +495,8 @@
         "acrPRaw": 0.062030916925625235,
         "acrPHolm": 0.08951831354201367,
         "camFlips005": true,
-        "acrFlips005": true
+        "acrFlips005": true,
+        "acrFlipMeaningful": true
       },
       {
         "repo": "apache/kafka",
@@ -482,7 +506,8 @@
         "acrPRaw": 0.00917512759450001,
         "acrPHolm": 0.01835025518900002,
         "camFlips005": false,
-        "acrFlips005": false
+        "acrFlips005": false,
+        "acrFlipMeaningful": true
       }
     ]
   }

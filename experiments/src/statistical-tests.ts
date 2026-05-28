@@ -70,12 +70,40 @@ const DEVELOPER_LED = new Set([
 
 // --- Statistical utilities ---
 
-// Seeded PRNG (mulberry32). Used by bootstrap so that resampling is
-// deterministic given the same seed — paper §5.5 bootstrap CIs are otherwise
-// non-reproducible at the third decimal. Override via STAT_SEED env var
-// (default 20260521, the pre-experiment-fix date) to vary the seed
-// intentionally; the result file records the seed it ran under.
-const STAT_SEED = Number(process.env.STAT_SEED ?? 20260521);
+// Seeded PRNG (mulberry32). Each bootstrap() call receives its OWN seeded
+// stream derived deterministically from STAT_SEED + a per-call index, so
+// the resampling result for any (data, statFn, label) tuple is fully
+// reproducible regardless of how many other bootstrap calls precede or
+// follow it. Pre-2026-05-29 code shared a single module-scoped rng across
+// every bootstrap call site, which made the console-printed CIs (lines
+// 298, 325) and the JSON-saved CIs (lines 451, 464) for the SAME groups
+// diverge at the third decimal — paper §5.5 cited values were the JSON
+// ones, but reviewers reproducing from the console would have disagreed.
+// Override via STAT_SEED env var (default 20260521, the original
+// pre-experiment-fix date) to vary the seed intentionally; the result
+// file records the seed it ran under.
+function parseStatSeed(): number {
+  const raw = process.env.STAT_SEED;
+  if (raw === undefined) return 20260521;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+    throw new Error(
+      `STAT_SEED must be a finite integer (got ${JSON.stringify(raw)}). ` +
+        `Unset the variable to use the default 20260521, or pass an integer.`,
+    );
+  }
+  // mulberry32 takes a 32-bit unsigned word; integers above 2^32-1 (or below
+  // -2^31) collapse silently via `>>> 0`. Reject upfront so the recorded
+  // seed in the result JSON is the seed actually used.
+  if (parsed < 0 || parsed > 0xffffffff) {
+    throw new Error(
+      `STAT_SEED out of range (must be 0..${0xffffffff}, got ${parsed}).`,
+    );
+  }
+  return parsed;
+}
+const STAT_SEED = parseStatSeed();
+
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return function () {
@@ -86,14 +114,39 @@ function mulberry32(seed: number): () => number {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-const rng = mulberry32(STAT_SEED);
+
+// Per-call rng derivation: hash (STAT_SEED, label) into a 32-bit seed using
+// xmur3 (Bryc 2018), then build a fresh mulberry32 stream. Two callers that
+// pass identical (data, statFn, label) get identical resamples regardless
+// of call order. Different `label` strings give independent streams.
+function xmur3(str: string): number {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  h = Math.imul(h ^ (h >>> 16), 2246822507);
+  h = Math.imul(h ^ (h >>> 13), 3266489909);
+  return (h ^ (h >>> 16)) >>> 0;
+}
 
 function bootstrap(
   data: number[],
   statFn: (arr: number[]) => number,
+  label: string,
   nBoot: number = 10000,
   alpha: number = 0.05,
 ): { estimate: number; ci: [number, number]; se: number } {
+  if (data.length < 2) {
+    // Pre-2026-05-29 the function silently bootstrapped degenerate inputs:
+    // length 0 produced sample=[] then statFn([]) typically returned NaN,
+    // length 1 always resampled the same value (zero variance). Both
+    // poisoned the result file. Callers must filter, but a defensive
+    // throw here surfaces any regression.
+    throw new Error(`bootstrap: data.length must be >= 2 (got ${data.length}; label=${label})`);
+  }
+  const seed = (STAT_SEED ^ xmur3(label)) >>> 0;
+  const rng = mulberry32(seed);
   const estimate = statFn(data);
   const bootStats: number[] = [];
 
@@ -295,7 +348,7 @@ async function main() {
       console.log(`${g.label.padEnd(25)} | ${String(g.data.length).padStart(3)} | ${"(n<2)".padStart(8)} |`);
       continue;
     }
-    const b = bootstrap(g.data, mean);
+    const b = bootstrap(g.data, mean, `cam-mean::${g.label.trim()}`);
     console.log(
       `${g.label.padEnd(25)} | ${String(g.data.length).padStart(3)} | ${formatPct(b.estimate).padStart(8)} | ${formatCI(b.ci).padStart(20)} | ${formatPct(b.se).padStart(8)}`,
     );
@@ -322,7 +375,7 @@ async function main() {
       console.log(`${g.label.padEnd(25)} | ${String(g.data.length).padStart(3)} | ${"(n<2)".padStart(8)} |`);
       continue;
     }
-    const b = bootstrap(g.data, mean);
+    const b = bootstrap(g.data, mean, `acr-mean::${g.label.trim()}`);
     console.log(
       `${g.label.padEnd(25)} | ${String(g.data.length).padStart(3)} | ${formatPct(b.estimate).padStart(8)} | ${formatCI(b.ci).padStart(20)} | ${formatPct(b.se).padStart(8)}`,
     );
@@ -377,12 +430,24 @@ async function main() {
   console.log("  (flip each repo's governance label and re-test)");
   console.log("========================================\n");
   const allTraditional = [...camDevLed, ...camFoundation];
-  const looRows: Array<{
-    repo: string; flippedTo: "dev-led" | "foundation";
+  type LooRow = {
+    repo: string;
+    flippedTo: "dev-led" | "foundation";
     camPRaw: number; camPHolm: number;
     acrPRaw: number; acrPHolm: number;
+    // Flip detection in Holm-vs-Holm space (baseline = full-data Holm p,
+    // comparison = LOO Holm p), so both sides of !== are in the same
+    // multiple-comparison space. The pre-2026-05-29 implementation compared
+    // raw-baseline vs Holm-LOO — repos got flagged "pivotal" whenever the
+    // Holm correction alone crossed 0.05, conflating Holm with LOO.
     camFlips005: boolean; acrFlips005: boolean;
-  }> = [];
+    // ACR sometimes excludes a repo (insufficient activity in 90d window);
+    // for such subjects we cannot actually FLIP its ACR label — the LOO
+    // operation degenerates to a removal. Marked here so the table and the
+    // paper can be honest about which rows measure what.
+    acrFlipMeaningful: boolean;
+  };
+  const looRows: LooRow[] = [];
   for (const subject of allTraditional) {
     const wasDevLed = DEVELOPER_LED.has(subject.repo);
     const flippedTo = wasDevLed ? "foundation" : "dev-led";
@@ -397,6 +462,7 @@ async function main() {
     if (acrSubject) {
       if (wasDevLed) acrFoundationV2.push(acrSubject.acr); else acrDevLedV2.push(acrSubject.acr);
     }
+    const acrFlipMeaningful = acrSubject !== undefined;
 
     const camMWv2 = mannWhitneyU(camDevLedV2, camFoundationV2);
     const acrMWv2 = mannWhitneyU(acrDevLedV2, acrFoundationV2);
@@ -406,20 +472,42 @@ async function main() {
       flippedTo,
       camPRaw: camMWv2.p, camPHolm: camHv2,
       acrPRaw: acrMWv2.p, acrPHolm: acrHv2,
-      camFlips005: (camMW.p < 0.05) !== (camHv2 < 0.05),
-      acrFlips005: (acrMW.p < 0.05) !== (acrHv2 < 0.05),
+      // Holm-vs-Holm comparison: baseline Holm-adjusted p (camPadj/acrPadj
+      // from earlier) against LOO Holm-adjusted p (camHv2/acrHv2). Both
+      // computations apply the same m=2 correction, isolating the LOO
+      // effect.
+      camFlips005: (camPadj < 0.05) !== (camHv2 < 0.05),
+      // ACR flip only meaningful when the subject actually had ACR data to
+      // move; if not, the test simply omits the subject (a removal, not a
+      // flip) — we still record the p-values for completeness but mark the
+      // row so a downstream filter or table can exclude it from the
+      // pivotalCount narrative.
+      acrFlips005: acrFlipMeaningful && (acrPadj < 0.05) !== (acrHv2 < 0.05),
+      acrFlipMeaningful,
     });
   }
-  console.log(`${"Repo".padEnd(28)} ${"Flip→".padEnd(11)} ${"CAM p_holm".padStart(11)} ${"ACR p_holm".padStart(11)} ${"Pivotal?".padStart(10)}`);
-  console.log("-".repeat(75));
+  console.log(
+    `${"Repo".padEnd(28)} ${"Flip→".padEnd(11)} ${"CAM p_holm".padStart(11)} ${"ACR p_holm".padStart(11)} ${"ACR flip?".padStart(10)} ${"Pivotal?".padStart(10)}`,
+  );
+  console.log("-".repeat(86));
   for (const r of looRows) {
     const pivotal = r.camFlips005 || r.acrFlips005 ? "yes" : "no";
+    const acrFlipMark = r.acrFlipMeaningful ? "flip" : "remove";
     console.log(
-      `${r.repo.padEnd(28)} ${r.flippedTo.padEnd(11)} ${r.camPHolm.toFixed(4).padStart(11)} ${r.acrPHolm.toFixed(4).padStart(11)} ${pivotal.padStart(10)}`,
+      `${r.repo.padEnd(28)} ${r.flippedTo.padEnd(11)} ${r.camPHolm.toFixed(4).padStart(11)} ${r.acrPHolm.toFixed(4).padStart(11)} ${acrFlipMark.padStart(10)} ${pivotal.padStart(10)}`,
     );
   }
   const pivotalCount = looRows.filter((r) => r.camFlips005 || r.acrFlips005).length;
-  console.log(`\nPivotal repos (flip changes a 0.05 decision in CAM or ACR): ${pivotalCount} / ${looRows.length}`);
+  const camPivotalCount = looRows.filter((r) => r.camFlips005).length;
+  const acrPivotalCount = looRows.filter((r) => r.acrFlips005).length;
+  const acrRemovalCount = looRows.filter((r) => !r.acrFlipMeaningful).length;
+  console.log(
+    `\nPivotal repos (Holm-vs-Holm flip across 0.05 in CAM OR ACR): ${pivotalCount} / ${looRows.length}`,
+  );
+  console.log(
+    `  by axis: CAM=${camPivotalCount}, ACR=${acrPivotalCount}; ` +
+      `${acrRemovalCount} repo(s) had no 90d ACR window so their ACR row measures removal, not flip.`,
+  );
 
   // 5. Data listing for transparency
   console.log("\n--- Raw data: Developer-led repos ---");
@@ -448,7 +536,11 @@ async function main() {
     cam: {
       bootstrapCI: Object.fromEntries(
         camGroups.filter((g) => g.data.length >= 2).map((g) => {
-          const b = bootstrap(g.data, mean);
+          // Same label as the console pass — derived rng is identical, so the
+          // value here exactly matches what was printed above. Pre-fix code
+          // used a shared module-level rng and these two passes returned
+          // different CIs for the same group.
+          const b = bootstrap(g.data, mean, `cam-mean::${g.label.trim()}`);
           return [g.label.trim(), { n: g.data.length, mean: b.estimate, ci95: b.ci, se: b.se }];
         }),
       ),
@@ -461,7 +553,7 @@ async function main() {
     acr: {
       bootstrapCI: Object.fromEntries(
         acrGroups.filter((g) => g.data.length >= 2).map((g) => {
-          const b = bootstrap(g.data, mean);
+          const b = bootstrap(g.data, mean, `acr-mean::${g.label.trim()}`);
           return [g.label.trim(), { n: g.data.length, mean: b.estimate, ci95: b.ci, se: b.se }];
         }),
       ),
@@ -478,7 +570,11 @@ async function main() {
     sensitivity: {
       method: "leave-one-out reclassification",
       family: "governance-moderation (CAM + ACR), Holm-corrected",
+      comparisonSpace: "Holm-vs-Holm (baseline p_holm vs LOO p_holm)",
       pivotalCount,
+      camPivotalCount,
+      acrPivotalCount,
+      acrRemovalCount,
       total: looRows.length,
       rows: looRows,
     },
