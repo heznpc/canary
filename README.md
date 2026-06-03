@@ -33,12 +33,13 @@ Claude Code's [Channels](https://code.claude.com/docs/en/changelog) observabilit
 > **Part of the heznpc indie+agent toolkit** — a coherent product line for solo and small-team developers running multiple AI coding agents:
 >
 > - **canary** *(this repo)* — observe: portfolio health, push-leakage, contributor signal
+> - [**anvil**](https://github.com/heznpc/anvil) — ship: commit→push→PR→CI→merge→cleanup as one atomic MCP call; closes the push-leakage window canary measures
 > - [**AirMCP**](https://github.com/heznpc/AirMCP) — extend: macOS-native tools (Calendar, Reminders, Notes, Shortcuts, Health) accessible via MCP
 > - [**ploidy**](https://github.com/heznpc/ploidy-research) — scale: asymmetric-renewal session-composition protocol for LLM context windows
 > - [**starter-series**](https://github.com/starter-series) — bootstrap: 13+ starters for new MCP servers, npm packages, browser/electron/native apps
 > - [**papers**](https://github.com/heznpc?tab=repositories&q=&type=&language=tex) — explain: research grounding the toolkit's design choices
 >
-> Each piece serves a different lifecycle phase of the same target user. Cross-pollination is intentional: canary scans starter-series projects, mcp-server-starter ships with canary integration, ploidy's session protocol motivates push-leakage measurement.
+> Each piece serves a different lifecycle phase of the same target user. Cross-pollination is intentional: canary scans starter-series projects, mcp-server-starter ships with canary integration, ploidy's session protocol motivates push-leakage measurement, and anvil's atomic ship closes the push-leakage window canary surfaces — canary diagnoses, anvil immunizes.
 
 ## Research
 
