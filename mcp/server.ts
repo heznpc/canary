@@ -28,6 +28,7 @@ import {
   buildUpdateActionsPayload,
 } from "./adapters";
 import { withTraceMeta } from "./trace-meta";
+import { fenceUntrusted } from "./untrusted";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -422,9 +423,12 @@ async function main() {
           allIssues.push({
             repo: d.repo,
             number: issue.number,
-            title: issue.title,
+            // Fence attacker-influenceable text (anyone can open an issue with a
+            // crafted title/login) so a downstream LLM treats it as data, not
+            // instructions. See mcp/untrusted.ts.
+            title: fenceUntrusted(issue.title),
             url: issue.url,
-            author: issue.author,
+            author: fenceUntrusted(issue.author),
             createdAt: issue.createdAt,
             comments: issue.comments,
             labels: issue.labels,
