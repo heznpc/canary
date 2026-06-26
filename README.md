@@ -96,9 +96,10 @@ dev` and let it tell you what to do next.
 # 1. Install dependencies
 npm install
 
-# 2. Set GitHub token (effectively required — 60 req/h unauthenticated limit)
-#    Create at https://github.com/settings/tokens; no scopes needed for public repos.
-export GITHUB_TOKEN=ghp_...
+# 2. Authenticate GitHub (recommended — unauthenticated API is 60 req/h)
+#    Canary uses GITHUB_TOKEN first, then falls back to `gh auth token`.
+gh auth login
+#    Or: export GITHUB_TOKEN=...
 
 # 3. Edit canary.config.ts to register your own repos
 #    Default config monitors heznpc/canary + heznpc/AirMCP + heznpc/ploidy-research.

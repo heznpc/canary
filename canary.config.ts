@@ -14,8 +14,9 @@ import type { SyncConfig } from "./lib/sync/types";
  * need `keywords` and `researchArea` (validated by __tests__/projects.test.ts).
  *
  * Tips:
- *   - GITHUB_TOKEN env var is effectively required for portfolios with
- *     more than ~3 projects (60 req/h unauthenticated GitHub API limit).
+ *   - GitHub auth is recommended for portfolios with more than ~3 projects:
+ *     Canary uses GITHUB_TOKEN first, then falls back to `gh auth token`
+ *     before unauthenticated API calls (60 req/h limit).
  *   - For push-leakage measurements, set CANARY_SELF_LOGIN if your local
  *     git author email differs from the repo owner; otherwise the scanner
  *     auto-derives the self-login from each repo's owner.

@@ -6,7 +6,7 @@ Thanks for your interest. This document covers the basics — full architectural
 
 ```bash
 npm install
-export GITHUB_TOKEN=ghp_...  # optional but recommended for higher rate limits
+gh auth login                 # or export GITHUB_TOKEN=... for higher rate limits
 npm run dev                   # http://localhost:3000
 ```
 

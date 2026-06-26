@@ -16,7 +16,7 @@ interface HealthResponse {
   uptime: number;
   snapshots: { pushLeakage: SnapshotFreshness };
   env: {
-    githubToken: { configured: boolean };
+    githubToken: { configured: boolean; source?: "env" | "gh" | "none" };
     anthropicAdminKey: { configured: boolean };
   };
   staleAfterSeconds: number;
@@ -39,7 +39,7 @@ function fmtAge(seconds: number | null): string {
  * Compact status banners that surface first-run friction the dashboard
  * otherwise hides.
  *
- *   - GITHUB_TOKEN missing → low GitHub API rate limit (60/h unauthed) →
+ *   - GitHub auth missing → low GitHub API rate limit (60/h unauthed) →
  *     scans will exhaust on a portfolio of any real size
  *   - push-leakage snapshot stale or absent → the PushLeakagePanel below is
  *     showing days-old or no data, the operator probably wants to refresh
@@ -82,11 +82,12 @@ export function ReadinessBanners() {
           <KeyRound className="h-4 w-4 mt-0.5 text-amber-700 dark:text-amber-300 flex-shrink-0" />
           <div className="flex-1">
             <p className="font-medium text-amber-900 dark:text-amber-100">
-              GITHUB_TOKEN 미설정 — GitHub API 60 req/h 한도에 묶임
+              GitHub 인증 미설정 — GitHub API 60 req/h 한도에 묶임
             </p>
             <p className="text-xs text-amber-800/90 dark:text-amber-200/80 mt-0.5">
-              <code className="rounded bg-amber-100/60 dark:bg-amber-900/40 px-1 py-0.5 text-[11px]">export GITHUB_TOKEN=ghp_...</code>{" "}
-              후 dev server 재시작.{" "}
+              <code className="rounded bg-amber-100/60 dark:bg-amber-900/40 px-1 py-0.5 text-[11px]">gh auth login</code>{" "}
+              또는 <code className="rounded bg-amber-100/60 dark:bg-amber-900/40 px-1 py-0.5 text-[11px]">GITHUB_TOKEN</code>{" "}
+              설정 후 dev server 재시작.{" "}
               <a
                 href="https://github.com/settings/tokens"
                 target="_blank"
