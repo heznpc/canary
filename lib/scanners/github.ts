@@ -12,15 +12,22 @@ import {
 } from "./vulnerabilities";
 import { logger } from "../logger";
 import { runGuarded } from "./shared-breaker";
+import { resolveGitHubAuth } from "./github-auth";
 
 let _tokenWarned = false;
+let _ghFallbackLogged = false;
 
 function getOctokit() {
-  if (!process.env.GITHUB_TOKEN && !_tokenWarned) {
+  const auth = resolveGitHubAuth();
+  if (!auth.configured && !_tokenWarned) {
     _tokenWarned = true;
-    logger.warn("GITHUB_TOKEN is not set — GitHub API requests will be unauthenticated and heavily rate-limited.", { source: "canary" });
+    logger.warn("No GitHub token found in GITHUB_TOKEN or `gh auth token` — GitHub API requests will be unauthenticated and heavily rate-limited.", { source: "canary" });
   }
-  return new Octokit({ auth: process.env.GITHUB_TOKEN || undefined });
+  if (auth.source === "gh" && !_ghFallbackLogged) {
+    _ghFallbackLogged = true;
+    logger.info("Using GitHub token from `gh auth token` fallback.", { source: "canary" });
+  }
+  return new Octokit({ auth: auth.token });
 }
 
 function hasNumericStatus(err: unknown): err is { status: number } {

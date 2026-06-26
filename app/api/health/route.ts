@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { resolveGitHubAuth, type GitHubTokenSource } from "@/lib/scanners/github-auth";
 import { getLatestPushLeakageSnapshot } from "@/lib/scanners/push-leakage";
 
 const startTime = Date.now();
@@ -35,9 +36,18 @@ interface EnvCheck {
   configured: boolean;
 }
 
+interface GitHubAuthCheck extends EnvCheck {
+  source: GitHubTokenSource;
+}
+
 function envCheck(name: string): EnvCheck {
   const v = process.env[name];
   return { configured: typeof v === "string" && v.trim().length > 0 };
+}
+
+function githubAuthCheck(): GitHubAuthCheck {
+  const auth = resolveGitHubAuth();
+  return { configured: auth.configured, source: auth.source };
 }
 
 export async function GET() {
@@ -54,9 +64,9 @@ export async function GET() {
     },
     env: {
       // Boolean-only — never echo the secret value. Used by the dashboard to
-      // surface a "set GITHUB_TOKEN for higher rate limits" banner when
+      // surface a "set GITHUB_TOKEN or run gh auth login" banner when
       // unauthenticated, and an analogous hint for the Anthropic admin key.
-      githubToken: envCheck("GITHUB_TOKEN"),
+      githubToken: githubAuthCheck(),
       anthropicAdminKey: envCheck("ANTHROPIC_ADMIN_API_KEY"),
     },
     staleAfterSeconds: STALE_AFTER_MS / 1000,

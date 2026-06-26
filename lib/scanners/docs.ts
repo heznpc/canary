@@ -1,6 +1,6 @@
 import type { DocFreshness, DocMismatch } from "../types";
 import type { ProjectConfig } from "../projects";
-import { fetchWithTimeout, parseRepoSlug } from "./version-utils";
+import { fetchWithTimeout, githubHeaders, parseRepoSlug } from "./version-utils";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 
@@ -9,7 +9,7 @@ async function fetchRawFile(repo: string, file: string): Promise<string | null> 
     const parsed = parseRepoSlug(repo);
     if (!parsed) return null;
     const url = `${RAW_BASE}/${parsed.owner}/${parsed.name}/HEAD/${file}`;
-    const res = await fetchWithTimeout(url, {}, 5000);
+    const res = await fetchWithTimeout(url, { headers: githubHeaders() }, 5000);
     if (!res.ok) return null;
     return await res.text();
   } catch {
@@ -22,11 +22,7 @@ async function getLatestRelease(repo: string): Promise<{ tag: string; date: stri
     const parsed = parseRepoSlug(repo);
     if (!parsed) return null;
     const url = `https://api.github.com/repos/${parsed.owner}/${parsed.name}/releases/latest`;
-    const headers: Record<string, string> = { Accept: "application/vnd.github.v3+json" };
-    if (process.env.GITHUB_TOKEN) {
-      headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
-    }
-    const res = await fetchWithTimeout(url, { headers }, 5000);
+    const res = await fetchWithTimeout(url, { headers: githubHeaders() }, 5000);
     if (!res.ok) return null;
     const data = await res.json();
     return { tag: data.tag_name, date: data.published_at };

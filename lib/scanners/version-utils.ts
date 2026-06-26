@@ -1,4 +1,5 @@
 import type { DependencyInfo, DependencyHealth } from "../types";
+import { resolveGitHubAuth } from "./github-auth";
 
 export function parseRepoSlug(repo: string): { owner: string; name: string } | null {
   const parts = repo.split("/");
@@ -8,7 +9,8 @@ export function parseRepoSlug(repo: string): { owner: string; name: string } | n
 
 export function githubHeaders(): HeadersInit {
   const h: HeadersInit = { Accept: "application/vnd.github+json" };
-  if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const auth = resolveGitHubAuth();
+  if (auth.token) h.Authorization = `Bearer ${auth.token}`;
   return h;
 }
 
