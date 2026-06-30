@@ -9,6 +9,7 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   let score = 100;
 
   const { project, git, dependencies, stack, deploy } = health;
+  let structuralRewriteSignal = false;
 
   // ── Tag-based baseline ──
   if (project.tag === "archived") {
@@ -60,6 +61,7 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   for (const s of stack) {
     if (s.eol) {
       score -= 25;
+      structuralRewriteSignal = true;
       reasons.push(`${s.name} ${s.current} — EOL (지원 종료)`);
     } else if (s.releasesBehind >= 2) {
       score -= 15;
@@ -73,6 +75,7 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   // ── Deploy ──
   if (deploy.status === "down") {
     score -= 30;
+    structuralRewriteSignal = true;
     reasons.push("배포된 서비스가 다운 상태");
   }
 
@@ -97,6 +100,9 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
       score -= 10;
       reasons.push("테스트 인프라 없음");
     }
+    if (!health.codeQuality.hasCI && !health.codeQuality.hasTests) {
+      structuralRewriteSignal = true;
+    }
     if (!health.codeQuality.hasLint) {
       score -= 5;
       reasons.push("린팅 설정 없음");
@@ -112,6 +118,7 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
     const sc = health.scorecard.score;
     if (sc < 4) {
       score -= 15;
+      structuralRewriteSignal = true;
       reasons.push(`OpenSSF Scorecard ${sc}/10 — 보안 관행 심각 부족`);
     } else if (sc < 6) {
       score -= 10;
@@ -203,7 +210,8 @@ export function gradeProject(health: Omit<ProjectHealth, "grade" | "recommendati
   const recommendation: Recommendation =
     score >= 85 ? "keep" :
     score >= 65 ? "update" :
-    score >= 40 ? "upgrade" : "rewrite";
+    score >= 40 ? "upgrade" :
+    structuralRewriteSignal ? "rewrite" : "upgrade";
 
   if (reasons.length === 0) {
     reasons.push("양호 — 특별한 조치 불필요");

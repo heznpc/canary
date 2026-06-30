@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import {
+  buildVulnQueries,
   countVulnerabilities,
   extractConcreteVersion,
+  extractNpmLockVersions,
   type VulnQuery,
 } from "../lib/scanners/vulnerabilities";
 
@@ -38,6 +40,53 @@ describe("extractConcreteVersion", () => {
 
   it("trims trailing range tokens", () => {
     expect(extractConcreteVersion(">=1.0.0 <2.0.0")).toBe("1.0.0");
+  });
+});
+
+describe("npm lockfile vulnerability queries", () => {
+  it("extracts direct dependency versions from npm package-lock packages", () => {
+    const lock = JSON.stringify({
+      lockfileVersion: 3,
+      packages: {
+        "": { name: "demo", version: "0.0.0" },
+        "node_modules/tar": { version: "7.5.16" },
+        "node_modules/@types/node": { version: "26.0.1" },
+      },
+    });
+
+    expect(extractNpmLockVersions(lock)).toEqual({
+      tar: "7.5.16",
+      "@types/node": "26.0.1",
+    });
+  });
+
+  it("uses package-lock versions instead of declared range floors for npm OSV queries", () => {
+    const declared = { tar: "^7.5.0", "@types/node": "^25.9.2" };
+    const lock = JSON.stringify({
+      packages: {
+        "node_modules/tar": { version: "7.5.16" },
+        "node_modules/@types/node": { version: "26.0.1" },
+      },
+    });
+
+    expect(buildVulnQueries(declared, "npm", lock)).toEqual([
+      { name: "tar", version: "7.5.16", ecosystem: "npm" },
+      { name: "@types/node", version: "26.0.1", ecosystem: "npm" },
+    ]);
+  });
+
+  it("falls back to concrete declared versions when the package-lock is missing a dependency", () => {
+    const declared = { tar: "^7.5.0", missing: "~1.2.3" };
+    const lock = JSON.stringify({
+      packages: {
+        "node_modules/tar": { version: "7.5.16" },
+      },
+    });
+
+    expect(buildVulnQueries(declared, "npm", lock)).toEqual([
+      { name: "tar", version: "7.5.16", ecosystem: "npm" },
+      { name: "missing", version: "1.2.3", ecosystem: "npm" },
+    ]);
   });
 });
 

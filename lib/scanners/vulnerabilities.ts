@@ -48,6 +48,43 @@ export function extractConcreteVersion(spec: string): string | null {
   return match ? match[1] : null;
 }
 
+export function extractNpmLockVersions(packageLockContent: string): Record<string, string> {
+  const versions: Record<string, string> = {};
+  try {
+    const lock = JSON.parse(packageLockContent) as {
+      packages?: Record<string, { version?: unknown }>;
+      dependencies?: Record<string, { version?: unknown }>;
+    };
+
+    for (const [pkgPath, pkg] of Object.entries(lock.packages ?? {})) {
+      if (!pkgPath.startsWith("node_modules/") || typeof pkg.version !== "string") continue;
+      versions[pkgPath.slice("node_modules/".length)] = pkg.version;
+    }
+
+    for (const [name, dep] of Object.entries(lock.dependencies ?? {})) {
+      if (typeof dep.version === "string" && !versions[name]) versions[name] = dep.version;
+    }
+  } catch {
+    return {};
+  }
+  return versions;
+}
+
+export function buildVulnQueries(
+  declared: Record<string, string>,
+  ecosystem: OsvEcosystem,
+  packageLockContent?: string,
+): VulnQuery[] {
+  const lockedVersions =
+    ecosystem === "npm" && packageLockContent ? extractNpmLockVersions(packageLockContent) : {};
+  const out: VulnQuery[] = [];
+  for (const [name, spec] of Object.entries(declared)) {
+    const version = lockedVersions[name] ?? extractConcreteVersion(spec);
+    if (version) out.push({ name, version, ecosystem });
+  }
+  return out;
+}
+
 /**
  * Returns the number of vulnerabilities in the batch, or `null` if the batch
  * could not be scanned (HTTP error, timeout, network failure). Callers must

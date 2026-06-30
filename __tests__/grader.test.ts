@@ -391,4 +391,29 @@ describe("gradeProject", () => {
     expect(result.grade).toBe("F");
     expect(result.recommendation).toBe("rewrite");
   });
+
+  it("recommends upgrade, not rewrite, when grade F is caused by dependency debt only", () => {
+    const result = gradeProject(
+      makeHealth({
+        dependencies: {
+          total: 20,
+          outdatedMajor: 3,
+          outdatedMinor: 8,
+          outdatedPatch: 0,
+          vulnerabilities: 3,
+          deps: [],
+          packageManager: "npm",
+        },
+        activity: {
+          commitsLast4Weeks: 4,
+          openPRs: 8,
+          openIssues: 0,
+          lastChecked: new Date().toISOString(),
+        },
+      }),
+    );
+
+    expect(result.grade).toBe("F");
+    expect(result.recommendation).toBe("upgrade");
+  });
 });
