@@ -5,9 +5,8 @@ import { parsePythonManifest, checkPypiVersion } from "./deps-python";
 import { parsePubspecYaml, checkPubVersion } from "./deps-flutter";
 import { parseGradle, parsePomXml, checkMavenVersion } from "./deps-jvm";
 import {
+  buildVulnQueries,
   countVulnerabilities,
-  extractConcreteVersion,
-  type OsvEcosystem,
   type VulnQuery,
 } from "./vulnerabilities";
 import { logger } from "../logger";
@@ -115,7 +114,7 @@ export async function getDependencyHealth(repo: string): Promise<DepScanResult |
       { file: "pom.xml", ecosystem: "maven" as const, needBody: true },
       { file: "pnpm-lock.yaml", ecosystem: "node" as const, needBody: false },
       { file: "yarn.lock", ecosystem: "node" as const, needBody: false },
-      { file: "package-lock.json", ecosystem: "node" as const, needBody: false },
+      { file: "package-lock.json", ecosystem: "node" as const, needBody: true },
     ];
 
     const checks = await Promise.all(
@@ -136,12 +135,13 @@ export async function getDependencyHealth(repo: string): Promise<DepScanResult |
     );
     if (found.length === 0) return null;
 
-    const nodeManifest = found.find((f) => f.ecosystem === "node" && f.needBody);
+    const nodeManifest = found.find((f) => f.file === "package.json");
     if (nodeManifest) {
-      const lockFiles = found.filter((f) => f.ecosystem === "node" && !f.needBody);
+      const lockFiles = found.filter((f) => f.ecosystem === "node" && f.file !== "package.json");
       const pm = detectPackageManagerFromLocks(lockFiles.map((f) => f.file));
       const packageJson = JSON.parse(nodeManifest.content) as Record<string, unknown>;
-      const health = await scanNodeDeps(packageJson, pm);
+      const packageLock = lockFiles.find((f) => f.file === "package-lock.json")?.content;
+      const health = await scanNodeDeps(packageJson, pm, packageLock);
       return { health, packageJson };
     }
 
@@ -173,21 +173,10 @@ export async function getDependencyHealth(repo: string): Promise<DepScanResult |
   });
 }
 
-function buildVulnQueries(
-  declared: Record<string, string>,
-  ecosystem: OsvEcosystem,
-): VulnQuery[] {
-  const out: VulnQuery[] = [];
-  for (const [name, spec] of Object.entries(declared)) {
-    const version = extractConcreteVersion(spec);
-    if (version) out.push({ name, version, ecosystem });
-  }
-  return out;
-}
-
 async function scanNodeDeps(
   packageJson: Record<string, unknown>,
   packageManager: DependencyHealth["packageManager"],
+  packageLockContent?: string,
 ): Promise<DependencyHealth> {
   const allDeps: Record<string, string> = {
     ...(packageJson.dependencies as Record<string, string> | undefined),
@@ -200,7 +189,7 @@ async function scanNodeDeps(
       const isKey = isKeyDependency(depName);
       return checkNpmVersion(depName, currentVersion, isKey);
     }),
-    countVulnerabilities(buildVulnQueries(allDeps, "npm")),
+    countVulnerabilities(buildVulnQueries(allDeps, "npm", packageLockContent)),
   ]);
 
   return { ...result, vulnerabilities, packageManager };
