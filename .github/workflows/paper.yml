@@ -23,7 +23,7 @@ jobs:
     name: Build canonical paper + validate citations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6 latest
 
       - name: Compile LaTeX (multi-pass with bibtex)
         uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
@@ -66,7 +66,7 @@ jobs:
       submissions: ${{ steps.list.outputs.submissions }}
       any: ${{ steps.list.outputs.any }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6 latest
       - id: list
         run: |
           set -eo pipefail
@@ -128,7 +128,7 @@ jobs:
       matrix:
         submission: ${{ fromJson(needs.detect-submissions.outputs.submissions) }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6 latest
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6 latest
 
       - name: Compile ${{ matrix.submission }} (multi-pass with bibtex)
         uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4 latest
