@@ -7,6 +7,7 @@ import { parseGradle, parsePomXml, checkMavenVersion } from "./deps-jvm";
 import {
   buildVulnQueries,
   countVulnerabilities,
+  extractConcreteVersion,
   type VulnQuery,
 } from "./vulnerabilities";
 import { logger } from "../logger";
