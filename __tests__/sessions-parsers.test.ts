@@ -28,8 +28,9 @@ describe("extractPathsFromCommand", () => {
     const paths = extractPathsFromCommand(
       'cat ~/.claude/CLAUDE.md && curl https://example.com/x && ls "/tmp/dir name"',
     );
-    expect(paths).toContain("~/.claude/CLAUDE.md");
-    expect(paths.some((p) => p.includes("example.com"))).toBe(false);
+    // Exact expectation: the URL must contribute nothing; the quoted path is
+    // cut at the space by design (heuristic extractor).
+    expect(new Set(paths)).toEqual(new Set(["~/.claude/CLAUDE.md", "/tmp/dir"]));
   });
 });
 
