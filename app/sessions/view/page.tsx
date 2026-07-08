@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { parseClaudeDetail } from "@/lib/sessions/claude";
 import { parseCodexDetail } from "@/lib/sessions/codex";
+import { redactDetail } from "@/lib/sessions/redact";
 import { codexSessionsRoot, isAllowedTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
 
 export const dynamic = "force-dynamic";
@@ -18,16 +19,18 @@ const ROLE_STYLES: Record<string, string> = {
 export default async function SessionViewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ path?: string; page?: string; role?: string }>;
+  searchParams: Promise<{ path?: string; page?: string; role?: string; redact?: string }>;
 }) {
   if (!sessionsEnabled()) notFound();
   const params = await searchParams;
   const path = params.path ?? "";
   if (!isAllowedTranscriptPath(path)) notFound();
 
-  const detail = path.startsWith(codexSessionsRoot())
+  const redacted = params.redact === "1";
+  const rawDetail = path.startsWith(codexSessionsRoot())
     ? await parseCodexDetail(path)
     : await parseClaudeDetail(path);
+  const detail = redacted ? redactDetail(rawDetail) : rawDetail;
 
   const roleFilter = params.role;
   const messages =
@@ -41,14 +44,23 @@ export default async function SessionViewPage({
   const s = detail.summary;
 
   const pageHref = (p: number, role?: string) =>
-    `/sessions/view?path=${encodeURIComponent(path)}&page=${p}${role ? `&role=${role}` : ""}`;
+    `/sessions/view?path=${encodeURIComponent(path)}&page=${p}${role ? `&role=${role}` : ""}${redacted ? "&redact=1" : ""}`;
+  const redactToggleHref = `/sessions/view?path=${encodeURIComponent(path)}${redacted ? "" : "&redact=1"}`;
 
   return (
     <main className="mx-auto max-w-4xl p-6">
-      <p className="mb-2 text-sm">
+      <p className="mb-2 flex items-center gap-4 text-sm">
         <Link className="underline underline-offset-4" href="/sessions">
           ← Sessions
         </Link>
+        <Link className="underline underline-offset-4" href={redactToggleHref}>
+          {redacted ? "원문 보기" : "reviewer-safe (redacted)"}
+        </Link>
+        {redacted && (
+          <span className="rounded border border-amber-500/60 px-1.5 py-0.5 text-xs">
+            assistant 발화 = 미검증 주장 · 자기확신 표현 마스킹됨
+          </span>
+        )}
       </p>
       <h1 className="text-lg font-semibold">{s.title}</h1>
       <p className="mb-1 font-mono text-xs opacity-70">

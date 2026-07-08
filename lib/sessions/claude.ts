@@ -46,6 +46,8 @@ function textOfContent(content: unknown, cap = 20_000): string {
 }
 
 interface ToolUseBlock {
+  /** Anthropic tool_use block id (toolu_…); the dedupe key across streamed lines. */
+  id: string | null;
   name: string;
   input: Record<string, unknown>;
 }
@@ -57,10 +59,18 @@ function toolUsesOf(content: unknown): ToolUseBlock[] {
     if (!block || typeof block !== "object") continue;
     const b = block as Record<string, unknown>;
     if (b.type === "tool_use" && typeof b.name === "string") {
-      out.push({ name: b.name, input: (b.input as Record<string, unknown>) ?? {} });
+      out.push({
+        id: typeof b.id === "string" ? b.id : null,
+        name: b.name,
+        input: (b.input as Record<string, unknown>) ?? {},
+      });
     }
   }
   return out;
+}
+
+function toolDedupeKey(mid: string | null, tool: ToolUseBlock): string {
+  return tool.id ?? `${mid ?? ""}|${tool.name}|${JSON.stringify(tool.input)}`;
 }
 
 function fileAccessOfTool(tool: ToolUseBlock, ts: string | null): FileAccessEntry[] {
@@ -96,13 +106,19 @@ interface ClaudeScanResult {
 
 /**
  * Single streaming pass over one transcript producing the list-view summary
- * and the file-access evidence rows. Assistant messages are deduplicated by
- * message.id — Claude Code writes the same streamed assistant message to
- * disk more than once, and without this the tool counts inflate.
+ * and the file-access evidence rows.
+ *
+ * Streamed-write model (verified on-disk 2026-07): one assistant message is
+ * written as MULTIPLE lines sharing the same message.id, each line carrying
+ * a different content block (thinking → text → tool_use). Dedupe therefore
+ * happens at the BLOCK level (tool_use by block id, message count by
+ * message.id) — taking only the first line per id silently drops most of
+ * the turn's text and tool calls.
  */
 export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanResult> {
   const stem = jsonlPath.split("/").pop()?.replace(/\.jsonl$/, "") ?? jsonlPath;
   const seenAssistantIds = new Set<string>();
+  const seenToolKeys = new Set<string>();
   const fileAccess: FileAccessEntry[] = [];
   let cwd: string | null = null;
   let gitBranch: string | null = null;
@@ -147,13 +163,15 @@ export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanRe
         if (!title) title = text.replace(/\s+/g, " ").slice(0, 120);
       }
     } else if (t === "assistant") {
-      const id = message?.id as string | undefined;
-      if (id) {
-        if (seenAssistantIds.has(id)) continue;
-        seenAssistantIds.add(id);
+      const id = (message?.id as string | undefined) ?? null;
+      if (!id || !seenAssistantIds.has(id)) {
+        if (id) seenAssistantIds.add(id);
+        assistantCount += 1;
       }
-      assistantCount += 1;
       for (const tool of toolUsesOf(message?.content)) {
+        const key = toolDedupeKey(id, tool);
+        if (seenToolKeys.has(key)) continue;
+        seenToolKeys.add(key);
         toolCount += 1;
         fileAccess.push(...fileAccessOfTool(tool, ts));
       }
@@ -179,11 +197,12 @@ export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanRe
   return { summary, fileAccess, parseErrors };
 }
 
-/** Full message timeline for the detail view. */
+/** Full message timeline for the detail view (block-level dedupe, see scan). */
 export async function parseClaudeDetail(jsonlPath: string): Promise<SessionDetail> {
   const { summary, fileAccess, parseErrors } = await scanClaudeSession(jsonlPath);
   const messages: SessionDetailMessage[] = [];
-  const seenAssistantIds = new Set<string>();
+  const seenTextKeys = new Set<string>();
+  const seenToolKeys = new Set<string>();
   let idx = 0;
 
   const rl = createInterface({ input: createReadStream(jsonlPath, "utf-8"), crlfDelay: Infinity });
@@ -199,14 +218,19 @@ export async function parseClaudeDetail(jsonlPath: string): Promise<SessionDetai
       if (text) messages.push({ idx: idx++, ts, role: "user", text });
       continue;
     }
-    const id = message?.id as string | undefined;
-    if (id) {
-      if (seenAssistantIds.has(id)) continue;
-      seenAssistantIds.add(id);
-    }
+    const id = (message?.id as string | undefined) ?? null;
     const text = textOfContent(message?.content);
-    if (text) messages.push({ idx: idx++, ts, role: "assistant", text });
+    if (text) {
+      const textKey = `${id ?? idx}|${text.slice(0, 500)}`;
+      if (!seenTextKeys.has(textKey)) {
+        seenTextKeys.add(textKey);
+        messages.push({ idx: idx++, ts, role: "assistant", text });
+      }
+    }
     for (const tool of toolUsesOf(message?.content)) {
+      const key = toolDedupeKey(id, tool);
+      if (seenToolKeys.has(key)) continue;
+      seenToolKeys.add(key);
       const paths = fileAccessOfTool(tool, ts).map((e) => e.path);
       const inputExcerpt =
         (tool.input.command as string | undefined) ??

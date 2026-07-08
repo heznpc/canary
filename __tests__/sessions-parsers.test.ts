@@ -58,7 +58,7 @@ describe("claude parser", () => {
         ],
       },
     },
-    // Duplicated streamed assistant write — must be deduplicated by message.id.
+    // Duplicated streamed write of the same block — must dedupe at block level.
     {
       type: "assistant",
       timestamp: "2026-07-01T10:00:05.000Z",
@@ -66,6 +66,18 @@ describe("claude parser", () => {
         id: "msg_1",
         role: "assistant",
         content: [{ type: "tool_use", name: "Read", input: { file_path: "/Users/x/proj/CLAUDE.md" } }],
+      },
+    },
+    // Block-split streamed line: SAME message.id, NEW block — must NOT be dropped.
+    {
+      type: "assistant",
+      timestamp: "2026-07-01T10:00:06.000Z",
+      message: {
+        id: "msg_1",
+        role: "assistant",
+        content: [
+          { type: "tool_use", id: "toolu_grep1", name: "Grep", input: { pattern: "login", path: "/Users/x/proj" } },
+        ],
       },
     },
     { type: "file-history-snapshot", timestamp: "2026-07-01T10:00:06.000Z" },
@@ -78,8 +90,8 @@ describe("claude parser", () => {
     expect(summary.title).toBe("Fix the login bug");
     expect(summary.cwd).toBe("/Users/x/proj");
     expect(summary.userCount).toBe(1);
-    expect(summary.assistantCount).toBe(1); // duplicate msg_1 not double-counted
-    expect(summary.toolCount).toBe(2);
+    expect(summary.assistantCount).toBe(1); // one message.id = one turn, however many lines
+    expect(summary.toolCount).toBe(3); // Read + Bash + block-split Grep; duplicate Read dropped
     expect(fileAccess.some((e) => e.op === "read" && e.flagged)).toBe(true);
     expect(summary.flaggedCount).toBeGreaterThanOrEqual(1);
   });
@@ -88,8 +100,9 @@ describe("claude parser", () => {
     const path = tmpJsonl("22222222-2222-3333-4444-555555555555.jsonl", lines);
     const detail = await parseClaudeDetail(path);
     const roles = detail.messages.map((m) => m.role);
-    expect(roles).toEqual(["user", "assistant", "tool", "tool"]);
+    expect(roles).toEqual(["user", "assistant", "tool", "tool", "tool"]);
     expect(detail.messages[2].toolName).toBe("Read");
+    expect(detail.messages[4].toolName).toBe("Grep"); // block-split line preserved
   });
 });
 
