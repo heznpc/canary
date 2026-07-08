@@ -22,6 +22,9 @@ const EXPECTED_TOOLS = [
   "list_leaking_repos",
   "audit_session_leakage",
   "list_recent_issues",
+  "list_sessions",
+  "get_session_transcript",
+  "get_file_access",
 ];
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
