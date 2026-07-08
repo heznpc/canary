@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { parseClaudeDetail } from "@/lib/sessions/claude";
 import { parseCodexDetail } from "@/lib/sessions/codex";
+import { redactDetail } from "@/lib/sessions/redact";
 import { codexSessionsRoot, isAllowedTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +36,8 @@ export async function GET(request: Request) {
     const detail = path.startsWith(codexSessionsRoot())
       ? await parseCodexDetail(path)
       : await parseClaudeDetail(path);
-    return Response.json(detail);
+    const redacted = url.searchParams.get("redact") === "1";
+    return Response.json(redacted ? redactDetail(detail) : detail);
   } catch (err) {
     logger.error("session detail route failed", {
       error: err instanceof Error ? err.message : String(err),
