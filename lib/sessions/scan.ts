@@ -30,6 +30,10 @@ export function codexSessionsRoot(): string {
   return process.env.CANARY_CODEX_DIR ?? join(homedir(), ".codex", "sessions");
 }
 
+export function codexArchivedSessionsRoot(): string {
+  return process.env.CANARY_CODEX_ARCHIVE_DIR ?? join(homedir(), ".codex", "archived_sessions");
+}
+
 /**
  * The review surface exposes raw transcript content (private by nature).
  * It is enabled in local dev and must be opted into for production builds.
@@ -90,12 +94,16 @@ async function buildIndex(): Promise<SessionsIndex> {
   const maxFiles = Number(process.env.CANARY_SESSIONS_MAX_FILES ?? "0") || Infinity;
 
   const targets: Array<{ path: string; source: SessionSource }> = [];
-  // Claude: one project dir level, session files at its top level. Subagent
-  // transcripts live in per-session subdirectories and are out of scope for v1.
-  for (const path of listJsonlFiles(claudeProjectsRoot(), false)) {
+  // Claude Code stores top-level sessions under project dirs, and newer
+  // conversation/subagent artifacts may live deeper. Keep the AISpool-era
+  // coverage contract: ~/.claude/projects/**/*.jsonl.
+  for (const path of listJsonlFiles(claudeProjectsRoot(), true)) {
     targets.push({ path, source: "claude" });
   }
   for (const path of listJsonlFiles(codexSessionsRoot(), true)) {
+    targets.push({ path, source: "codex" });
+  }
+  for (const path of listJsonlFiles(codexArchivedSessionsRoot(), false)) {
     targets.push({ path, source: "codex" });
   }
 
@@ -208,7 +216,15 @@ export function isAllowedTranscriptPath(path: string): boolean {
   const resolved = resolve(path);
   return (
     (resolved.startsWith(resolve(claudeProjectsRoot()) + "/") ||
-      resolved.startsWith(resolve(codexSessionsRoot()) + "/")) &&
+      isCodexTranscriptPath(resolved)) &&
     resolved.endsWith(".jsonl")
+  );
+}
+
+export function isCodexTranscriptPath(path: string): boolean {
+  const resolved = resolve(path);
+  return (
+    resolved.startsWith(resolve(codexSessionsRoot()) + "/") ||
+    resolved.startsWith(resolve(codexArchivedSessionsRoot()) + "/")
   );
 }

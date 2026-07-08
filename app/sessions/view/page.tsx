@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { parseClaudeDetail } from "@/lib/sessions/claude";
 import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail } from "@/lib/sessions/redact";
-import { codexSessionsRoot, isAllowedTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
+import { isAllowedTranscriptPath, isCodexTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ export default async function SessionViewPage({
   if (!isAllowedTranscriptPath(path)) notFound();
 
   const redacted = params.redact === "1";
-  const rawDetail = path.startsWith(codexSessionsRoot())
+  const rawDetail = isCodexTranscriptPath(path)
     ? await parseCodexDetail(path)
     : await parseClaudeDetail(path);
   const detail = redacted ? redactDetail(rawDetail) : rawDetail;

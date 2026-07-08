@@ -1,11 +1,17 @@
-import { mkdtempSync, writeFileSync } from "fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { describe, expect, it } from "vitest";
 
 import { parseClaudeDetail, scanClaudeSession } from "../lib/sessions/claude";
 import { parseCodexDetail, scanCodexSession } from "../lib/sessions/codex";
+import { getSessionsIndex, isAllowedTranscriptPath, isCodexTranscriptPath } from "../lib/sessions/scan";
 import { extractPathsFromCommand, isRuleSurface } from "../lib/sessions/types";
+
+function restoreEnv(key: string, value: string | undefined): void {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+}
 
 function tmpJsonl(name: string, lines: unknown[]): string {
   const dir = mkdtempSync(join(tmpdir(), "canary-sessions-"));
@@ -158,5 +164,84 @@ describe("codex parser", () => {
     const roles = detail.messages.map((m) => m.role);
     expect(roles).toEqual(["user", "tool", "assistant"]);
     expect(detail.messages[1].paths).toContain("/Users/x/proj/AGENTS.md");
+  });
+});
+
+describe("session scanner roots", () => {
+  it("indexes recursive Claude plus active and archived Codex transcripts", async () => {
+    const root = mkdtempSync(join(tmpdir(), "canary-session-roots-"));
+    const claudeProject = join(root, "claude-projects", "-Users-x-proj");
+    const codexDay = join(root, "codex-sessions", "2026", "07", "08");
+    const codexArchive = join(root, "codex-archived");
+    mkdirSync(claudeProject, { recursive: true });
+    mkdirSync(codexDay, { recursive: true });
+    mkdirSync(codexArchive, { recursive: true });
+
+    const claudePath = join(claudeProject, "11111111-2222-3333-4444-555555555555.jsonl");
+    const nestedClaudeDir = join(claudeProject, "22222222-2222-3333-4444-555555555555");
+    mkdirSync(nestedClaudeDir, { recursive: true });
+    const nestedClaudePath = join(nestedClaudeDir, "33333333-3333-3333-3333-555555555555.jsonl");
+    writeFileSync(
+      claudePath,
+      JSON.stringify({
+        type: "user",
+        timestamp: "2026-07-08T00:00:00.000Z",
+        cwd: "/Users/x/proj",
+        message: { role: "user", content: "review this" },
+      }) + "\n",
+    );
+    writeFileSync(
+      nestedClaudePath,
+      JSON.stringify({
+        type: "user",
+        timestamp: "2026-07-08T00:00:02.000Z",
+        cwd: "/Users/x/proj",
+        message: { role: "user", content: "nested review" },
+      }) + "\n",
+    );
+
+    const codexActivePath = join(codexDay, "rollout-2026-07-08-active.jsonl");
+    const codexArchivePath = join(codexArchive, "rollout-2026-07-08-archived.jsonl");
+    const codexLines = (id: string) =>
+      [
+        {
+          timestamp: "2026-07-08T00:00:00.000Z",
+          type: "session_meta",
+          payload: { id, cwd: "/Users/x/proj", originator: "Codex Desktop" },
+        },
+        {
+          timestamp: "2026-07-08T00:00:01.000Z",
+          type: "event_msg",
+          payload: { type: "user_message", message: "audit this repo" },
+        },
+      ]
+        .map((line) => JSON.stringify(line))
+        .join("\n") + "\n";
+    writeFileSync(codexActivePath, codexLines("active-session"));
+    writeFileSync(codexArchivePath, codexLines("archived-session"));
+
+    const oldClaudeDir = process.env.CANARY_CLAUDE_DIR;
+    const oldCodexDir = process.env.CANARY_CODEX_DIR;
+    const oldCodexArchiveDir = process.env.CANARY_CODEX_ARCHIVE_DIR;
+    try {
+      process.env.CANARY_CLAUDE_DIR = join(root, "claude-projects");
+      process.env.CANARY_CODEX_DIR = join(root, "codex-sessions");
+      process.env.CANARY_CODEX_ARCHIVE_DIR = codexArchive;
+
+      const index = await getSessionsIndex(true);
+      expect(index.fileCount).toBe(4);
+      expect(index.sessions.map((s) => s.id).sort()).toEqual([
+        "claude:11111111-2222-3333-4444-555555555555",
+        "claude:33333333-3333-3333-3333-555555555555",
+        "codex:active-session",
+        "codex:archived-session",
+      ]);
+      expect(isAllowedTranscriptPath(codexArchivePath)).toBe(true);
+      expect(isCodexTranscriptPath(codexArchivePath)).toBe(true);
+    } finally {
+      restoreEnv("CANARY_CLAUDE_DIR", oldClaudeDir);
+      restoreEnv("CANARY_CODEX_DIR", oldCodexDir);
+      restoreEnv("CANARY_CODEX_ARCHIVE_DIR", oldCodexArchiveDir);
+    }
   });
 });

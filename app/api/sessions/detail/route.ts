@@ -5,7 +5,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { parseClaudeDetail } from "@/lib/sessions/claude";
 import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail } from "@/lib/sessions/redact";
-import { codexSessionsRoot, isAllowedTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
+import { isAllowedTranscriptPath, isCodexTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const detail = path.startsWith(codexSessionsRoot())
+    const detail = isCodexTranscriptPath(path)
       ? await parseCodexDetail(path)
       : await parseClaudeDetail(path);
     const redacted = url.searchParams.get("redact") === "1";
