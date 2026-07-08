@@ -16,6 +16,7 @@ import {
   type FileAccessEntry,
   type SessionDetail,
   type SessionDetailMessage,
+  type SessionSource,
   type SessionSummary,
 } from "./types";
 
@@ -115,7 +116,10 @@ interface ClaudeScanResult {
  * message.id) — taking only the first line per id silently drops most of
  * the turn's text and tool calls.
  */
-export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanResult> {
+export async function scanClaudeSession(
+  jsonlPath: string,
+  source: Extract<SessionSource, "claude" | "claude-desktop"> = "claude",
+): Promise<ClaudeScanResult> {
   const stem = jsonlPath.split("/").pop()?.replace(/\.jsonl$/, "") ?? jsonlPath;
   const seenAssistantIds = new Set<string>();
   const seenToolKeys = new Set<string>();
@@ -180,8 +184,8 @@ export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanRe
 
   const stat = statSync(jsonlPath);
   const summary: SessionSummary = {
-    id: `claude:${stem}`,
-    source: "claude",
+    id: `${source}:${stem}`,
+    source,
     jsonlPath,
     cwd,
     title: summaryTitle || title || "(untitled)",
@@ -198,8 +202,11 @@ export async function scanClaudeSession(jsonlPath: string): Promise<ClaudeScanRe
 }
 
 /** Full message timeline for the detail view (block-level dedupe, see scan). */
-export async function parseClaudeDetail(jsonlPath: string): Promise<SessionDetail> {
-  const { summary, fileAccess, parseErrors } = await scanClaudeSession(jsonlPath);
+export async function parseClaudeDetail(
+  jsonlPath: string,
+  source: Extract<SessionSource, "claude" | "claude-desktop"> = "claude",
+): Promise<SessionDetail> {
+  const { summary, fileAccess, parseErrors } = await scanClaudeSession(jsonlPath, source);
   const messages: SessionDetailMessage[] = [];
   const seenTextKeys = new Set<string>();
   const seenToolKeys = new Set<string>();

@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseClaudeDetail, scanClaudeSession } from "../lib/sessions/claude";
 import { parseCodexDetail, scanCodexSession } from "../lib/sessions/codex";
-import { getSessionsIndex, isAllowedTranscriptPath, isCodexTranscriptPath } from "../lib/sessions/scan";
+import { getSessionsIndex, isAllowedTranscriptPath, isCodexTranscriptPath, parseSessionDetail } from "../lib/sessions/scan";
 import { extractPathsFromCommand, isRuleSurface } from "../lib/sessions/types";
 
 function restoreEnv(key: string, value: string | undefined): void {
@@ -168,14 +168,20 @@ describe("codex parser", () => {
 });
 
 describe("session scanner roots", () => {
-  it("indexes recursive Claude plus active and archived Codex transcripts", async () => {
+  it("indexes all configured local AI transcript sources", async () => {
     const root = mkdtempSync(join(tmpdir(), "canary-session-roots-"));
     const claudeProject = join(root, "claude-projects", "-Users-x-proj");
     const codexDay = join(root, "codex-sessions", "2026", "07", "08");
     const codexArchive = join(root, "codex-archived");
+    const geminiChats = join(root, "gemini", "sample-project", "chats");
+    const claudeDesktop = join(root, "Claude", "local-agent-mode-sessions", "local-1");
+    const listedOnly = join(root, "listed-only");
     mkdirSync(claudeProject, { recursive: true });
     mkdirSync(codexDay, { recursive: true });
     mkdirSync(codexArchive, { recursive: true });
+    mkdirSync(geminiChats, { recursive: true });
+    mkdirSync(claudeDesktop, { recursive: true });
+    mkdirSync(listedOnly, { recursive: true });
 
     const claudePath = join(claudeProject, "11111111-2222-3333-4444-555555555555.jsonl");
     const nestedClaudeDir = join(claudeProject, "22222222-2222-3333-4444-555555555555");
@@ -220,28 +226,95 @@ describe("session scanner roots", () => {
     writeFileSync(codexActivePath, codexLines("active-session"));
     writeFileSync(codexArchivePath, codexLines("archived-session"));
 
+    const geminiPath = join(geminiChats, "session-2026-07-08-gemini.jsonl");
+    writeFileSync(
+      geminiPath,
+      [
+        { sessionId: "gemini-session", startTime: "2026-07-08T00:00:00.000Z", kind: "main" },
+        { id: "u1", timestamp: "2026-07-08T00:00:01.000Z", type: "user", content: "find context" },
+        { id: "m1", timestamp: "2026-07-08T00:00:02.000Z", type: "gemini", content: "context found" },
+      ]
+        .map((line) => JSON.stringify(line))
+        .join("\n") + "\n",
+    );
+
+    const desktopPath = join(claudeDesktop, "desktop-session.jsonl");
+    writeFileSync(
+      desktopPath,
+      [
+        {
+          type: "user",
+          sessionId: "desktop-session",
+          timestamp: "2026-07-08T00:00:03.000Z",
+          cwd: "/Users/x/desktop-proj",
+          message: { role: "user", content: "desktop request" },
+        },
+        {
+          type: "assistant",
+          sessionId: "desktop-session",
+          timestamp: "2026-07-08T00:00:04.000Z",
+          message: { role: "assistant", content: "desktop answer" },
+        },
+      ]
+        .map((line) => JSON.stringify(line))
+        .join("\n") + "\n",
+    );
+
+    const genericPath = join(listedOnly, "other-agent.jsonl");
+    writeFileSync(
+      genericPath,
+      [
+        { id: "generic-session", timestamp: "2026-07-08T00:00:05.000Z", type: "user", content: "generic request" },
+        { id: "generic-session", timestamp: "2026-07-08T00:00:06.000Z", type: "assistant", content: "generic answer" },
+      ]
+        .map((line) => JSON.stringify(line))
+        .join("\n") + "\n",
+    );
+    const listFile = join(root, "list_ALL-ai-conversations.txt");
+    writeFileSync(listFile, `${genericPath}\n`);
+
     const oldClaudeDir = process.env.CANARY_CLAUDE_DIR;
     const oldCodexDir = process.env.CANARY_CODEX_DIR;
     const oldCodexArchiveDir = process.env.CANARY_CODEX_ARCHIVE_DIR;
+    const oldGeminiDir = process.env.CANARY_GEMINI_DIR;
+    const oldClaudeDesktopDir = process.env.CANARY_CLAUDE_DESKTOP_DIR;
+    const oldListFiles = process.env.CANARY_SESSION_LIST_FILES;
     try {
       process.env.CANARY_CLAUDE_DIR = join(root, "claude-projects");
       process.env.CANARY_CODEX_DIR = join(root, "codex-sessions");
       process.env.CANARY_CODEX_ARCHIVE_DIR = codexArchive;
+      process.env.CANARY_GEMINI_DIR = join(root, "gemini");
+      process.env.CANARY_CLAUDE_DESKTOP_DIR = join(root, "Claude", "local-agent-mode-sessions");
+      process.env.CANARY_SESSION_LIST_FILES = listFile;
 
       const index = await getSessionsIndex(true);
-      expect(index.fileCount).toBe(4);
+      expect(index.fileCount).toBe(7);
       expect(index.sessions.map((s) => s.id).sort()).toEqual([
+        "claude-desktop:desktop-session",
         "claude:11111111-2222-3333-4444-555555555555",
         "claude:33333333-3333-3333-3333-555555555555",
         "codex:active-session",
         "codex:archived-session",
+        "gemini:gemini-session",
+        "generic:generic-session",
       ]);
       expect(isAllowedTranscriptPath(codexArchivePath)).toBe(true);
+      expect(isAllowedTranscriptPath(genericPath)).toBe(true);
       expect(isCodexTranscriptPath(codexArchivePath)).toBe(true);
+      const geminiDetail = await parseSessionDetail(geminiPath);
+      expect(geminiDetail.summary.source).toBe("gemini");
+      const desktopDetail = await parseSessionDetail(desktopPath);
+      expect(desktopDetail.summary.source).toBe("claude-desktop");
+      const genericDetail = await parseSessionDetail(genericPath);
+      expect(genericDetail.summary.source).toBe("generic");
+      expect(genericDetail.messages.map((m) => m.role)).toEqual(["user", "assistant"]);
     } finally {
       restoreEnv("CANARY_CLAUDE_DIR", oldClaudeDir);
       restoreEnv("CANARY_CODEX_DIR", oldCodexDir);
       restoreEnv("CANARY_CODEX_ARCHIVE_DIR", oldCodexArchiveDir);
+      restoreEnv("CANARY_GEMINI_DIR", oldGeminiDir);
+      restoreEnv("CANARY_CLAUDE_DESKTOP_DIR", oldClaudeDesktopDir);
+      restoreEnv("CANARY_SESSION_LIST_FILES", oldListFiles);
     }
   });
 });

@@ -1,6 +1,6 @@
 /**
- * Unified session index over the local Claude Code and Codex transcript
- * stores. Read-only by design: the scanner opens transcripts, never writes
+ * Unified session index over local AI transcript stores. Read-only by design:
+ * the scanner opens transcripts, never writes
  * near them; the index lives in process memory only.
  *
  * Incremental: per-file cache keyed by (mtime, size), so the first request
@@ -8,13 +8,14 @@
  * changed. This mirrors the mtime-validated cache pattern used by the
  * existing scanners.
  */
-import { readdirSync, statSync } from "fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { homedir } from "os";
-import { join, resolve } from "path";
+import { delimiter, join, resolve } from "path";
 
 import { logger } from "../logger";
-import { scanClaudeSession } from "./claude";
-import { scanCodexSession } from "./codex";
+import { parseClaudeDetail, scanClaudeSession } from "./claude";
+import { parseCodexDetail, scanCodexSession } from "./codex";
+import { parseGenericDetail, scanGenericSession } from "./generic";
 import type {
   FileAccessAggregate,
   FileAccessEntry,
@@ -32,6 +33,17 @@ export function codexSessionsRoot(): string {
 
 export function codexArchivedSessionsRoot(): string {
   return process.env.CANARY_CODEX_ARCHIVE_DIR ?? join(homedir(), ".codex", "archived_sessions");
+}
+
+export function geminiRoot(): string {
+  return process.env.CANARY_GEMINI_DIR ?? join(homedir(), ".gemini", "tmp");
+}
+
+export function claudeDesktopRoot(): string {
+  return (
+    process.env.CANARY_CLAUDE_DESKTOP_DIR ??
+    join(homedir(), "Library", "Application Support", "Claude", "local-agent-mode-sessions")
+  );
 }
 
 /**
@@ -66,6 +78,103 @@ function listJsonlFiles(root: string, recursive: boolean): string[] {
   return out;
 }
 
+function expandHome(path: string): string {
+  if (path === "~") return homedir();
+  if (path.startsWith("~/")) return join(homedir(), path.slice(2));
+  return path;
+}
+
+function splitEnvPaths(value: string | undefined): string[] {
+  if (!value) return [];
+  return value
+    .split(delimiter)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map(expandHome);
+}
+
+function latestConversationListFile(): string | null {
+  const docs = join(homedir(), "Documents");
+  let entries;
+  try {
+    entries = readdirSync(docs, { withFileTypes: true });
+  } catch {
+    return null;
+  }
+  const dirs = entries
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("ai-conversation-lists-"))
+    .map((entry) => join(docs, entry.name))
+    .sort()
+    .reverse();
+  for (const dir of dirs) {
+    const list = join(dir, "list_ALL-ai-conversations.txt");
+    if (existsSync(list)) return list;
+  }
+  return null;
+}
+
+function conversationListFiles(): string[] {
+  const configured = splitEnvPaths(process.env.CANARY_SESSION_LIST_FILES);
+  if (configured.length > 0) return configured;
+  const latest = latestConversationListFile();
+  return latest ? [latest] : [];
+}
+
+function readPathList(listPath: string): string[] {
+  try {
+    return readFileSync(listPath, "utf-8")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+      .map(expandHome);
+  } catch {
+    return [];
+  }
+}
+
+function inferSource(path: string): SessionSource {
+  const resolved = resolve(path);
+  if (resolved.includes("/Library/Application Support/Claude/local-agent-mode-sessions/")) {
+    return "claude-desktop";
+  }
+  if (resolved.includes("/.gemini/")) return "gemini";
+  if (resolved.includes("/.codex/sessions/") || resolved.includes("/.codex/archived_sessions/")) {
+    return "codex";
+  }
+  if (resolved.includes("/.claude/projects/")) return "claude";
+  return "generic";
+}
+
+function knownTranscriptRoots(): string[] {
+  return [
+    claudeProjectsRoot(),
+    codexSessionsRoot(),
+    codexArchivedSessionsRoot(),
+    geminiRoot(),
+    claudeDesktopRoot(),
+    ...splitEnvPaths(process.env.CANARY_SESSION_EXTRA_DIRS),
+  ].map((path) => resolve(path));
+}
+
+function listedTranscriptPaths(): Set<string> {
+  const out = new Set<string>();
+  for (const list of conversationListFiles()) {
+    for (const path of readPathList(list)) {
+      if (path.endsWith(".jsonl")) out.add(resolve(path));
+    }
+  }
+  return out;
+}
+
+function addTarget(
+  targets: Map<string, SessionSource>,
+  path: string,
+  source: SessionSource = inferSource(path),
+): void {
+  if (!path.endsWith(".jsonl")) return;
+  targets.set(resolve(path), source);
+}
+
 interface CachedFile {
   mtimeMs: number;
   size: number;
@@ -93,21 +202,34 @@ async function buildIndex(): Promise<SessionsIndex> {
   const started = Date.now();
   const maxFiles = Number(process.env.CANARY_SESSIONS_MAX_FILES ?? "0") || Infinity;
 
-  const targets: Array<{ path: string; source: SessionSource }> = [];
+  const targets = new Map<string, SessionSource>();
   // Claude Code stores top-level sessions under project dirs, and newer
   // conversation/subagent artifacts may live deeper. Keep the AISpool-era
   // coverage contract: ~/.claude/projects/**/*.jsonl.
   for (const path of listJsonlFiles(claudeProjectsRoot(), true)) {
-    targets.push({ path, source: "claude" });
+    addTarget(targets, path, "claude");
   }
   for (const path of listJsonlFiles(codexSessionsRoot(), true)) {
-    targets.push({ path, source: "codex" });
+    addTarget(targets, path, "codex");
   }
   for (const path of listJsonlFiles(codexArchivedSessionsRoot(), false)) {
-    targets.push({ path, source: "codex" });
+    addTarget(targets, path, "codex");
+  }
+  for (const path of listJsonlFiles(geminiRoot(), true)) {
+    addTarget(targets, path, "gemini");
+  }
+  for (const path of listJsonlFiles(claudeDesktopRoot(), true)) {
+    addTarget(targets, path, "claude-desktop");
+  }
+  for (const root of splitEnvPaths(process.env.CANARY_SESSION_EXTRA_DIRS)) {
+    for (const path of listJsonlFiles(root, true)) addTarget(targets, path);
+  }
+  for (const list of conversationListFiles()) {
+    for (const path of readPathList(list)) addTarget(targets, path);
   }
 
-  const limited = targets.slice(0, maxFiles === Infinity ? targets.length : maxFiles);
+  const allTargets = Array.from(targets.entries()).map(([path, source]) => ({ path, source }));
+  const limited = allTargets.slice(0, maxFiles === Infinity ? allTargets.length : maxFiles);
   const sessions: SessionSummary[] = [];
   const fileAccessBySession = new Map<string, FileAccessEntry[]>();
   let parseErrorFiles = 0;
@@ -127,8 +249,7 @@ async function buildIndex(): Promise<SessionsIndex> {
       continue;
     }
     try {
-      const result =
-        source === "claude" ? await scanClaudeSession(path) : await scanCodexSession(path);
+      const result = await scanTranscript(path, source);
       if (result.parseErrors > 0) parseErrorFiles += 1;
       fileCache.set(path, {
         mtimeMs: stat.mtimeMs,
@@ -209,14 +330,14 @@ export async function getFileAccessAggregates(): Promise<FileAccessAggregate[]> 
 }
 
 /**
- * Detail requests address transcripts by absolute path; only paths inside
- * the two known stores are served.
+ * Detail requests address transcripts by absolute path; only allowed local
+ * transcript roots or explicit path-list entries are served.
  */
 export function isAllowedTranscriptPath(path: string): boolean {
   const resolved = resolve(path);
   return (
-    (resolved.startsWith(resolve(claudeProjectsRoot()) + "/") ||
-      isCodexTranscriptPath(resolved)) &&
+    (knownTranscriptRoots().some((root) => resolved.startsWith(root + "/")) ||
+      listedTranscriptPaths().has(resolved)) &&
     resolved.endsWith(".jsonl")
   );
 }
@@ -227,4 +348,26 @@ export function isCodexTranscriptPath(path: string): boolean {
     resolved.startsWith(resolve(codexSessionsRoot()) + "/") ||
     resolved.startsWith(resolve(codexArchivedSessionsRoot()) + "/")
   );
+}
+
+export function sessionSourceForPath(path: string): SessionSource {
+  const resolved = resolve(path);
+  if (resolved.startsWith(resolve(claudeProjectsRoot()) + "/")) return "claude";
+  if (isCodexTranscriptPath(resolved)) return "codex";
+  if (resolved.startsWith(resolve(geminiRoot()) + "/")) return "gemini";
+  if (resolved.startsWith(resolve(claudeDesktopRoot()) + "/")) return "claude-desktop";
+  return inferSource(path);
+}
+
+async function scanTranscript(path: string, source: SessionSource) {
+  if (source === "claude") return scanClaudeSession(path, "claude");
+  if (source === "codex") return scanCodexSession(path);
+  return scanGenericSession(path, source);
+}
+
+export async function parseSessionDetail(path: string) {
+  const source = sessionSourceForPath(path);
+  if (source === "claude") return parseClaudeDetail(path, "claude");
+  if (source === "codex") return parseCodexDetail(path);
+  return parseGenericDetail(path, source);
 }

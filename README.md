@@ -15,7 +15,7 @@ Canary exposes what GitHub doesn't see: unpushed commits, working-tree staleness
 
 - **Push leakage** — agent-touched commits that never made it to remote. Joins local git ahead/behind/dirty state with Claude Code session transcripts under `~/.claude/projects/`. Measured as APL (Agent-Push Latency), MIP (Metadata-Invisibility Period), PLR (Push Leakage Rate), and UCP (Uncommitted-Period). See `planning/drafts/agent-push-leakage.md` for the framing and `paper/main.tex` §5.4 for the empirical vignette.
 - **Session leakage audit** — "did anything I just did leak?" — `audit_session_leakage` MCP tool inspects sessions modified in the last N hours and joins with current git state.
-- **Local session review** — a reviewer-safe index over Claude Code and Codex transcripts, including active Codex sessions and `~/.codex/archived_sessions`. The MCP layer exposes `list_sessions`, `get_session_transcript`, and `get_file_access`; the dashboard mirrors the same data at `/sessions`.
+- **Local session review** — a reviewer-safe index over local AI transcript stores: Claude Code, Claude Desktop local-agent sessions, Codex active/archived sessions, Gemini CLI chats, and configured generic JSONL path lists. The MCP layer exposes `list_sessions`, `get_session_transcript`, and `get_file_access`; the dashboard mirrors the same data at `/sessions`.
 - **Cross-tool MCP serving** — one observability layer that any agent in any tool can query. Register once with Claude Code, Cursor, or Codex; the same scanner and session-review tools are available everywhere.
 
 **Companion capabilities — also exposed, but where GitHub Agentic Workflows can do more:**
@@ -77,18 +77,22 @@ Git is not dying — it is becoming invisible. Like EXIF metadata on photos or D
 - Research tracking — Semantic Scholar integration for paper projects
 - AI coding intel — framework-version-specific gotchas for Claude / Copilot / Cursor workflows
 - Push-leakage — APL / MIP / PLR / UCP metrics joining Claude Code session transcripts with multi-repo git state
-- Session review — Claude Code + Codex transcript summaries, reviewer-safe transcript rendering, and file-access inversion
+- Session review — local AI transcript summaries, reviewer-safe transcript rendering, source filtering, and file-access inversion
 - Smart grading — 100-point scoring with context-aware weights
 
-### AISpool Migration
+### AISpool Migration And Expansion
 
 The old [`aispool`](https://github.com/heznpc/aispool) CLI is superseded by canary's `lib/sessions` + MCP tools. Canary keeps the read-only local-transcript posture but moves the surface from a private SQLite inbox to an in-memory service index, dashboard pages, and cross-agent MCP calls.
 
-Coverage carried forward from AISpool:
+Coverage now handled by the session index:
 
 - `~/.claude/projects/**/*.jsonl`
 - `~/.codex/sessions/**/*.jsonl`
 - `~/.codex/archived_sessions/*.jsonl`
+- `~/.gemini/tmp/**/*.jsonl`
+- `~/Library/Application Support/Claude/local-agent-mode-sessions/**/*.jsonl`
+- `CANARY_SESSION_LIST_FILES` path-list inputs, including `list_ALL-ai-conversations.txt`
+- `CANARY_SESSION_EXTRA_DIRS` recursive generic JSONL roots
 
 AISpool's promote/reject ledger is not carried forward as a database feature; canary is the review and evidence surface, while follow-up decisions should live in the repo or workflow that acts on the evidence.
 
@@ -143,6 +147,10 @@ CANARY_SCAN_FILTER=Projects npm run pl:scan
 export CANARY_CLAUDE_DIR=$HOME/.claude/projects
 export CANARY_CODEX_DIR=$HOME/.codex/sessions
 export CANARY_CODEX_ARCHIVE_DIR=$HOME/.codex/archived_sessions
+export CANARY_GEMINI_DIR=$HOME/.gemini/tmp
+export CANARY_CLAUDE_DESKTOP_DIR="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
+export CANARY_SESSION_LIST_FILES="$HOME/Documents/ai-conversation-lists-2026-07-08/list_ALL-ai-conversations.txt"
+export CANARY_SESSION_EXTRA_DIRS=/path/to/other/jsonl/root
 
 # Override the "self login" used for issue-author filtering
 # (default: each repo's owner). Useful when you contribute to repos
@@ -219,7 +227,7 @@ Tools exposed (run `npm run mcp:smoke` to confirm registration):
 - `get_anthropic_usage(days?)` — token/cost totals from the Anthropic Admin API (requires `ANTHROPIC_ADMIN_API_KEY`)
 - `list_leaking_repos({ roots?, thresholdDays?, top?, pathFilter? })` — push-leakage scan: repos in MIP > thresholdDays, sorted desc
 - `audit_session_leakage({ sinceHours?, sessionId?, root? })` — "did anything just leak?" — inspect Claude Code sessions in a window and join with current git state
-- `list_sessions({ source?, q?, flaggedOnly?, limit? })` — unified local Claude Code + Codex transcript index
+- `list_sessions({ source?, q?, flaggedOnly?, limit? })` — unified local AI transcript index
 - `get_session_transcript({ path, redact?, role?, maxChars? })` — fetch one transcript, reviewer-safe redacted by default
 - `get_file_access({ q?, flaggedOnly?, limit? })` — invert local sessions by files touched, with rule/config surfaces first
 - `list_recent_issues({ windowDays?, top?, projectId? })` — external-contributor issue digest across the portfolio (or one project), filtering out self-tracking and bots
