@@ -29,15 +29,14 @@ import {
 } from "./adapters";
 import { withTraceMeta } from "./trace-meta";
 import { fenceUntrusted, UNTRUSTED_OPEN, UNTRUSTED_CLOSE } from "./untrusted";
-import { parseClaudeDetail } from "@/lib/sessions/claude";
-import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail, renderDetailAsText } from "@/lib/sessions/redact";
 import {
   getFileAccessAggregates,
   getSessionsIndex,
   isAllowedTranscriptPath,
-  isCodexTranscriptPath,
+  parseSessionDetail,
 } from "@/lib/sessions/scan";
+import { SESSION_SOURCE_VALUES } from "@/lib/sessions/types";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -476,11 +475,11 @@ async function main() {
   server.registerTool(
     "list_sessions",
     {
-      title: "List local agent sessions (Claude Code + Codex)",
+      title: "List local agent sessions",
       description:
-        "Unified index over ~/.claude/projects and ~/.codex/sessions transcripts: source, title, cwd, timestamps, message/tool counts, and how many rule/config surfaces (CLAUDE.md, AGENTS.md, settings, ~/.claude, ~/.codex) the session touched. Use this to find a session before fetching its transcript.",
+        "Unified index over local AI transcript stores: Claude Code, Claude Desktop local-agent sessions, Codex active/archived sessions, Gemini CLI chats, and configured generic JSONL path lists. Returns source, title, cwd, timestamps, message/tool counts, and how many rule/config surfaces the session touched. Use this to find a session before fetching its transcript.",
       inputSchema: {
-        source: z.enum(["claude", "codex"]).optional().describe("Restrict to one store."),
+        source: z.enum(SESSION_SOURCE_VALUES).optional().describe("Restrict to one transcript source."),
         q: z.string().optional().describe("Substring filter over title and cwd."),
         flaggedOnly: z
           .boolean()
@@ -537,7 +536,7 @@ async function main() {
       inputSchema: {
         path: z
           .string()
-          .describe("Absolute .jsonl path inside ~/.claude/projects or ~/.codex/sessions (from list_sessions)."),
+          .describe("Absolute .jsonl path inside an allowed local transcript store (from list_sessions)."),
         redact: z
           .boolean()
           .optional()
@@ -562,9 +561,7 @@ async function main() {
           extra,
         );
       }
-      const parsed = isCodexTranscriptPath(path)
-        ? await parseCodexDetail(path)
-        : await parseClaudeDetail(path);
+      const parsed = await parseSessionDetail(path);
       const filtered = role
         ? { ...parsed, messages: parsed.messages.filter((m) => m.role === role) }
         : parsed;

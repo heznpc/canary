@@ -30,8 +30,9 @@ export async function GET(request: Request) {
     const limit = Math.min(Number(url.searchParams.get("limit") ?? "200") || 200, 1000);
 
     const index = await getSessionsIndex();
+    const sourceOptions = new Set(index.sessions.map((s) => s.source));
     let sessions = index.sessions;
-    if (source === "claude" || source === "codex") {
+    if (source && sourceOptions.has(source as (typeof index.sessions)[number]["source"])) {
       sessions = sessions.filter((s) => s.source === source);
     }
     if (q) {

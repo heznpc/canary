@@ -2,10 +2,8 @@ import { headers } from "next/headers";
 
 import { logger } from "@/lib/logger";
 import { rateLimit } from "@/lib/rate-limit";
-import { parseClaudeDetail } from "@/lib/sessions/claude";
-import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail } from "@/lib/sessions/redact";
-import { isAllowedTranscriptPath, isCodexTranscriptPath, sessionsEnabled } from "@/lib/sessions/scan";
+import { isAllowedTranscriptPath, parseSessionDetail, sessionsEnabled } from "@/lib/sessions/scan";
 
 export const dynamic = "force-dynamic";
 
@@ -33,9 +31,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const detail = isCodexTranscriptPath(path)
-      ? await parseCodexDetail(path)
-      : await parseClaudeDetail(path);
+    const detail = await parseSessionDetail(path);
     const redacted = url.searchParams.get("redact") === "1";
     return Response.json(redacted ? redactDetail(detail) : detail);
   } catch (err) {
