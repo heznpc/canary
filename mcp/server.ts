@@ -33,10 +33,10 @@ import { parseClaudeDetail } from "@/lib/sessions/claude";
 import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail, renderDetailAsText } from "@/lib/sessions/redact";
 import {
-  codexSessionsRoot,
   getFileAccessAggregates,
   getSessionsIndex,
   isAllowedTranscriptPath,
+  isCodexTranscriptPath,
 } from "@/lib/sessions/scan";
 
 /**
@@ -562,7 +562,7 @@ async function main() {
           extra,
         );
       }
-      const parsed = path.startsWith(codexSessionsRoot())
+      const parsed = isCodexTranscriptPath(path)
         ? await parseCodexDetail(path)
         : await parseClaudeDetail(path);
       const filtered = role
