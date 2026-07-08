@@ -28,7 +28,16 @@ import {
   buildUpdateActionsPayload,
 } from "./adapters";
 import { withTraceMeta } from "./trace-meta";
-import { fenceUntrusted } from "./untrusted";
+import { fenceUntrusted, UNTRUSTED_OPEN, UNTRUSTED_CLOSE } from "./untrusted";
+import { parseClaudeDetail } from "@/lib/sessions/claude";
+import { parseCodexDetail } from "@/lib/sessions/codex";
+import { redactDetail, renderDetailAsText } from "@/lib/sessions/redact";
+import {
+  codexSessionsRoot,
+  getFileAccessAggregates,
+  getSessionsIndex,
+  isAllowedTranscriptPath,
+} from "@/lib/sessions/scan";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -461,6 +470,164 @@ async function main() {
       },
       extra,
     );
+    },
+  );
+
+  server.registerTool(
+    "list_sessions",
+    {
+      title: "List local agent sessions (Claude Code + Codex)",
+      description:
+        "Unified index over ~/.claude/projects and ~/.codex/sessions transcripts: source, title, cwd, timestamps, message/tool counts, and how many rule/config surfaces (CLAUDE.md, AGENTS.md, settings, ~/.claude, ~/.codex) the session touched. Use this to find a session before fetching its transcript.",
+      inputSchema: {
+        source: z.enum(["claude", "codex"]).optional().describe("Restrict to one store."),
+        q: z.string().optional().describe("Substring filter over title and cwd."),
+        flaggedOnly: z
+          .boolean()
+          .optional()
+          .describe("Only sessions that touched rule/config surfaces. Defaults to false."),
+        limit: z.number().int().min(1).max(500).optional().describe("Max rows. Defaults to 50."),
+      },
+    },
+    async ({ source, q, flaggedOnly, limit }, extra) => {
+      const index = await getSessionsIndex();
+      let sessions = index.sessions;
+      if (source) sessions = sessions.filter((s) => s.source === source);
+      if (flaggedOnly) sessions = sessions.filter((s) => s.flaggedCount > 0);
+      const needle = q?.toLowerCase();
+      if (needle) {
+        sessions = sessions.filter(
+          (s) => s.title.toLowerCase().includes(needle) || (s.cwd ?? "").toLowerCase().includes(needle),
+        );
+      }
+      const rows = sessions.slice(0, limit ?? 50).map((s) => ({
+        // Titles are transcript-derived (user/AI authored) — fence them so a
+        // crafted session title cannot instruct the downstream consumer.
+        title: fenceUntrusted(s.title),
+        source: s.source,
+        jsonlPath: s.jsonlPath,
+        cwd: s.cwd,
+        firstTs: s.firstTs,
+        lastTs: s.lastTs,
+        userCount: s.userCount,
+        assistantCount: s.assistantCount,
+        toolCount: s.toolCount,
+        ruleSurfaceHits: s.flaggedCount,
+      }));
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({ total: sessions.length, shown: rows.length, sessions: rows }, null, 2),
+            },
+          ],
+        },
+        extra,
+      );
+    },
+  );
+
+  server.registerTool(
+    "get_session_transcript",
+    {
+      title: "Fetch one session transcript (reviewer-safe by default)",
+      description:
+        "Return a session transcript as text. By default the output is REDACTED for cross-session review: every assistant message is labelled as an unverified claim and self-assurance phrases are masked (deterministic; grounded in the measured reviewer-contamination incident — raw assistant prose makes a fresh reviewer inherit the reviewed session's frame). Pass redact=false only when you explicitly need the verbatim assistant prose. The whole transcript is additionally fenced as untrusted content.",
+      inputSchema: {
+        path: z
+          .string()
+          .describe("Absolute .jsonl path inside ~/.claude/projects or ~/.codex/sessions (from list_sessions)."),
+        redact: z
+          .boolean()
+          .optional()
+          .describe("Reviewer-safe redaction. Defaults to true."),
+        role: z
+          .enum(["user", "assistant", "tool"])
+          .optional()
+          .describe("Only messages of one role."),
+        maxChars: z
+          .number()
+          .int()
+          .min(1000)
+          .max(200_000)
+          .optional()
+          .describe("Truncate the rendered transcript to this many characters. Defaults to 30000."),
+      },
+    },
+    async ({ path, redact, role, maxChars }, extra) => {
+      if (!isAllowedTranscriptPath(path)) {
+        return withTraceMeta(
+          errorResponse(`Path outside the transcript stores: ${path}`),
+          extra,
+        );
+      }
+      const parsed = path.startsWith(codexSessionsRoot())
+        ? await parseCodexDetail(path)
+        : await parseClaudeDetail(path);
+      const filtered = role
+        ? { ...parsed, messages: parsed.messages.filter((m) => m.role === role) }
+        : parsed;
+      const redacted = redact !== false;
+      const detail = redacted ? redactDetail(filtered) : filtered;
+      const body = renderDetailAsText(detail, { redacted, maxChars: maxChars ?? 30_000 });
+      const s = parsed.summary;
+      const meta = `session ${s.id} | ${s.cwd ?? "cwd?"} | ${s.firstTs ?? "?"} → ${s.lastTs ?? "?"} | ${s.userCount}u/${s.assistantCount}a/${s.toolCount}t | rule-surface hits: ${s.flaggedCount} | redacted: ${redacted}`;
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text",
+              text: `${meta}\n${UNTRUSTED_OPEN}\n${body}\n${UNTRUSTED_CLOSE}`,
+            },
+          ],
+        },
+        extra,
+      );
+    },
+  );
+
+  server.registerTool(
+    "get_file_access",
+    {
+      title: "Which sessions touched which files (rule surfaces first)",
+      description:
+        "Inverted file-access index across all local sessions: for each path, read/write/shell counts and the sessions that touched it. Rule/config surfaces (CLAUDE.md, AGENTS.md, settings, ~/.claude, ~/.codex) sort first — the contamination-investigation view.",
+      inputSchema: {
+        q: z.string().optional().describe("Substring filter over paths."),
+        flaggedOnly: z
+          .boolean()
+          .optional()
+          .describe("Only rule/config surfaces. Defaults to true."),
+        limit: z.number().int().min(1).max(1000).optional().describe("Max rows. Defaults to 100."),
+      },
+    },
+    async ({ q, flaggedOnly, limit }, extra) => {
+      let aggregates = await getFileAccessAggregates();
+      if (flaggedOnly !== false) aggregates = aggregates.filter((a) => a.flagged);
+      const needle = q?.toLowerCase();
+      if (needle) aggregates = aggregates.filter((a) => a.path.toLowerCase().includes(needle));
+      const rows = aggregates.slice(0, limit ?? 100).map((a) => ({
+        path: a.path,
+        flagged: a.flagged,
+        reads: a.reads,
+        writes: a.writes,
+        shell: a.bash,
+        sessionCount: a.sessionIds.length,
+        sessionIds: a.sessionIds.slice(0, 20),
+        lastTs: a.lastTs,
+      }));
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({ total: aggregates.length, shown: rows.length, paths: rows }, null, 2),
+            },
+          ],
+        },
+        extra,
+      );
     },
   );
 
