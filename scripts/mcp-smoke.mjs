@@ -23,6 +23,7 @@ const EXPECTED_TOOLS = [
   "audit_session_leakage",
   "list_recent_issues",
   "list_sessions",
+  "scan_friction",
   "get_session_transcript",
   "get_file_access",
 ];
