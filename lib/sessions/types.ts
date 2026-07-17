@@ -1,4 +1,12 @@
-export type SessionSource = "claude" | "codex";
+export const SESSION_SOURCE_VALUES = [
+  "claude",
+  "codex",
+  "gemini",
+  "claude-desktop",
+  "generic",
+] as const;
+
+export type SessionSource = (typeof SESSION_SOURCE_VALUES)[number];
 
 export type FileAccessOp = "read" | "write" | "bash";
 

@@ -29,15 +29,15 @@ import {
 } from "./adapters";
 import { withTraceMeta } from "./trace-meta";
 import { fenceUntrusted, UNTRUSTED_OPEN, UNTRUSTED_CLOSE } from "./untrusted";
-import { parseClaudeDetail } from "@/lib/sessions/claude";
-import { parseCodexDetail } from "@/lib/sessions/codex";
 import { redactDetail, renderDetailAsText } from "@/lib/sessions/redact";
 import {
   getFileAccessAggregates,
   getSessionsIndex,
   isAllowedTranscriptPath,
-  isCodexTranscriptPath,
+  parseSessionDetail,
 } from "@/lib/sessions/scan";
+import { FRICTION_CATEGORIES, scanFriction } from "@/lib/sessions/friction";
+import { SESSION_SOURCE_VALUES } from "@/lib/sessions/types";
 
 /**
  * stdio MCP server exposing canary scanners as tools. Runs out-of-process so
@@ -476,11 +476,11 @@ async function main() {
   server.registerTool(
     "list_sessions",
     {
-      title: "List local agent sessions (Claude Code + Codex)",
+      title: "List local agent sessions",
       description:
-        "Unified index over ~/.claude/projects and ~/.codex/sessions transcripts: source, title, cwd, timestamps, message/tool counts, and how many rule/config surfaces (CLAUDE.md, AGENTS.md, settings, ~/.claude, ~/.codex) the session touched. Use this to find a session before fetching its transcript.",
+        "Unified index over local AI transcript stores: Claude Code, Claude Desktop local-agent sessions, Codex active/archived sessions, Gemini CLI chats, and configured generic JSONL path lists. Returns source, title, cwd, timestamps, message/tool counts, and how many rule/config surfaces the session touched. Use this to find a session before fetching its transcript.",
       inputSchema: {
-        source: z.enum(["claude", "codex"]).optional().describe("Restrict to one store."),
+        source: z.enum(SESSION_SOURCE_VALUES).optional().describe("Restrict to one transcript source."),
         q: z.string().optional().describe("Substring filter over title and cwd."),
         flaggedOnly: z
           .boolean()
@@ -529,6 +529,72 @@ async function main() {
   );
 
   server.registerTool(
+    "scan_friction",
+    {
+      title: "Scan operator friction in local sessions",
+      description:
+        "Deterministic operator-friction scan over local AI session transcripts. Flags user turns that push back on agent behaviour — wrong actions, unverified assertions, stalling, rule contamination, over-orchestration, repetition — with severity 1-3 and a 9-category taxonomy derived from a verified 2,630-turn / 515-finding audit (2026-07). Quotes are operator-authored transcript text and arrive fenced. Review aid, not ground truth: keyword/tone matching under- and over-catches relative to the human audit.",
+      inputSchema: {
+        sinceDays: z
+          .number()
+          .int()
+          .min(1)
+          .max(365)
+          .optional()
+          .describe("Look-back window over session activity. Defaults to 30."),
+        source: z.enum(SESSION_SOURCE_VALUES).optional().describe("Restrict to one transcript source."),
+        category: z
+          .enum(FRICTION_CATEGORIES)
+          .optional()
+          .describe("Only findings in one taxonomy category."),
+        minSeverity: z
+          .number()
+          .int()
+          .min(1)
+          .max(3)
+          .optional()
+          .describe("Drop findings below this severity (3 = rage, 2 = clear irritation, 1 = mild correction)."),
+        limit: z.number().int().min(1).max(500).optional().describe("Max findings returned (most recent). Defaults to 100."),
+      },
+    },
+    async ({ sinceDays, source, category, minSeverity, limit }, extra) => {
+      const report = await scanFriction({ sinceDays, source });
+      let findings = report.findings;
+      if (category) findings = findings.filter((f) => f.category === category);
+      if (minSeverity) findings = findings.filter((f) => f.severity >= minSeverity);
+      const rows = findings.slice(-(limit ?? 100)).map((f) => ({
+        ...f,
+        // Operator-authored transcript text — fence so a crafted prompt cannot
+        // instruct the downstream consumer.
+        quote: fenceUntrusted(f.quote),
+      }));
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  sessionsScanned: report.sessionsScanned,
+                  userTurnsScanned: report.userTurnsScanned,
+                  totalFindings: report.findings.length,
+                  shown: rows.length,
+                  byCategory: report.byCategory,
+                  bySeverity: report.bySeverity,
+                  findings: rows,
+                },
+                null,
+                2,
+              ),
+            },
+          ],
+        },
+        extra,
+      );
+    },
+  );
+
+  server.registerTool(
     "get_session_transcript",
     {
       title: "Fetch one session transcript (reviewer-safe by default)",
@@ -537,7 +603,7 @@ async function main() {
       inputSchema: {
         path: z
           .string()
-          .describe("Absolute .jsonl path inside ~/.claude/projects or ~/.codex/sessions (from list_sessions)."),
+          .describe("Absolute .jsonl path inside an allowed local transcript store (from list_sessions)."),
         redact: z
           .boolean()
           .optional()
@@ -562,9 +628,7 @@ async function main() {
           extra,
         );
       }
-      const parsed = isCodexTranscriptPath(path)
-        ? await parseCodexDetail(path)
-        : await parseClaudeDetail(path);
+      const parsed = await parseSessionDetail(path);
       const filtered = role
         ? { ...parsed, messages: parsed.messages.filter((m) => m.role === role) }
         : parsed;

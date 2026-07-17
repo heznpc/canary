@@ -27,8 +27,9 @@ export default async function SessionsPage({
   const flaggedOnly = params.flagged === "1";
 
   const index = await getSessionsIndex();
+  const sourceOptions = Array.from(new Set(index.sessions.map((s) => s.source))).sort();
   let sessions = index.sessions;
-  if (source === "claude" || source === "codex") {
+  if (source && sourceOptions.includes(source as (typeof sourceOptions)[number])) {
     sessions = sessions.filter((s) => s.source === source);
   }
   if (flaggedOnly) sessions = sessions.filter((s) => s.flaggedCount > 0);
@@ -68,9 +69,12 @@ export default async function SessionsPage({
           defaultValue={source ?? ""}
           name="source"
         >
-          <option value="">both sources</option>
-          <option value="claude">claude</option>
-          <option value="codex">codex</option>
+          <option value="">all sources</option>
+          {sourceOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
         </select>
         <label className="flex items-center gap-1">
           <input defaultChecked={flaggedOnly} name="flagged" type="checkbox" value="1" />
