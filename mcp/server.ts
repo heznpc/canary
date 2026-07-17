@@ -36,6 +36,7 @@ import {
   isAllowedTranscriptPath,
   parseSessionDetail,
 } from "@/lib/sessions/scan";
+import { FRICTION_CATEGORIES, scanFriction } from "@/lib/sessions/friction";
 import { SESSION_SOURCE_VALUES } from "@/lib/sessions/types";
 
 /**
@@ -519,6 +520,72 @@ async function main() {
             {
               type: "text",
               text: JSON.stringify({ total: sessions.length, shown: rows.length, sessions: rows }, null, 2),
+            },
+          ],
+        },
+        extra,
+      );
+    },
+  );
+
+  server.registerTool(
+    "scan_friction",
+    {
+      title: "Scan operator friction in local sessions",
+      description:
+        "Deterministic operator-friction scan over local AI session transcripts. Flags user turns that push back on agent behaviour — wrong actions, unverified assertions, stalling, rule contamination, over-orchestration, repetition — with severity 1-3 and a 9-category taxonomy derived from a verified 2,630-turn / 515-finding audit (2026-07). Quotes are operator-authored transcript text and arrive fenced. Review aid, not ground truth: keyword/tone matching under- and over-catches relative to the human audit.",
+      inputSchema: {
+        sinceDays: z
+          .number()
+          .int()
+          .min(1)
+          .max(365)
+          .optional()
+          .describe("Look-back window over session activity. Defaults to 30."),
+        source: z.enum(SESSION_SOURCE_VALUES).optional().describe("Restrict to one transcript source."),
+        category: z
+          .enum(FRICTION_CATEGORIES)
+          .optional()
+          .describe("Only findings in one taxonomy category."),
+        minSeverity: z
+          .number()
+          .int()
+          .min(1)
+          .max(3)
+          .optional()
+          .describe("Drop findings below this severity (3 = rage, 2 = clear irritation, 1 = mild correction)."),
+        limit: z.number().int().min(1).max(500).optional().describe("Max findings returned (most recent). Defaults to 100."),
+      },
+    },
+    async ({ sinceDays, source, category, minSeverity, limit }, extra) => {
+      const report = await scanFriction({ sinceDays, source });
+      let findings = report.findings;
+      if (category) findings = findings.filter((f) => f.category === category);
+      if (minSeverity) findings = findings.filter((f) => f.severity >= minSeverity);
+      const rows = findings.slice(-(limit ?? 100)).map((f) => ({
+        ...f,
+        // Operator-authored transcript text — fence so a crafted prompt cannot
+        // instruct the downstream consumer.
+        quote: fenceUntrusted(f.quote),
+      }));
+      return withTraceMeta(
+        {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(
+                {
+                  sessionsScanned: report.sessionsScanned,
+                  userTurnsScanned: report.userTurnsScanned,
+                  totalFindings: report.findings.length,
+                  shown: rows.length,
+                  byCategory: report.byCategory,
+                  bySeverity: report.bySeverity,
+                  findings: rows,
+                },
+                null,
+                2,
+              ),
             },
           ],
         },
